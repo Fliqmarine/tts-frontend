@@ -1,122 +1,83 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import Layout from "./components/Layout";
+import DashboardPage from "./pages/dashboard/DashBoard";
+import UsersIndex from "./pages/master/users/UsersIndex";
+import ContactsIndex from "./pages/master/contact-list/ContactsIndex";
+import VesselsIndex from "./pages/master/vessels/VesselsIndex";
+import VesselCreate from "./pages/master/vessels/VesselCreate";
+import HubIndex from "./pages/master/hub/HubIndex";
+import VendorsIndex from "./pages/master/vendors/VendorsIndex";
+import BanksIndex from "./pages/master/banks/BanksIndex";
+import TariffMasterIndex from "./pages/master/tariff-master/TariffMasterIndex";
+import AirportCodesIndex from "./pages/master/airport-codes/AirportCodesIndex";
+import CurrenciesIndex from "./pages/master/currency/CurrenciesIndex";
+import CargoIndex from "./pages/master/cargo/CargoIndex";
+import CreateContactPage from "./pages/master/contact-list/ContactCreate";
+import CreateStockPage from "./pages/stocks/CreateStockPage";
+import StockListPage from "./pages/stocks/StockListPage";
+import FollowUpPage from "./pages/stocks/FollowUpPage";
+import StockHistoryPage from "./pages/stocks/StockHistoryPage";
+import GLCodeSubChildrenIndex from "./pages/master/finance-master/gl-code-subchildren/GLCodeSubChildrenIndex";
+import GLCodeChildrenIndex from "./pages/master/finance-master/gl-code-children/GLCodeChildrenIndex";
+import GLCodeParentIndex from "./pages/master/finance-master/gl-code-parent/GLCodeParentIndex";
+import ContactEdit from "./pages/master/contact-list/ContactEdit";
+import VesselEdit from "./pages/master/vessels/VesselEdit";
+
+
 
 function App() {
-  const [count, setCount] = useState(0)
+
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Navigate to="/login" />} />
+                <Route path="/login" element={<LoginPage />} />
 
-      <div className="ticks"></div>
+                <Route element={<Layout />}>
+                    <Route path="/dashboard" element={<DashboardPage />} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+                    <Route path="/master/users" element={<UsersIndex />} />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+                    <Route path="/master/contact-list" element={<ContactsIndex />} />
+                    <Route path="/master/contact-list/contact-create" element={<CreateContactPage />} />
+                    <Route path="/master/contact-list/contact-edit/:id" element={<ContactEdit />} />
+
+                    <Route path="/master/vessels" element={<VesselsIndex />} />
+                    <Route path="/master/vessels/vessel-create" element={<VesselCreate />} />
+                    <Route path="/master/vessels/vessel-edit/:id" element={<VesselEdit />} />
+
+                    <Route path="/master/vendors" element={<VendorsIndex />} />
+                    <Route path="/master/banks" element={<BanksIndex />} />
+                    <Route path="/master/tariff-master" element={<TariffMasterIndex />} />
+                    <Route path="/master/airport-codes" element={<AirportCodesIndex />} />
+                    <Route path="/master/currency" element={<CurrenciesIndex />} />
+                    <Route path="/master/cargo" element={<CargoIndex />} />
+                    
+
+                    <Route path="/master/hub" element={<HubIndex />} />
+
+
+                    <Route path="/master/finance-master/gl-code-parent" element={<GLCodeParentIndex />} />
+                    <Route path="/master/finance-master/gl-code-child" element={<GLCodeChildrenIndex />} />
+                    {/* <Route path="/master/finance-master/gl-code-children" element={<GLCodeChildrenIndex />} /> */}
+                    <Route path="/master/finance-master/gl-code-subchild" element={<GLCodeSubChildrenIndex />} />
+                    {/* <Route path="/master/finance-master/gl-code-subchildren" element={<GLCodeSubChildrenIndex />} /> */}
+
+
+
+
+                    <Route path="/stocks/create-stock" element={<CreateStockPage />} />
+                    <Route path="/stocks/stock-list" element={<StockListPage />} />
+                    <Route path="/stocks/follow-up" element={<FollowUpPage />} />
+                    <Route path="/stocks/history" element={<StockHistoryPage />} />
+                </Route>
+            </Routes>
+      </BrowserRouter>
+
+  );
+   
 }
 
 export default App
