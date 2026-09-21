@@ -7,28 +7,17 @@ import { useState } from "react";
 
 
 const demoData: AirportCodes[] = [
-    {id: 1,city_name: "New York",airport_code: "JFK",airport_name: "John F. Kennedy International Airport",country: "USA",},
-    {id: 2,city_name: "London",airport_code: "LHR",airport_name: "Heathrow Airport",country: "UK",},
-    {id: 3,city_name: "Tokyo",airport_code: "HND",airport_name: "Haneda Airport",country: "Japan",},
-    {id: 4,city_name: "Dubai",airport_code: "DXB",airport_name: "Dubai International Airport",country: "UAE",},
-    {id: 5,city_name: "Singapore",airport_code: "SIN",airport_name: "Changi Airport",country: "Singapore",}
+    { id: 1, city_name: "New York", airport_code: "JFK", airport_name: "John F. Kennedy International Airport", country: "USA", },
+    { id: 2, city_name: "London", airport_code: "LHR", airport_name: "Heathrow Airport", country: "UK", },
+    { id: 3, city_name: "Tokyo", airport_code: "HND", airport_name: "Haneda Airport", country: "Japan", },
+    { id: 4, city_name: "Dubai", airport_code: "DXB", airport_name: "Dubai International Airport", country: "UAE", },
+    { id: 5, city_name: "Singapore", airport_code: "SIN", airport_name: "Changi Airport", country: "Singapore", }
 ];
 
-const TOTAL_COLUMNS = 5; 
+const TOTAL_COLUMNS = 5;
 
 const headCellSx = {
-    fontWeight: 700,
-    color: "#C62828",
-    fontSize: "0.72rem",
-    textTransform: "uppercase" as const,
-    letterSpacing: "0.6px",
-    py: "8px",
     whiteSpace: "nowrap" as const,
-};
-
-const rowHoverSx = {
-    "&:hover": { bgcolor: "rgba(198,40,40,0.03)" },
-    transition: "background 0.15s",
 };
 
 interface AirportCodesIndexTableProps {
@@ -36,20 +25,15 @@ interface AirportCodesIndexTableProps {
 }
 
 export default function AirportCodesIndexTable({ onEdit }: AirportCodesIndexTableProps) {
-
-    //* pagination state
     const [rows, setRows] = useState<AirportCodes[]>(demoData);
     const [page, setPage] = useState(0);
-
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    //* delete handler
-    const  handleDelete = (id: number) => {
+    const handleDelete = (id: number) => {
         setRows((prev) => prev.filter((row) => row.id !== id));
     }
 
-    //* pagination handlers
-    const handleChangePage =  (_: unknown, newPage: number) => {
+    const handleChangePage = (_: unknown, newPage: number) => {
         setPage(newPage);
     };
 
@@ -58,7 +42,6 @@ export default function AirportCodesIndexTable({ onEdit }: AirportCodesIndexTabl
         setPage(0);
     };
 
-    //* paginated slice
     const paginated = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     const [selected, setSelected] = useState<number[]>([]);
@@ -85,16 +68,16 @@ export default function AirportCodesIndexTable({ onEdit }: AirportCodesIndexTabl
     return (
         <Box>
             {selected.length > 0 && (
-                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", px: 2, py: 1, mb: 1, bgcolor: "rgba(198,40,40,0.06)", borderRadius: 2, border: "1px solid rgba(198,40,40,0.15)" }}>
-                    <Typography variant="body2" sx={{ fontWeight: 600, color: "#C62828" }}>{selected.length} items selected</Typography>
-                    <Button variant="contained" size="small" startIcon={<FileDownloadOutlinedIcon />} onClick={handleExport}>Export</Button>
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", px: 2, py: 1, mb: 1, bgcolor: "action.hover", borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
+                    <Typography variant="body2" color="primary.main" sx={{ fontWeight: 600 }}>{selected.length} items selected</Typography>
+                    <Button variant="contained" size="small" color="primary" startIcon={<FileDownloadOutlinedIcon />} onClick={handleExport} sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, px: 2.5 }}>Export</Button>
                 </Box>
             )}
             <TableContainer component={Paper} elevation={3} sx={{ borderRadius: "8px 8px 16px 16px", border: "1px solid", borderColor: "divider", overflow: "hidden" }}>
                 <Table size="small">
                     <TableHead>
-                        <TableRow sx={{ background: "linear-gradient(135deg, #fafbfd 0%, #f1f5f9 100%)", borderBottom: "2px solid rgba(198,40,40,0.15)" }}>
-                            <TableCell padding="checkbox" sx={{ pl: 1.5 }}><Checkbox size="small" indeterminate={someOnPageSelected} checked={allOnPageSelected} onChange={handleSelectAll} /></TableCell>
+                        <TableRow>
+                            <TableCell padding="checkbox" sx={{ pl: 1.5 }}><Checkbox size="small" color="primary" indeterminate={someOnPageSelected} checked={allOnPageSelected} onChange={handleSelectAll} /></TableCell>
                             <TableCell sx={headCellSx}>City</TableCell>
                             <TableCell sx={headCellSx}>Airport Code</TableCell>
                             <TableCell sx={headCellSx}>Airport Name</TableCell>
@@ -113,16 +96,16 @@ export default function AirportCodesIndexTable({ onEdit }: AirportCodesIndexTabl
                             paginated.map((airportCode) => {
                                 const isSelected = selected.includes(airportCode.id);
                                 return (
-                                    <TableRow key={airportCode.id} hover selected={isSelected} sx={{ ...rowHoverSx, ...(isSelected && { bgcolor: "rgba(198,40,40,0.04) !important" }) }}>
-                                        <TableCell padding="checkbox" sx={{ pl: 1.5 }}><Checkbox size="small" checked={isSelected} onChange={() => handleSelectRow(airportCode.id)} /></TableCell>
-                                        <TableCell>{airportCode.city_name}</TableCell>
-                                        <TableCell>{airportCode.airport_code}</TableCell>
-                                        <TableCell>{airportCode.airport_name}</TableCell>
-                                        <TableCell>{airportCode.country}</TableCell>
+                                    <TableRow key={airportCode.id} hover selected={isSelected}>
+                                        <TableCell padding="checkbox" sx={{ pl: 1.5 }}><Checkbox size="small" color="primary" checked={isSelected} onChange={() => handleSelectRow(airportCode.id)} /></TableCell>
+                                        <TableCell sx={{ fontWeight: 600, color: "text.primary" }}>{airportCode.city_name}</TableCell>
+                                        <TableCell sx={{ color: "text.secondary" }}>{airportCode.airport_code}</TableCell>
+                                        <TableCell sx={{ color: "text.secondary" }}>{airportCode.airport_name}</TableCell>
+                                        <TableCell sx={{ color: "text.secondary" }}>{airportCode.country}</TableCell>
                                         <TableCell sx={{ textAlign: "right" }}>
                                             <Box sx={{ display: "flex", gap: 0.25, justifyContent: "flex-end" }}>
-                                                <IconButton size="small" aria-label="edit" onClick={() => onEdit(airportCode)}><EditIcon fontSize="small" /></IconButton>
-                                                <IconButton size="small" aria-label="delete" onClick={() => handleDelete(airportCode.id)}><DeleteIcon fontSize="small" /></IconButton>
+                                                <IconButton size="small" color="primary" aria-label="edit" onClick={() => onEdit(airportCode)}><EditIcon fontSize="small" /></IconButton>
+                                                <IconButton size="small" color="error" aria-label="delete" onClick={() => handleDelete(airportCode.id)}><DeleteIcon fontSize="small" /></IconButton>
                                             </Box>
                                         </TableCell>
                                     </TableRow>
@@ -131,7 +114,7 @@ export default function AirportCodesIndexTable({ onEdit }: AirportCodesIndexTabl
                         )}
                     </TableBody>
                 </Table>
-                <TablePagination component="div" count={rows.length} page={page} onPageChange={handleChangePage} rowsPerPage={rowsPerPage} onRowsPerPageChange={handleChangeRowsPerPage} rowsPerPageOptions={[5, 10, 15, 25, 50, 100]} />
+                <TablePagination component="div" count={rows.length} page={page} onPageChange={handleChangePage} rowsPerPage={rowsPerPage} onRowsPerPageChange={handleChangeRowsPerPage} rowsPerPageOptions={[5, 10, 15, 25, 50, 100]} sx={{ borderTop: "1px solid", borderColor: "divider" }} />
             </TableContainer>
         </Box>
     );

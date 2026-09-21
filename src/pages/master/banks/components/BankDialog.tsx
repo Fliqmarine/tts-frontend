@@ -96,7 +96,7 @@ export default function BankDialog({
     };
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth sx={{ "& .MuiDialog-paper": { bgcolor: "#fff" } }}>
+        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <Box
                 sx={{
 
@@ -112,19 +112,17 @@ export default function BankDialog({
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        borderBottom: 1,
-                        borderColor: "divider",
-                        background:
-                            "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
+                        bgcolor: "primary.main",
+                        color: "primary.contrastText",
                     }}
                 >
                     <Typography
                         variant="h6"
-                        sx={{ color: "#fff", fontWeight: 600 }}
+                        sx={{ fontWeight: 600 }}
                     >
                         {isEdit ? "Edit Bank" : "Create Bank"}
                     </Typography>
-                    <IconButton onClick={onClose} sx={{ color: "#fff" }}>
+                    <IconButton onClick={onClose} color="inherit">
                         <CloseIcon />
                     </IconButton>
                 </Box>
@@ -283,15 +281,9 @@ export default function BankDialog({
                         form="bank-dialog-form"
                         variant="contained"
                         disabled={loading}
+                        color="primary"
                         sx={{
-                            background:
-                                "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
-                            color: "#ffffff",
                             fontWeight: 600,
-                            "&:hover": {
-                                background:
-                                    "linear-gradient(135deg, #8E0000 0%, #C62828 100%)",
-                            },
                         }}
                     >
                         {loading

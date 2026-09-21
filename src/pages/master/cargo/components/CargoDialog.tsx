@@ -58,7 +58,6 @@ export default function CargoDialog({ open, onClose, cargo, onSubmit }: CargoDia
             onClose={onClose}
             maxWidth="sm"
             fullWidth
-            sx={{ "& .MuiDialog-paper": { bgcolor: "#fff" } }}
         >
             <Box
                 sx={{
@@ -74,28 +73,27 @@ export default function CargoDialog({ open, onClose, cargo, onSubmit }: CargoDia
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        borderBottom: 1,
-                        borderColor: "divider",
-                        background: "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
+                        bgcolor: "primary.main",
+                        color: "primary.contrastText",
                     }}
                 >
-                    <Typography variant="h6" sx={{ color: "#fff", fontWeight: 600 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
                         {isEdit ? "Edit Cargo" : "Add Cargo"}
                     </Typography>
                     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                        <IconButton onClick={onClose} sx={{ color: "#fff" }}>
+                        <IconButton onClick={onClose} color="inherit">
                             <CloseIcon />
                         </IconButton>
                     </Box>
                 </Box>
                 <Box sx={{ flex: 1, overflowY: "auto", px: 3, py: 3 }}>
-                    <Box 
+                    <Box
                         sx={{
                             display: "grid",
                             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
                             gap: 3,
                         }}
-                        
+
                     >
                         <TextField
                             label="Cargo Name"
@@ -120,7 +118,7 @@ export default function CargoDialog({ open, onClose, cargo, onSubmit }: CargoDia
                 </Box>
                 <Box sx={{ flex: 1, overflowY: "auto", px: 3, }}>
                     <Stack spacing={2.5}>
-                       
+
                         <TextField
                             label="Description"
                             fullWidth
@@ -162,14 +160,10 @@ export default function CargoDialog({ open, onClose, cargo, onSubmit }: CargoDia
                         variant="contained"
                         onClick={handleSubmit}
                         disabled={!form.cargo_name.trim() || !form.hsv_code.trim()}
+                        color="primary"
                         sx={{
-                            background: "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
                             textTransform: "none",
-                            color: "#ffffff",
                             fontWeight: 600,
-                            "&:hover": {
-                                background: "linear-gradient(135deg, #8E0000 0%, #C62828 100%)",
-                            },
                         }}
                     >
                         {isEdit ? "Save Changes" : "Add Cargo"}

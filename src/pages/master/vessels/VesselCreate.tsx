@@ -36,10 +36,9 @@ const SECTION_HEADER_SX = {
     px: 2,
     display: "flex",
     alignItems: "center",
-    backgroundColor: "#373737ff",
-    color: "white",
+    bgcolor: "primary.main",
+    color: "primary.contrastText",
     borderRadius: 1,
-
 } as const;
 
 function SectionHeader({ title }: { title: string }) {
@@ -157,15 +156,15 @@ export default function VesselCreate() {
                             height: 48,
                             flexShrink: 0,
                             borderRadius: 2,
-                            background:
-                                "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
+                            bgcolor: "primary.main",
+                            color: "primary.contrastText",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                         }}
                     >
                         <DirectionsBoatFilledOutlined
-                            sx={{ color: "#fff", fontSize: 26 }}
+                            sx={{ fontSize: 26 }}
                         />
                     </Box>
                     <Typography variant="h5" sx={{ fontWeight: 600 }}>

@@ -302,7 +302,7 @@ export const navigationMenus: NavigationMenu[] = [
     },
 ];
 
-const navItemSx = (active: boolean) => ({
+const navItemSx = (active: boolean) => (theme: any) => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -310,12 +310,12 @@ const navItemSx = (active: boolean) => ({
     py: 0.8,
     borderRadius: 1,
     cursor: "pointer",
-    color: active ? "#C62828" : "#1a1a2e",
+    color: active ? theme.palette.secondary.main : theme.palette.text.primary,
     fontWeight: active ? 700 : 400,
     fontSize: "0.875rem",
     "&:hover": {
-        backgroundColor: "rgba(198,40,40,0.06)",
-        color: "#C62828",
+        backgroundColor: theme.palette.mode === 'dark' ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.04)",
+        color: theme.palette.secondary.main,
     },
 });
 
@@ -442,8 +442,8 @@ export default function NavigationMenu() {
                     >
                         <Button
                             endIcon={<KeyboardArrowDownIcon />}
-                            sx={{
-                                color: active || isOpen ? "#EF5350" : "#ffffff",
+                            sx={(theme: any) => ({
+                                color: active || isOpen ? theme.palette.secondary.main : "#ffffff",
                                 fontWeight: active ? 700 : 600,
                                 fontSize: "0.775rem",
                                 borderRadius: 0,
@@ -459,14 +459,14 @@ export default function NavigationMenu() {
                                     transform: "translateX(-50%)",
                                     width: active || isOpen ? "100%" : "0%",
                                     height: "2px",
-                                    backgroundColor: "#EF5350",
+                                    backgroundColor: theme.palette.secondary.main,
                                     transition: "width 0.3s ease",
                                 },
                                 "&:hover": {
-                                    color: "#EF5350",
+                                    color: theme.palette.secondary.main,
                                     backgroundColor: "rgba(255,255,255,0.08)",
                                 },
-                            }}
+                            })}
                         >
                             {menu.label}
                         </Button>

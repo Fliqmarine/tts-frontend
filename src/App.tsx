@@ -36,42 +36,41 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
 
                 <Route element={<Layout />}>
-                    <Route path="/dashboard" element={<DashboardPage />} />
 
-                    <Route path="/master/users" element={<UsersIndex />} />
+                  <Route path="/dashboard" element={<DashboardPage />} />
 
-                    <Route path="/master/contact-list" element={<ContactsIndex />} />
-                    <Route path="/master/contact-list/contact-create" element={<CreateContactPage />} />
-                    <Route path="/master/contact-list/contact-edit/:id" element={<ContactEdit />} />
+                  <Route path="/master/users" element={<UsersIndex />} />
 
-                    <Route path="/master/vessels" element={<VesselsIndex />} />
-                    <Route path="/master/vessels/vessel-create" element={<VesselCreate />} />
-                    <Route path="/master/vessels/vessel-edit/:id" element={<VesselEdit />} />
+                  <Route path="/master/contact-list" element={<ContactsIndex />} />
+                  <Route path="/master/contact-list/contact-create" element={<CreateContactPage />} />
+                  <Route path="/master/contact-list/contact-edit/:id" element={<ContactEdit />} />
 
-                    <Route path="/master/vendors" element={<VendorsIndex />} />
-                    <Route path="/master/banks" element={<BanksIndex />} />
-                    <Route path="/master/tariff-master" element={<TariffMasterIndex />} />
-                    <Route path="/master/airport-codes" element={<AirportCodesIndex />} />
-                    <Route path="/master/currency" element={<CurrenciesIndex />} />
-                    <Route path="/master/cargo" element={<CargoIndex />} />
-                    
+                  <Route path="/master/vessels" element={<VesselsIndex />} />
+                  <Route path="/master/vessels/vessel-create" element={<VesselCreate />} />
+                  <Route path="/master/vessels/vessel-edit/:id" element={<VesselEdit />} />
 
-                    <Route path="/master/hub" element={<HubIndex />} />
+                  <Route path="/master/vendors" element={<VendorsIndex />} />
+                  <Route path="/master/banks" element={<BanksIndex />} />
+                  <Route path="/master/tariff-master" element={<TariffMasterIndex />} />
+                  <Route path="/master/airport-codes" element={<AirportCodesIndex />} />
+                  <Route path="/master/currency" element={<CurrenciesIndex />} />
+                  <Route path="/master/cargo" element={<CargoIndex />} />
 
+                  <Route path="/master/hub" element={<HubIndex />} />
 
-                    <Route path="/master/finance-master/gl-code-parent" element={<GLCodeParentIndex />} />
-                    <Route path="/master/finance-master/gl-code-child" element={<GLCodeChildrenIndex />} />
-                    {/* <Route path="/master/finance-master/gl-code-children" element={<GLCodeChildrenIndex />} /> */}
-                    <Route path="/master/finance-master/gl-code-subchild" element={<GLCodeSubChildrenIndex />} />
-                    {/* <Route path="/master/finance-master/gl-code-subchildren" element={<GLCodeSubChildrenIndex />} /> */}
+                  <Route path="/master/finance-master/gl-code-parent" element={<GLCodeParentIndex />} />
+                  <Route path="/master/finance-master/gl-code-child" element={<GLCodeChildrenIndex />} />
+                  {/* <Route path="/master/finance-master/gl-code-children" element={<GLCodeChildrenIndex />} /> */}
+                  <Route path="/master/finance-master/gl-code-subchild" element={<GLCodeSubChildrenIndex />} />
+                  {/* <Route path="/master/finance-master/gl-code-subchildren" element={<GLCodeSubChildrenIndex />} /> */}
 
+                  <Route path="/stocks/create-stock" element={<CreateStockPage />} />
+                  <Route path="/stocks/stock-list" element={<StockListPage />} />
+                  <Route path="/stocks/follow-up" element={<FollowUpPage />} />
+                  <Route path="/stocks/history" element={<StockHistoryPage />} />
 
+                  
 
-
-                    <Route path="/stocks/create-stock" element={<CreateStockPage />} />
-                    <Route path="/stocks/stock-list" element={<StockListPage />} />
-                    <Route path="/stocks/follow-up" element={<FollowUpPage />} />
-                    <Route path="/stocks/history" element={<StockHistoryPage />} />
                 </Route>
             </Routes>
       </BrowserRouter>

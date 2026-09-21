@@ -23,8 +23,8 @@ function SectionHeader({ title }: { title: string }) {
             sx={{
                 py: 0.6,
                 px: 2,
-                backgroundColor: "#c62828",
-                color: "white",
+                bgcolor: "primary.main",
+                color: "primary.contrastText",
                 borderRadius: 1,
                 mb: 1.5,
             }}
@@ -138,8 +138,8 @@ export default function ContactView() {
                             size="small"
                             sx={{
                                 fontSize: "0.68rem",
-                                bgcolor: "rgba(198,40,40,0.09)",
-                                color: "#c62828",
+                                bgcolor: (theme) => `rgba(${theme.palette.primary.main}, 0.09)`,
+                                color: "primary.main",
                                 fontWeight: 700,
                             }}
                         />

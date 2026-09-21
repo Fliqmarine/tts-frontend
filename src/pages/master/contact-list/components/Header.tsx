@@ -1,4 +1,3 @@
-import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { Box, Button, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -9,12 +8,12 @@ export default function ContactsIndexHeader() {
     const navigate = useNavigate();
 
     const handleAddContact = () => {
-    navigate("/master/contact-list/contact-create");
+        navigate("/master/contact-list/contact-create");
     };
 
     return (
-        <Box 
-         sx={{
+        <Box
+            sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
@@ -23,47 +22,41 @@ export default function ContactsIndexHeader() {
             }}
         >
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <Box 
-                    sx={{
+                <Box
+                    sx={(theme) => ({
                         width: 48,
                         height: 48,
                         borderRadius: 2,
-                        background: "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
+                        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                    }}>
-                    <ContactsIcon sx={{ color: "#fff", fontSize: 26 }} />
+                        color: theme.palette.primary.contrastText,
+                    })}>
+                    <ContactsIcon sx={{ fontSize: 26 }} />
                 </Box>
 
                 <Box>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <Typography variant="h5" sx={{ fontWeight: 700, color: "#0b0b0b" }}>
+                        <Typography variant="h5" sx={{ fontWeight: 700, color: "text.primary" }}>
                             Contacts
                         </Typography>
                     </Box>
                 </Box>
             </Box>
             <Button
-                    variant="contained"
-                    startIcon={<Add />}
-                    onClick={handleAddContact}
-                    sx={{
-                        background: "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
-                        textTransform: "none",
-                        fontWeight: 600,
-                        borderRadius: 2,
-                        px: 3,
-                        py: 1,
-                        boxShadow: "0 4px 14px rgba(198,40,40,0.4)",
-                        "&:hover": {
-                            background: "linear-gradient(135deg, #8E0000 0%, #C62828 100%)",
-                            boxShadow: "0 6px 20px rgba(198,40,40,0.5)",
-                        },
-                    }}
-                >
-                    Add Contact
-                </Button>
+                variant="contained"
+                color="primary"
+                startIcon={<Add />}
+                onClick={handleAddContact}
+                sx={{
+                    borderRadius: 2,
+                    px: 3,
+                    py: 1,
+                }}
+            >
+                Add Contact
+            </Button>
 
         </Box>
     )

@@ -3,9 +3,9 @@ import BusinessIcon from "@mui/icons-material/Business";
 import { Add } from "@mui/icons-material";
 
 
-interface HeaderProps{ onCreate: () => void;}
+interface HeaderProps { onCreate: () => void; }
 
-export default function Header({onCreate,}:HeaderProps) {
+export default function Header({ onCreate, }: HeaderProps) {
     return (
 
         <Box
@@ -17,24 +17,25 @@ export default function Header({onCreate,}:HeaderProps) {
                 px: 1,
             }}
         >
-            
+
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                 <Box
-                    sx={{
+                    sx={(theme) => ({
                         width: 48,
                         height: 48,
                         borderRadius: 2,
-                        background: "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
+                        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                    }}
+                        color: theme.palette.primary.contrastText,
+                    })}
                 >
-                    <BusinessIcon sx={{ color: "#fff", fontSize: 26 }} />
+                    <BusinessIcon sx={{ fontSize: 26 }} />
                 </Box>
                 <Box>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <Typography variant="h5" sx={{ fontWeight: 700, color: "#0b0b0b" }}>
+                        <Typography variant="h5" sx={{ fontWeight: 700, color: "text.primary" }}>
                             Vendors
                         </Typography>
                     </Box>
@@ -43,27 +44,20 @@ export default function Header({onCreate,}:HeaderProps) {
             </Box>
             <Button
                 variant="contained"
+                color="primary"
                 startIcon={<Add />}
                 onClick={onCreate}
                 sx={{
-                    background: "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
-                    textTransform: "none",
-                    fontWeight: 600,
                     borderRadius: 2,
                     px: 3,
                     py: 1,
-                    boxShadow: "0 4px 14px rgba(198,40,40,0.4)",
-                    "&:hover": {
-                        background: "linear-gradient(135deg, #8E0000 0%, #C62828 100%)",
-                        boxShadow: "0 6px 20px rgba(198,40,40,0.5)",
-                    },
                 }}
             >
                 Add Vendor
             </Button>
-               
+
 
         </Box>
-       
+
     );
 }

@@ -60,7 +60,6 @@ export default function GLCodeSubChildDialog({ open, onClose, glCode, onSubmit }
             open={open}
             onClose={onClose}
             maxWidth="sm" fullWidth
-            sx={{ "& .MuiDialog-paper": { bgcolor: "#fff" } }}
         >
             <Box
                 sx={{
@@ -69,16 +68,14 @@ export default function GLCodeSubChildDialog({ open, onClose, glCode, onSubmit }
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    borderBottom: 1,
-                    borderColor: "divider",
-                    background: "linear-gradient(135deg, #C62828 0%, #1d1d1dff 100%)",
-                    color: "#fff",
+                    bgcolor: "primary.main",
+                    color: "primary.contrastText",
                 }}
             >
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                     {isEdit ? "Edit GL Code Sub-Child" : "Add GL Code Sub-Child"}
                 </Typography>
-                <IconButton onClick={onClose} sx={{ color: "#fff" }} size="small">
+                <IconButton onClick={onClose} color="inherit" size="small">
                     <CloseIcon />
                 </IconButton>
             </Box>
@@ -157,14 +154,10 @@ export default function GLCodeSubChildDialog({ open, onClose, glCode, onSubmit }
                     variant="contained"
                     onClick={handleSubmit}
                     disabled={!form.code.trim() || !form.name.trim() || !form.glCodeParentName || !form.glCodeChildrenName}
+                    color="primary"
                     sx={{
-                        background: "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
                         textTransform: "none",
-                        color: "#fff",
                         fontWeight: 600,
-                        "&:hover": {
-                            background: "linear-gradient(135deg, #8E0000 0%, #C62828 100%)",
-                        },
                     }}
                 >
                     {isEdit ? "Save Changes" : "Create"}

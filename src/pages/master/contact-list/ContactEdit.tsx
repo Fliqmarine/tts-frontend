@@ -53,8 +53,8 @@ function SectionHeader({ title }: { title: string }) {
                 px: 2,
                 display: "flex",
                 alignItems: "center",
-                backgroundColor: "#c62828",
-                color: "white",
+                bgcolor: "primary.main",
+                color: "primary.contrastText",
                 borderRadius: 1,
             }}
         >
@@ -209,7 +209,7 @@ export default function ContactEdit() {
             await updateContact(
                 Number(id),
                 {
-                    groupId,
+                    groupId: groupId as any,
                     description,
                     companyName,
                     initial,

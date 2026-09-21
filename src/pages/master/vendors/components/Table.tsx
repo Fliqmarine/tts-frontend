@@ -23,23 +23,10 @@ import { useState } from "react";
 import type { Vendor } from "../types/vendor.types";
 import type { VendorsFilters } from "./Filter";
 
-// ── Styles (matching Vessel table) ────────────────────────────────────────────
 const headCellSx = {
-    fontWeight: 700,
-    color: "#C62828",
-    fontSize: "0.72rem",
-    textTransform: "uppercase" as const,
-    letterSpacing: "0.6px",
-    py: "8px",
     whiteSpace: "nowrap" as const,
 };
 
-const rowHoverSx = {
-    "&:hover": { bgcolor: "rgba(198,40,40,0.03)" },
-    transition: "background 0.15s",
-};
-
-// ── Demo data ─────────────────────────────────────────────────────────────────
 const DEMO_VENDORS: Vendor[] = [
     { id: 1, vendorName: "Al Futtaim Logistics", currency: "AED", paymentTerm: "30 Days", isActive: true },
     { id: 2, vendorName: "Gulf Agency Company", currency: "USD", paymentTerm: "COD", isActive: true },
@@ -57,13 +44,11 @@ interface VendorsIndexTableProps {
 }
 
 export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableProps) {
-    // ── State ─────────────────────────────────────────────────────────────────
     const [vendors, setVendors] = useState<Vendor[]>(DEMO_VENDORS);
     const [selected, setSelected] = useState<number[]>([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(15);
 
-    // ── Client-side filter ────────────────────────────────────────────────────
     const filtered = vendors.filter((v) => {
         const search = filters?.search?.toLowerCase() ?? "";
         const searchMatch =
@@ -74,13 +59,11 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
         return searchMatch;
     });
 
-    // ── Paginated slice ───────────────────────────────────────────────────────
     const paginatedVendors = filtered.slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
     );
 
-    // ── Selection helpers ─────────────────────────────────────────────────────
     const currentPageIds = paginatedVendors.map((v) => v.id);
     const allOnPageSelected =
         currentPageIds.length > 0 && currentPageIds.every((id) => selected.includes(id));
@@ -101,27 +84,23 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
         );
     };
 
-    // ── Toggle active ─────────────────────────────────────────────────────────
     const handleToggleActive = (id: number) => {
         setVendors((prev) =>
             prev.map((v) => (v.id === id ? { ...v, isActive: !v.isActive } : v)),
         );
     };
 
-    // ── Delete handler ────────────────────────────────────────────────────────
     const handleDelete = (id: number) => {
         setVendors((prev) => prev.filter((v) => v.id !== id));
         setSelected((prev) => prev.filter((sid) => sid !== id));
     };
 
-    // ── Export handler (placeholder) ──────────────────────────────────────────
     const handleExport = () => {
         const selectedVendors = vendors.filter((v) => selected.includes(v.id));
         console.log("Exporting vendors:", selectedVendors);
         alert(`Exporting ${selectedVendors.length} vendor(s)`);
     };
 
-    // ── Pagination handlers ───────────────────────────────────────────────────
     const handleChangePage = (_: unknown, newPage: number) => {
         setPage(newPage);
     };
@@ -131,12 +110,10 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
         setPage(0);
     };
 
-    const TOTAL_COLUMNS = 7; // checkbox + 4 data cols + active + actions
+    const TOTAL_COLUMNS = 7;
 
-    // ── Table ─────────────────────────────────────────────────────────────────
     return (
         <Box>
-            {/* ── Export bar (visible when rows are selected) ─────────────── */}
             {selected.length > 0 && (
                 <Box
                     sx={{
@@ -146,28 +123,27 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                         px: 2,
                         py: 1,
                         mb: 1,
-                        bgcolor: "rgba(198,40,40,0.06)",
+                        bgcolor: "action.hover",
                         borderRadius: 2,
-                        border: "1px solid rgba(198,40,40,0.15)",
+                        border: "1px solid",
+                        borderColor: "divider",
                     }}
                 >
-                    <Typography variant="body2" sx={{ fontWeight: 600, color: "#C62828" }}>
+                    <Typography variant="body2" color="primary.main" sx={{ fontWeight: 600 }}>
                         {selected.length} vendor{selected.length > 1 ? "s" : ""} selected
                     </Typography>
                     <Box sx={{ display: "flex", gap: 1 }}>
                         <Button
                             variant="contained"
                             size="small"
+                            color="success"
                             startIcon={<FileDownloadOutlinedIcon />}
                             onClick={handleExport}
-                            color="success"
                             sx={{
-                                color: "#fff",
                                 textTransform: "none",
                                 fontWeight: 600,
                                 borderRadius: 2,
                                 px: 2.5,
-                                boxShadow: "0 3px 10px rgba(198,40,40,0.3)",
                             }}
                         >
                             Export Excel
@@ -175,15 +151,14 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                         <Button
                             variant="contained"
                             size="small"
+                            color="secondary"
                             startIcon={<FileDownloadOutlinedIcon />}
                             onClick={handleExport}
-
                             sx={{
                                 textTransform: "none",
                                 fontWeight: 600,
                                 borderRadius: 2,
                                 px: 2.5,
-                                boxShadow: "0 3px 16px rgba(198,40,40,0.4)",
                             }}
                         >
                             Export PDF
@@ -203,27 +178,15 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                 }}
             >
                 <Table size="small">
-                    {/* ── Head ──────────────────────────────────────────────── */}
                     <TableHead>
-                        <TableRow
-                            sx={{
-                                background: "linear-gradient(135deg, #fafbfd 0%, #f1f5f9 100%)",
-                                borderBottom: "2px solid rgba(198,40,40,0.15)",
-                            }}
-                        >
-                            {/* Select-all checkbox */}
+                        <TableRow>
                             <TableCell padding="checkbox" sx={{ pl: 1.5 }}>
                                 <Checkbox
                                     size="small"
+                                    color="primary"
                                     indeterminate={someOnPageSelected}
                                     checked={allOnPageSelected}
                                     onChange={handleSelectAll}
-                                    sx={{
-                                        color: "#94a3b8",
-                                        "&.Mui-checked, &.MuiCheckbox-indeterminate": {
-                                            color: "#C62828",
-                                        },
-                                    }}
                                 />
                             </TableCell>
                             <TableCell sx={headCellSx}>Vendor Name</TableCell>
@@ -236,7 +199,6 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                         </TableRow>
                     </TableHead>
 
-                    {/* ── Body ──────────────────────────────────────────────── */}
                     <TableBody>
                         {paginatedVendors.length === 0 ? (
                             <TableRow>
@@ -254,51 +216,37 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                                         key={vendor.id}
                                         hover
                                         selected={isSelected}
-                                        sx={{
-                                            ...rowHoverSx,
-                                            ...(isSelected && {
-                                                bgcolor: "rgba(198,40,40,0.04) !important",
-                                            }),
-                                        }}
                                     >
-                                        {/* Row checkbox */}
                                         <TableCell padding="checkbox" sx={{ pl: 1.5 }}>
                                             <Checkbox
                                                 size="small"
+                                                color="primary"
                                                 checked={isSelected}
                                                 onChange={() => handleSelectRow(vendor.id)}
-                                                sx={{
-                                                    color: "#94a3b8",
-                                                    "&.Mui-checked": { color: "#C62828" },
-                                                }}
                                             />
                                         </TableCell>
 
-                                        {/* Vendor Name */}
-                                        <TableCell sx={{ fontWeight: 600, color: "#1e293b" }}>
+                                        <TableCell sx={{ fontWeight: 600, color: "text.primary" }}>
                                             {vendor.vendorName}
                                         </TableCell>
 
-                                        {/* Currency */}
-                                        <TableCell sx={{ color: "#475569" }}>
+                                        <TableCell sx={{ color: "text.secondary" }}>
                                             {vendor.currency}
                                         </TableCell>
 
-                                        {/* Payment Term */}
                                         <TableCell>
                                             <Chip
                                                 label={vendor.paymentTerm}
                                                 size="small"
+                                                color="primary"
+                                                variant="outlined"
                                                 sx={{
                                                     fontWeight: 500,
                                                     fontSize: "0.75rem",
-                                                    bgcolor: "rgba(198,40,40,0.08)",
-                                                    color: "#C62828",
                                                 }}
                                             />
                                         </TableCell>
 
-                                        {/* Active toggle */}
                                         <TableCell>
                                             <Switch
                                                 size="small"
@@ -308,21 +256,13 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                                             />
                                         </TableCell>
 
-                                        {/* Actions */}
                                         <TableCell align="right">
                                             <Box sx={{ display: "flex", gap: 0.25, justifyContent: "flex-end" }}>
                                                 <Tooltip title="Edit" arrow>
                                                     <IconButton
                                                         size="small"
+                                                        color="primary"
                                                         onClick={() => onEdit(vendor)}
-                                                        sx={{
-                                                            color: "#94a3b8",
-                                                            p: "4px",
-                                                            "&:hover": {
-                                                                bgcolor: "rgba(198,40,40,0.06)",
-                                                                color: "#006affff",
-                                                            },
-                                                        }}
                                                     >
                                                         <EditIcon sx={{ fontSize: "1rem" }} />
                                                     </IconButton>
@@ -331,15 +271,8 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                                                 <Tooltip title="Delete" arrow>
                                                     <IconButton
                                                         size="small"
+                                                        color="error"
                                                         onClick={() => handleDelete(vendor.id)}
-                                                        sx={{
-                                                            color: "#94a3b8",
-                                                            p: "4px",
-                                                            "&:hover": {
-                                                                bgcolor: "rgba(239,68,68,0.06)",
-                                                                color: "#ef4444",
-                                                            },
-                                                        }}
                                                     >
                                                         <DeleteIcon sx={{ fontSize: "1rem" }} />
                                                     </IconButton>
@@ -353,7 +286,6 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                     </TableBody>
                 </Table>
 
-                {/* ── Pagination ────────────────────────────────────────────── */}
                 <TablePagination
                     component="div"
                     count={filtered.length}
@@ -365,13 +297,6 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                     sx={{
                         borderTop: "1px solid",
                         borderColor: "divider",
-                        ".MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows": {
-                            fontSize: "0.8rem",
-                            color: "#64748b",
-                        },
-                        ".MuiTablePagination-actions button": {
-                            color: "#C62828",
-                        },
                     }}
                 />
             </TableContainer>

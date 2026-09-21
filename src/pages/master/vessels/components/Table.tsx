@@ -48,21 +48,9 @@ interface VesselListTableProps {
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 const headCellSx = {
-    fontWeight: 700,
-    color: "#C62828",
-    fontSize: "0.72rem",
-    textTransform: "uppercase" as const,
-    letterSpacing: "0.6px",
-    py: "8px",
     whiteSpace: "nowrap" as const,
 };
 
-const rowHoverSx = {
-    "&:hover": { bgcolor: "rgba(198,40,40,0.03)" },
-    transition: "background 0.15s",
-};
-
-// ── Demo data ─────────────────────────────────────────────────────────────────
 const DEMO_VESSELS: Vessel[] = [
     { id: 1, vesselName: "MV Atlantic Star", clientName: "Maersk Line", vesselCode: "ATL-001", imoNo: "9321483", picName: "John Smith", picEmail: "john.smith@maersk.com", isActive: true },
     { id: 2, vesselName: "MV Pacific Explorer", clientName: "MSC", vesselCode: "PAC-002", imoNo: "9456712", picName: "Maria Garcia", picEmail: "maria.garcia@msc.com", isActive: true },
@@ -165,7 +153,6 @@ export default function VesselListTable({ filters }: VesselListTableProps) {
     // ── Table ─────────────────────────────────────────────────────────────────
     return (
         <Box>
-            {/* ── Export bar (visible when rows are selected) ─────────────── */}
             {selected.length > 0 && (
                 <Box
                     sx={{
@@ -175,12 +162,13 @@ export default function VesselListTable({ filters }: VesselListTableProps) {
                         px: 2,
                         py: 1,
                         mb: 1,
-                        bgcolor: "rgba(198,40,40,0.06)",
+                        bgcolor: "action.hover",
                         borderRadius: 2,
-                        border: "1px solid rgba(198,40,40,0.15)",
+                        border: "1px solid",
+                        borderColor: "divider",
                     }}
                 >
-                    <Typography variant="body2" sx={{ fontWeight: 600, color: "#C62828" }}>
+                    <Typography variant="body2" color="primary.main" sx={{ fontWeight: 600 }}>
                         {selected.length} vessel{selected.length > 1 ? "s" : ""} selected
                     </Typography>
                     <Box sx={{ display: "flex", gap: 1 }}>
@@ -191,12 +179,10 @@ export default function VesselListTable({ filters }: VesselListTableProps) {
                             onClick={handleExport}
                             color="success"
                             sx={{
-                                color: "#fff",
                                 textTransform: "none",
                                 fontWeight: 600,
                                 borderRadius: 2,
                                 px: 2.5,
-                                boxShadow: "0 3px 10px rgba(198,40,40,0.3)",
                             }}
                         >
                             Export Excel
@@ -204,15 +190,14 @@ export default function VesselListTable({ filters }: VesselListTableProps) {
                         <Button
                             variant="contained"
                             size="small"
+                            color="secondary"
                             startIcon={<FileDownloadOutlinedIcon />}
                             onClick={handleExport}
-
                             sx={{
                                 textTransform: "none",
                                 fontWeight: 600,
                                 borderRadius: 2,
                                 px: 2.5,
-                                boxShadow: "0 3px 16px rgba(198,40,40,0.4)",
                             }}
                         >
                             Export PDF
@@ -232,27 +217,15 @@ export default function VesselListTable({ filters }: VesselListTableProps) {
                 }}
             >
                 <Table size="small">
-                    {/* ── Head ──────────────────────────────────────────────── */}
                     <TableHead>
-                        <TableRow
-                            sx={{
-                                background: "linear-gradient(135deg, #fafbfd 0%, #f1f5f9 100%)",
-                                borderBottom: "2px solid rgba(198,40,40,0.15)",
-                            }}
-                        >
-                            {/* Select-all checkbox */}
+                        <TableRow>
                             <TableCell padding="checkbox" sx={{ pl: 1.5 }}>
                                 <Checkbox
                                     size="small"
+                                    color="primary"
                                     indeterminate={someOnPageSelected}
                                     checked={allOnPageSelected}
                                     onChange={handleSelectAll}
-                                    sx={{
-                                        color: "#94a3b8",
-                                        "&.Mui-checked, &.MuiCheckbox-indeterminate": {
-                                            color: "#C62828",
-                                        },
-                                    }}
                                 />
                             </TableCell>
                             <TableCell sx={headCellSx}>Vessel Name</TableCell>
@@ -266,7 +239,6 @@ export default function VesselListTable({ filters }: VesselListTableProps) {
                         </TableRow>
                     </TableHead>
 
-                    {/* ── Body ──────────────────────────────────────────────── */}
                     <TableBody>
                         {paginatedVessels.length === 0 ? (
                             <TableRow>
@@ -284,57 +256,40 @@ export default function VesselListTable({ filters }: VesselListTableProps) {
                                         key={vessel.id}
                                         hover
                                         selected={isSelected}
-                                        sx={{
-                                            ...rowHoverSx,
-                                            ...(isSelected && {
-                                                bgcolor: "rgba(198,40,40,0.04) !important",
-                                            }),
-                                        }}
                                     >
-                                        {/* Row checkbox */}
                                         <TableCell padding="checkbox" sx={{ pl: 1.5 }}>
                                             <Checkbox
                                                 size="small"
+                                                color="primary"
                                                 checked={isSelected}
                                                 onChange={() => handleSelectRow(vessel.id)}
-                                                sx={{
-                                                    color: "#94a3b8",
-                                                    "&.Mui-checked": { color: "#C62828" },
-                                                }}
                                             />
                                         </TableCell>
 
-                                        {/* Vessel Name */}
-                                        <TableCell sx={{ fontWeight: 600, color: "#1e293b" }}>
+                                        <TableCell sx={{ fontWeight: 600, color: "text.primary" }}>
                                             {vessel.vesselName}
                                         </TableCell>
 
-                                        {/* Client Name */}
-                                        <TableCell sx={{ color: "#475569" }}>
+                                        <TableCell sx={{ color: "text.secondary" }}>
                                             {vessel.clientName}
                                         </TableCell>
 
-                                        {/* Vessel Code */}
-                                        <TableCell sx={{ color: "#64748b", fontFamily: "monospace", fontWeight: 500 }}>
+                                        <TableCell sx={{ fontFamily: "monospace", fontWeight: 500, color: "text.secondary" }}>
                                             {vessel.vesselCode}
                                         </TableCell>
 
-                                        {/* IMO No */}
-                                        <TableCell sx={{ color: "#64748b", fontFamily: "monospace" }}>
+                                        <TableCell sx={{ fontFamily: "monospace", color: "text.secondary" }}>
                                             {vessel.imoNo}
                                         </TableCell>
 
-                                        {/* PIC Name */}
-                                        <TableCell sx={{ color: "#475569" }}>
+                                        <TableCell sx={{ color: "text.secondary" }}>
                                             {vessel.picName}
                                         </TableCell>
 
-                                        {/* PIC Email */}
-                                        <TableCell sx={{ color: "#475569", fontSize: "0.82rem" }}>
+                                        <TableCell sx={{ fontSize: "0.82rem", color: "text.secondary" }}>
                                             {vessel.picEmail}
                                         </TableCell>
 
-                                        {/* Active toggle */}
                                         <TableCell>
                                             <Switch
                                                 size="small"
@@ -344,22 +299,16 @@ export default function VesselListTable({ filters }: VesselListTableProps) {
                                             />
                                         </TableCell>
 
-                                        {/* Actions */}
                                         <TableCell align="right">
                                             <Box sx={{ display: "flex", gap: 0.25, justifyContent: "flex-end" }}>
                                                 <IconButton
                                                     size="small"
+                                                    color="primary"
                                                     onClick={() =>
-                                                        navigate(`/master/vessels/vessel-edit/${vessel.id}`)
+                                                        navigate(`/master/vessels/vessel-edit/${vessel.id}`, {
+                                                            state: { vessel },
+                                                        })
                                                     }
-                                                    sx={{
-                                                        color: "#94a3b8",
-                                                        p: "4px",
-                                                        "&:hover": {
-                                                            bgcolor: "rgba(198,40,40,0.06)",
-                                                            color: "#006affff",
-                                                        },
-                                                    }}
                                                 >
                                                     <EditIcon sx={{ fontSize: "1rem" }} />
                                                 </IconButton>
@@ -367,15 +316,8 @@ export default function VesselListTable({ filters }: VesselListTableProps) {
                                                 <Tooltip title="Delete" arrow>
                                                     <IconButton
                                                         size="small"
+                                                        color="error"
                                                         onClick={() => handleDelete(vessel.id)}
-                                                        sx={{
-                                                            color: "#94a3b8",
-                                                            p: "4px",
-                                                            "&:hover": {
-                                                                bgcolor: "rgba(239,68,68,0.06)",
-                                                                color: "#ef4444",
-                                                            },
-                                                        }}
                                                     >
                                                         <DeleteIcon sx={{ fontSize: "1rem" }} />
                                                     </IconButton>
@@ -389,7 +331,6 @@ export default function VesselListTable({ filters }: VesselListTableProps) {
                     </TableBody>
                 </Table>
 
-                {/* ── Pagination ────────────────────────────────────────────── */}
                 <TablePagination
                     component="div"
                     count={filtered.length}
@@ -401,13 +342,6 @@ export default function VesselListTable({ filters }: VesselListTableProps) {
                     sx={{
                         borderTop: "1px solid",
                         borderColor: "divider",
-                        ".MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows": {
-                            fontSize: "0.8rem",
-                            color: "#64748b",
-                        },
-                        ".MuiTablePagination-actions button": {
-                            color: "#C62828",
-                        },
                     }}
                 />
             </TableContainer>

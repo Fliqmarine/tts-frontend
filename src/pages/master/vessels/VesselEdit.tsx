@@ -14,7 +14,7 @@ import {
     Typography,
 } from "@mui/material";
 import { forwardRef, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import type { Value } from "react-phone-number-input";
@@ -25,6 +25,7 @@ import {
 } from "./types/vessel.types";
 import { getUsers } from "../users/services/user.service";
 import type { User } from "../users/types/user.types";
+import type { Vessel } from "./components/Table";
 
 const PhoneInputField = forwardRef<HTMLInputElement, any>((props, ref) => (
     <TextField label="Telephone" {...props} inputRef={ref} />
@@ -39,8 +40,8 @@ const SECTION_HEADER_SX = {
     px: 2,
     display: "flex",
     alignItems: "center",
-    backgroundColor: "#373737ff",
-    color: "white",
+    bgcolor: "primary.main",
+    color: "primary.contrastText",
     borderRadius: 1,
 } as const;
 
@@ -116,6 +117,7 @@ function PersonInfoSection({
 export default function VesselEdit() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [form, setForm] = useState<VesselFormState>(INITIAL_VESSEL_STATE);
     const [keyAccountManagers, setKeyAccountManagers] = useState<User[]>([]);
@@ -140,13 +142,23 @@ export default function VesselEdit() {
         if (!id) return;
         const fetchVessel = async () => {
             try {
-                // TODO: replace with real API call, e.g. const data = await getVessel(Number(id));
-                // For now, simulate loading delay
-                await new Promise((r) => setTimeout(r, 400));
+                const vessel = (location.state as { vessel?: Vessel } | null)?.vessel;
 
-                // Placeholder: populate with empty state
-                // Once the API service is ready, map `data` onto form fields:
-                // setForm({ ...data });
+                if (vessel) {
+                    setForm((previous) => ({
+                        ...previous,
+                        clientId: vessel.clientName,
+                        vesselName: vessel.vesselName,
+                        imoNo: vessel.imoNo,
+                        shipId: vessel.vesselCode,
+                        email: vessel.picEmail,
+                        clientPic: {
+                            ...previous.clientPic,
+                            name: vessel.picName,
+                            email: vessel.picEmail,
+                        },
+                    }));
+                }
             } catch {
                 setSnackbar({
                     open: true,
@@ -158,7 +170,7 @@ export default function VesselEdit() {
             }
         };
         fetchVessel();
-    }, [id]);
+    }, [id, location.state]);
 
     // ── Update handler ────────────────────────────────────────────────────
     const handleUpdate = async () => {
@@ -240,15 +252,15 @@ export default function VesselEdit() {
                             height: 48,
                             flexShrink: 0,
                             borderRadius: 2,
-                            background:
-                                "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
+                            bgcolor: "primary.main",
+                            color: "primary.contrastText",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                         }}
                     >
                         <DirectionsBoatFilledOutlined
-                            sx={{ color: "#fff", fontSize: 26 }}
+                            sx={{ fontSize: 26 }}
                         />
                     </Box>
                     <Typography variant="h5" sx={{ fontWeight: 600 }}>

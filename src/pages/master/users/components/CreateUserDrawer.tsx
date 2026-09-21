@@ -164,20 +164,18 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            borderBottom: 1,
-            borderColor: "divider",
-            background:
-              "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
+            bgcolor: "primary.main",
+            color: "primary.contrastText",
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <PersonAddIcon sx={{ color: "#fff", fontSize: 26 }} />
-            <Typography variant="h6" sx={{ color: "#fff", fontWeight: 600 }}>
+            <PersonAddIcon color="inherit" sx={{ fontSize: 26 }} />
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
               {user ? "Edit User" : "Create User"}
             </Typography>
           </Box>
 
-          <IconButton onClick={handleCancel} sx={{ color: "#fff" }}>
+          <IconButton onClick={handleCancel} color="inherit">
             <CloseIcon />
           </IconButton>
         </Box>
@@ -271,7 +269,7 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
                   input: {
                     startAdornment: (
                       <InputAdornment position="start">
-                        <PersonIcon sx={{ color: "red" }} />
+                        <PersonIcon sx={{ color: "primary.main" }} />
                       </InputAdornment>
                     ),
                   },
@@ -292,7 +290,7 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
                   input: {
                     startAdornment: (
                       <InputAdornment position="start">
-                        <EmailIcon sx={{ color: "red" }} />
+                        <EmailIcon sx={{ color: "primary.main" }} />
                       </InputAdornment>
                     ),
                   }
@@ -313,7 +311,7 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
                   input: {
                     startAdornment: (
                       <InputAdornment position="start">
-                        <LockIcon sx={{ color: "red" }} />
+                        <LockIcon sx={{ color: "primary.main" }} />
                       </InputAdornment>
                     ),
                   }
@@ -338,7 +336,7 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
                   input: {
                     startAdornment: (
                       <InputAdornment position="start">
-                        <AdminPanelSettingsIcon sx={{ color: "red" }} />
+                        <AdminPanelSettingsIcon sx={{ color: "primary.main" }} />
                       </InputAdornment>
                     ),
                   }
@@ -384,7 +382,7 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
                   input: {
                     startAdornment: (
                       <InputAdornment position="start">
-                        <PersonIcon sx={{ color: "red" }} />
+                        <PersonIcon sx={{ color: "primary.main" }} />
                       </InputAdornment>
                     ),
                   }

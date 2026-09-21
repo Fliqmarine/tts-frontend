@@ -1,6 +1,6 @@
-import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { Box, Button, Typography } from "@mui/material";
-import ConnectingAirportsOutlinedIcon from '@mui/icons-material/ConnectingAirportsOutlined';import { Add } from "@mui/icons-material";
+import ConnectingAirportsOutlinedIcon from '@mui/icons-material/ConnectingAirportsOutlined';
+import { Add } from "@mui/icons-material";
 
 interface AirportCodesIndexHeaderProps {
     onCreate: () => void;
@@ -19,24 +19,24 @@ export default function AirportCodesIndexHeader({ onCreate }: AirportCodesIndexH
         >
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                 <Box
-                    sx={{
+                    sx={(theme) => ({
                         width: 48,
                         height: 48,
                         borderRadius: 2,
-                        background:
-                            "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
+                        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                    }}
+                        color: theme.palette.primary.contrastText,
+                    })}
                 >
                     <ConnectingAirportsOutlinedIcon
-                        sx={{ color: "#fff", fontSize: 26 }}
+                        sx={{ fontSize: 26 }}
                     />
                 </Box>
                 <Typography
                     variant="h5"
-                    sx={{ fontWeight: 700, color: "#0b0b0b" }}
+                    sx={{ fontWeight: 700, color: "text.primary" }}
                 >
                     Airport Codes
                 </Typography>
@@ -44,22 +44,13 @@ export default function AirportCodesIndexHeader({ onCreate }: AirportCodesIndexH
 
             <Button
                 variant="contained"
+                color="primary"
                 startIcon={<Add />}
                 onClick={onCreate}
                 sx={{
-                    background:
-                        "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
-                    textTransform: "none",
-                    fontWeight: 600,
                     borderRadius: 2,
                     px: 3,
                     py: 1,
-                    boxShadow: "0 4px 14px rgba(198,40,40,0.4)",
-                    "&:hover": {
-                        background:
-                            "linear-gradient(135deg, #8E0000 0%, #C62828 100%)",
-                        boxShadow: "0 6px 20px rgba(198,40,40,0.5)",
-                    },
                 }}
             >
                 Add Airport Code

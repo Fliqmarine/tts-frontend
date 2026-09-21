@@ -59,7 +59,7 @@ export default function TariffMasterDialog({
     };
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth sx={{ "& .MuiDialog-paper": { bgcolor: "#fff" } }}>
+        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <Box
                 sx={{
 
@@ -75,15 +75,14 @@ export default function TariffMasterDialog({
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        borderBottom: 1,
-                        borderColor: "divider",
-                        background: "linear-gradient(135deg, #C62828 0%, #1d1d1dff 100%)",
+                        bgcolor: "primary.main",
+                        color: "primary.contrastText",
                     }}
                 >
-                    <Typography variant="h6" sx={{ color: "#fff", fontWeight: 600 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
                         {isEdit ? "Edit Tariff" : "Add Tariff"}
                     </Typography>
-                    <IconButton onClick={onClose} sx={{ color: "#fff" }}>
+                    <IconButton onClick={onClose} color="inherit">
                         <CloseIcon />
                     </IconButton>
                 </Box>
@@ -137,13 +136,10 @@ export default function TariffMasterDialog({
                         variant="contained"
                         onClick={handleSubmit}
                         disabled={!form.name.trim()}
+                        color="primary"
                         sx={{
-                            background: "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
                             textTransform: "none",
                             fontWeight: 600,
-                            "&:hover": {
-                                background: "linear-gradient(135deg, #8E0000 0%, #C62828 100%)",
-                            },
                         }}
                     >
                         {isEdit ? "Save Changes" : "Add Tariff"}

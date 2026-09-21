@@ -102,7 +102,6 @@ export default function VendorDialog({
             onClose={onClose}
             maxWidth="sm"
             fullWidth
-            sx={{ "& .MuiDialog-paper": { bgcolor: "#fff" } }}
         >
             <Box
                 sx={{
@@ -118,19 +117,17 @@ export default function VendorDialog({
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        borderBottom: 1,
-                        borderColor: "divider",
-                        background:
-                            "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
+                        bgcolor: "primary.main",
+                        color: "primary.contrastText",
                     }}
                 >
                     <Typography
                         variant="h6"
-                        sx={{ color: "#fff", fontWeight: 600 }}
+                        sx={{ fontWeight: 600 }}
                     >
                         {isEdit ? "Edit Vendor" : "Create Vendor"}
                     </Typography>
-                    <IconButton onClick={onClose} sx={{ color: "#fff" }}>
+                    <IconButton onClick={onClose} color="inherit">
                         <CloseIcon />
                     </IconButton>
                 </Box>
@@ -279,16 +276,10 @@ export default function VendorDialog({
                         type="submit"
                         form="vendor-Dialog-form"
                         variant="contained"
+                        color="primary"
                         disabled={loading}
                         sx={{
-                            background:
-                                "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
-                            color: "#ffffff",
                             fontWeight: 600,
-                            "&:hover": {
-                                background:
-                                    "linear-gradient(135deg, #8E0000 0%, #C62828 100%)",
-                            },
                         }}
                     >
                         {loading

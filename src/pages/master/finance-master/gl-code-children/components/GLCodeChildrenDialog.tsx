@@ -58,8 +58,6 @@ export default function GLCodeChildrenDialog({ open, onClose, glCode, onSubmit }
             open={open}
             onClose={onClose}
             maxWidth="sm" fullWidth
-            sx={{ "& .MuiDialog-paper": { bgcolor: "#fff" } }}
-
         >
             <Box
                 sx={{
@@ -68,22 +66,20 @@ export default function GLCodeChildrenDialog({ open, onClose, glCode, onSubmit }
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    borderBottom: 1,
-                    borderColor: "divider",
-                    background: "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
-                    color: "#fff",
+                    bgcolor: "primary.main",
+                    color: "primary.contrastText",
                 }}
             >
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                     {isEdit ? "Edit GL Code Parent" : "Add GL Code Parent"}
                 </Typography>
-                <IconButton onClick={onClose} sx={{ color: "#fff" }} size="small">
+                <IconButton onClick={onClose} color="inherit" size="small">
                     <CloseIcon />
                 </IconButton>
             </Box>
 
             <DialogContent dividers sx={{ p: 3 }}>
-                <Box 
+                <Box
                     sx={{
                         display: "grid",
                         gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
@@ -140,14 +136,10 @@ export default function GLCodeChildrenDialog({ open, onClose, glCode, onSubmit }
                     variant="contained"
                     onClick={handleSubmit}
                     disabled={!form.code.trim() || !form.name.trim() || !form.glCodeParentId}
+                    color="primary"
                     sx={{
-                        background: "linear-gradient(135deg, #C62828 0%, #EF5350 100%)",
                         textTransform: "none",
-                        color: "#ffffff",
                         fontWeight: 600,
-                        "&:hover": {
-                            background: "linear-gradient(135deg, #8E0000 0%, #C62828 100%)",
-                        },
                     }}
                 >
                     {isEdit ? "Save Changes" : "Create"}

@@ -46,8 +46,8 @@ const SECTION_HEADER_SX = {
     px: 2,
     display: "flex",
     alignItems: "center",
-    backgroundColor: "#373737ff",
-    color: "white",
+    bgcolor: "primary.main",
+    color: "primary.contrastText",
     borderRadius: 1,
 } as const;
 
@@ -399,7 +399,7 @@ function setValue(data: FormState, path: string, value: string | boolean): FormS
     const [parent, child] = parts;
     return {
         ...data,
-        [parent]: { ...(data as Record<string, unknown>)[parent] as object, [child]: value },
+        [parent]: { ...(data as any)[parent] as object, [child]: value },
     };
 }
 

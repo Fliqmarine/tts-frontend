@@ -12,6 +12,10 @@ const demoData: GLCodeSubChildren[] = [
 
 const TOTAL_COLUMNS = 7;
 
+const headCellSx = {
+    whiteSpace: "nowrap" as const,
+};
+
 interface GLCodeSubChildrenIndexTableProps {
     onEdit: (glCode: GLCodeSubChildren) => void;
 }
@@ -66,122 +70,66 @@ export default function GLCodeSubChildrenIndexTable({ onEdit }: GLCodeSubChildre
     return (
         <Box>
             {selected.length > 0 && (
-                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", px: 2, py: 1, mb: 1, bgcolor: "rgba(198,40,40,0.06)", borderRadius: 2, border: "1px solid rgba(198,40,40,0.15)" }}>
-                    <Typography variant="body2" sx={{ fontWeight: 600, color: "#C62828" }}>{selected.length} items selected</Typography>
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", px: 2, py: 1, mb: 1, bgcolor: "action.hover", borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
+                    <Typography variant="body2" color="primary.main" sx={{ fontWeight: 600 }}>{selected.length} items selected</Typography>
                     <Box sx={{ display: "flex", gap: 1 }}>
-                        <Button variant="contained" size="small" startIcon={<FileDownloadOutlinedIcon />} onClick={handleExport} color="success" sx={{ color: "#fff", textTransform: "none", fontWeight: 600, borderRadius: 2, px: 2.5, boxShadow: "0 3px 10px rgba(198,40,40,0.3)" }}>Export Excel</Button>
-                        <Button variant="contained" size="small" startIcon={<FileDownloadOutlinedIcon />} onClick={handleExport} sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, px: 2.5, boxShadow: "0 3px 16px rgba(198,40,40,0.4)" }}>Export PDF</Button>
+                        <Button variant="contained" size="small" color="success" startIcon={<FileDownloadOutlinedIcon />} onClick={handleExport} sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, px: 2.5 }}>Export Excel</Button>
+                        <Button variant="contained" size="small" color="secondary" startIcon={<FileDownloadOutlinedIcon />} onClick={handleExport} sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, px: 2.5 }}>Export PDF</Button>
                     </Box>
                 </Box>
             )}
-            <TableContainer
-            component={Paper}
-            elevation={3}
-            sx={{
-                borderRadius: "8px 8px 16px 16px",
-                // borderRadius: 2,
-                border: "1px solid",
-                borderColor: "divider",
-                overflow: "hidden",
-            }}
-        >
-            <Table size="small">
-                <TableHead>
-                    <TableRow
-                        sx={{
-                            background: "linear-gradient(135deg, #fafbfd 0%, #f1f5f9 100%)",
-                            borderBottom: "2px solid rgba(198,40,40,0.15)",
-                        }}
-                    >
-                        <TableCell padding="checkbox" sx={{ pl: 1.5 }}><Checkbox size="small" indeterminate={someOnPageSelected} checked={allOnPageSelected} onChange={handleSelectAll} /></TableCell>
-                        <TableCell>GL Code Parent</TableCell>
-                        <TableCell>GL Code Child</TableCell>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Code</TableCell>
-                        <TableCell align="center">Active</TableCell>
-                        <TableCell sx={{ textAlign: "right", px: 2 }}>Actions</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {paginated.length === 0 ? (
+            <TableContainer component={Paper} elevation={3} sx={{ borderRadius: "8px 8px 16px 16px", border: "1px solid", borderColor: "divider", overflow: "hidden" }}>
+                <Table size="small">
+                    <TableHead>
                         <TableRow>
-                            <TableCell colSpan={TOTAL_COLUMNS} sx={{ textAlign: "center", py: 5 }}>
-                                <Typography variant="body2" color="text.secondary">
-                                    No GL Codes found.
-                                </Typography>
-                            </TableCell>
+                            <TableCell padding="checkbox" sx={{ pl: 1.5 }}><Checkbox size="small" color="primary" indeterminate={someOnPageSelected} checked={allOnPageSelected} onChange={handleSelectAll} /></TableCell>
+                            <TableCell sx={headCellSx}>GL Code Parent</TableCell>
+                            <TableCell sx={headCellSx}>GL Code Child</TableCell>
+                            <TableCell sx={headCellSx}>Name</TableCell>
+                            <TableCell sx={headCellSx}>Code</TableCell>
+                            <TableCell sx={headCellSx} align="center">Active</TableCell>
+                            <TableCell sx={{ ...headCellSx, textAlign: "right", px: 2 }}>Actions</TableCell>
                         </TableRow>
-                    ) : (
-                        paginated.map((row) => (
-                            <TableRow key={row.id} hover>
-                                <TableCell padding="checkbox" sx={{ pl: 1.5 }}><Checkbox size="small" checked={selected.includes(row.id)} onChange={() => handleSelectRow(row.id)} /></TableCell>
-                                <TableCell>{row.glCodeParentName}</TableCell>
-                                <TableCell>{row.glCodeChildrenName}</TableCell>
-                                <TableCell>{row.name}</TableCell>
-                                <TableCell sx={{ fontWeight: 600 }}>{row.code}</TableCell>
-                                <TableCell align="center">
-                                    <Switch
-                                        size="small"
-                                        color="success"
-                                        checked={row.active}
-                                        onChange={(e) => handleActiveChange(row.id, e.target.checked)}
-                                    />
-                                </TableCell>
-                                <TableCell sx={{ textAlign: "right" }}>
-                                    <Box sx={{ display: "flex", gap: 0.25, justifyContent: "flex-end" }}>
-                                        <IconButton
-                                            size="small"
-                                            aria-label="edit"
-                                            onClick={() => onEdit(row)}
-                                            sx={{
-                                                color: "#94a3b8",
-                                                p: "4px",
-                                                "&:hover": {
-                                                    bgcolor: "rgba(198,40,40,0.06)",
-                                                    color: "#006affff",
-                                                },
-                                            }}
-                                        >
-                                            <EditIcon fontSize="small" />
-                                            <Typography sx={{ fontSize: "12px", color: "#006affff", ml: "2px" }}>Edit</Typography>
-                                        </IconButton>
-                                        <IconButton
-                                            size="small"
-                                            aria-label="delete"
-                                            onClick={() => handleDelete(row.id)}
-                                            sx={{
-                                                color: "#94a3b8",
-                                                p: "4px",
-                                                "&:hover": {
-                                                    bgcolor: "rgba(198,40,40,0.06)",
-                                                    color: "#ff0019ff",
-                                                },
-                                            }}
-                                        >
-                                            <DeleteIcon fontSize="small" />
-                                            <Typography sx={{ fontSize: "12px", color: "#ff0019ff", ml: "2px" }}>Delete</Typography>
-                                        </IconButton>
-                                    </Box>
+                    </TableHead>
+                    <TableBody>
+                        {paginated.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={TOTAL_COLUMNS} sx={{ textAlign: "center", py: 5 }}>
+                                    <Typography variant="body2" color="text.secondary">
+                                        No GL Codes found.
+                                    </Typography>
                                 </TableCell>
                             </TableRow>
-                        ))
-                    )}
-                </TableBody>
-            </Table>
-            <TablePagination
-                component="div"
-                count={rows.length}
-                page={page}
-                onPageChange={handleChangePage}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                rowsPerPageOptions={[5, 10, 15, 25, 50, 100]}
-                sx={{
-                    borderTop: "1px solid #e2e8f0",
-                    bgcolor: "#fafbfd",
-                }}
-            />
-        </TableContainer>
+                        ) : (
+                            paginated.map((row) => (
+                                <TableRow key={row.id} hover selected={selected.includes(row.id)}>
+                                    <TableCell padding="checkbox" sx={{ pl: 1.5 }}><Checkbox size="small" color="primary" checked={selected.includes(row.id)} onChange={() => handleSelectRow(row.id)} /></TableCell>
+                                    <TableCell sx={{ color: "text.primary" }}>{row.glCodeParentName}</TableCell>
+                                    <TableCell sx={{ color: "text.primary" }}>{row.glCodeChildrenName}</TableCell>
+                                    <TableCell sx={{ color: "text.primary" }}>{row.name}</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, color: "text.secondary" }}>{row.code}</TableCell>
+                                    <TableCell align="center">
+                                        <Switch size="small" color="success" checked={row.active} onChange={(e) => handleActiveChange(row.id, e.target.checked)} />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: "right" }}>
+                                        <Box sx={{ display: "flex", gap: 0.25, justifyContent: "flex-end", alignItems: "center" }}>
+                                            <IconButton size="small" color="primary" aria-label="edit" onClick={() => onEdit(row)}>
+                                                <EditIcon fontSize="small" />
+                                                <Typography variant="caption" sx={{ ml: 0.5 }}>Edit</Typography>
+                                            </IconButton>
+                                            <IconButton size="small" color="error" aria-label="delete" onClick={() => handleDelete(row.id)}>
+                                                <DeleteIcon fontSize="small" />
+                                                <Typography variant="caption" sx={{ ml: 0.5 }}>Delete</Typography>
+                                            </IconButton>
+                                        </Box>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
+                    </TableBody>
+                </Table>
+                <TablePagination component="div" count={rows.length} page={page} onPageChange={handleChangePage} rowsPerPage={rowsPerPage} onRowsPerPageChange={handleChangeRowsPerPage} rowsPerPageOptions={[5, 10, 15, 25, 50, 100]} sx={{ borderTop: "1px solid", borderColor: "divider" }} />
+            </TableContainer>
         </Box>
     );
 }

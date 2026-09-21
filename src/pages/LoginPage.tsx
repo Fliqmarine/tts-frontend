@@ -23,13 +23,14 @@ const ttsLogo = "/TTS_Logo.png";
 /* -------------------------------------------------------------------------- */
 
 const COLORS = {
-  primary: "#C62828",
-  primaryLight: "#EF5350",
-  primaryDark: "#8E0000",
+  primary: "#3B6E91",
+  primaryLight: "#6C93AF",
+  primaryDark: "#2D536E",
   white: "#FFFFFF",
-  textDark: "#1a1a2e",
-  textMutedDark: "rgba(26, 26, 46, 0.55)",
-  border: "#e5e7eb",
+  textDark: "#1E2A32",
+  textMuted: "#5A6B75",
+  textMutedDark: "#5A6B75",
+  border: "#DCE4E8",
 };
 
 /* -------------------------------------------------------------------------- */
@@ -52,12 +53,12 @@ const inputStyles = {
 
     "&:hover": {
       "& .MuiOutlinedInput-notchedOutline": {
-        borderColor: "rgba(198, 40, 40, 0.5)",
+        borderColor: "rgba(181, 88, 61, 0.5)",
       },
     },
 
     "&.Mui-focused": {
-      boxShadow: "0 0 0 3px rgba(198, 40, 40, 0.12)",
+      boxShadow: "0 0 0 3px rgba(181, 88, 61, 0.12)",
       "& .MuiOutlinedInput-notchedOutline": {
         borderColor: COLORS.primary,
         borderWidth: "1.5px",
@@ -102,7 +103,7 @@ const loginButtonStyles = {
     ${COLORS.primaryDark} 100%
   )`,
 
-  boxShadow: "0 4px 20px rgba(198, 40, 40, 0.3)",
+  boxShadow: "0 4px 20px rgba(181, 88, 61, 0.3)",
 
   "&:hover": {
     background: `linear-gradient(
@@ -110,7 +111,7 @@ const loginButtonStyles = {
       ${COLORS.primaryLight} 0%,
       ${COLORS.primary} 100%
     )`,
-    boxShadow: "0 6px 28px rgba(198, 40, 40, 0.4)",
+    boxShadow: "0 6px 28px rgba(181, 88, 61, 0.4)",
     transform: "translateY(-1px)",
   },
 
@@ -166,7 +167,7 @@ function IntroSplash({ onFinish }: { onFinish: () => void }) {
         inset: 0,
         zIndex: 2000,
          background:
-            "linear-gradient(160deg, #0e0000 0%, #1c0000 55%, #080808 100%)",
+            "linear-gradient(160deg, #4FA8A0 0%, #3D817B 55%, #1E2A32 100%)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -557,7 +558,7 @@ function LoginPage() {
             width: "100vw",
             height: "100dvh",
             background:
-            "linear-gradient(160deg, #0e0000 0%, #1c0000 55%, #080808 100%)",
+            "linear-gradient(160deg, #4FA8A0 0%, #3D817B 55%, #1E2A32 100%)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
