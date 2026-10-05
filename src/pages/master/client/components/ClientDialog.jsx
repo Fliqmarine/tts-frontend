@@ -23,7 +23,7 @@ const createEmptyForm = () => ({
 	city: "",
 	country: "",
 	address: "",
-	notifyParty: "",
+	// notifyParty: "",
 	postalCode: "",
 	vatNo: "",
 	multipleEmail: "",
@@ -54,7 +54,7 @@ const createFormFromClient = (client) => {
 		city: client.city ?? "",
 		country: client.country ?? "",
 		address: client.address ?? "",
-		notifyParty: client.notifyParty ?? "",
+		// notifyParty: client.notifyParty ?? "",
 		postalCode: client.postalCode ?? "",
 		vatNo: client.vatNo ?? "",
 		multipleEmail: client.multipleEmail ?? "",
@@ -161,7 +161,7 @@ export default function ClientDialog({ open, onClose, onSaved, client = null }) 
 			city: form.city.trim(),
 			country: form.country,
 			address: form.address.trim(),
-			notifyParty: form.notifyParty.trim(),
+			// notifyParty: form.notifyParty.trim(),
 			postalCode: form.postalCode.trim(),
 			vatNo: form.vatNo.trim(),
 			multipleEmail: form.multipleEmail.trim(),
@@ -240,7 +240,7 @@ export default function ClientDialog({ open, onClose, onSaved, client = null }) 
 									<Field label="Postal Code" value={form.postalCode} onChange={updateField("postalCode")} />
 									<Field label="VAT No" value={form.vatNo} onChange={updateField("vatNo")} />
 									<Field label="Address" value={form.address} onChange={updateField("address")} required multiline minRows={2} sx={fullRow} />
-									<Field label="Notify Party" value={form.notifyParty} onChange={updateField("notifyParty")} multiline minRows={1} sx={fullRow} />
+									{/* <Field label="Notify Party" value={form.notifyParty} onChange={updateField("notifyParty")} multiline minRows={1} sx={fullRow} /> */}
 								</Box>
 							</Section>
 
@@ -264,7 +264,7 @@ export default function ClientDialog({ open, onClose, onSaved, client = null }) 
 									<Field label="Credit Limit" value={acc.creditLimit} onChange={updateNested("accountingDetails", "creditLimit")} required />
 									<Field label="Currency" value={acc.currency} onChange={updateNested("accountingDetails", "currency")} required />
 									<Field label="Payment Terms" value={acc.paymentTerms} onChange={updateNested("accountingDetails", "paymentTerms")} required />
-									<Field label="Billing Address" value={acc.billingAddress} onChange={updateNested("accountingDetails", "billingAddress")} multiline minRows={3} sx={fullRow} />
+									<Field label="Billing Address" value={acc.billingAddress} onChange={updateNested("accountingDetails", "billingAddress")} multiline minRows={3} sx={fullRow} required />
 									<Field label="Special Instructions" value={acc.specialInstructions} onChange={updateNested("accountingDetails", "specialInstructions")} multiline minRows={3} sx={fullRow} />
 								</Box>
 							</Section>
@@ -272,14 +272,14 @@ export default function ClientDialog({ open, onClose, onSaved, client = null }) 
 
 						{/* Column 3 */}
 						<Column>
-							<Section title="Multiple Email">
-								<Field label="Email" type="email" value={form.multipleEmail} onChange={updateField("multipleEmail")} />
+							<Section title="TTS - Bank Details">
+								<Field label="Bank Details" value={form.bankDetails} onChange={updateField("bankDetails")} required multiline minRows={3} />
 							</Section>
 							<Section title="Key Account Manager">
 								<Field label="Opp Manager" value={form.keyAccountManager} onChange={updateField("keyAccountManager")} required />
 							</Section>
-							<Section title="TTS - Bank Details">
-								<Field label="Bank Details" value={form.bankDetails} onChange={updateField("bankDetails")} required multiline minRows={6} />
+							<Section title="Multiple Email">
+								<Field label="Email" type="email" value={form.multipleEmail} onChange={updateField("multipleEmail")} />
 							</Section>
 						</Column>
 					</Box>

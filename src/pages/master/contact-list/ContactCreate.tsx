@@ -142,6 +142,7 @@ interface SectionConfig {
 
 interface GroupConfig {
     coordinatorInChargeStandalone: boolean;
+    coordinatorInChargeRequired?: boolean;
     hasAccounting: boolean;
     accountingVariant?: "standard";
     hasExtraColumn: boolean; // Client-only: key account manager / bank detail / client hubs
@@ -218,6 +219,7 @@ const GROUP_CONFIGS: Record<string, GroupConfig> = {
     },
     Supplier: {
         coordinatorInChargeStandalone: true,
+        coordinatorInChargeRequired: false,
         hasAccounting: false,
         hasExtraColumn: false,
         contactRows: [
@@ -231,10 +233,10 @@ const GROUP_CONFIGS: Record<string, GroupConfig> = {
                 { key: "eoriUiseNo", label: "EORI / UISE No." },
             ],
             [
-                { key: "country", label: "Country", required: true },
-                { key: "city", label: "City", required: true },
+                { key: "country", label: "Country", },
+                { key: "city", label: "City", },
             ],
-            [{ key: "address", label: "Address", required: true, multiline: true, rows: 3 }],
+            [{ key: "address", label: "Address", multiline: true, rows: 3 }],
             [
                 { key: "postalCode", label: "Postal Code" },
                 { key: "vatNo", label: "Vat No" },
@@ -260,14 +262,15 @@ function buildAgentConfig(): GroupConfig {
             //     { key: "faxNo", label: "Fax No" },
             // ],
             [
+                { key: "stationCode", label: "Station Code", required: true },
+                { key: "airportCode", label: "Airport Code", required: true },
+            ],
+            [
                 
                 { key: "country", label: "Country", required: true },
                 { key: "city", label: "City", required: true },
             ],
-            [
-                { key: "airportCode", label: "Airport Code", required: true },
-                { key: "stationCode", label: "Station Code", required: true },
-            ],
+            
             [   { key: "address", label: "Address", required: true, multiline: true, rows: 3 }],
             [   { key: "notifyParty", label: "Notify Party", multiline: true, rows: 3 },],
 
@@ -501,7 +504,16 @@ export default function CreateContactPage() {
                 {renderRows(config.contactRows)}
             </Box>
             {renderSection(
-                { title: "Coordinator In Charge", rows: COORDINATOR_IN_CHARGE_ROWS, standalonePaper: true },
+                {
+                    title: "Coordinator In Charge",
+                    rows: COORDINATOR_IN_CHARGE_ROWS.map((row) =>
+                        row.map((field) => ({
+                            ...field,
+                            required: config.coordinatorInChargeRequired ?? true,
+                        }))
+                    ),
+                    standalonePaper: true,
+                },
                 "coordinator-in-charge",
             )}
         </Box>

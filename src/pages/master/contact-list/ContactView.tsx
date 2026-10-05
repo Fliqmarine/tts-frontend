@@ -85,19 +85,6 @@ export default function ContactView() {
                     borderRadius: 2,
                 }}
             >
-                {/* Back */}
-                <Button
-                    size="small"
-                    variant="outlined"
-                    color="inherit"
-                    startIcon={<ArrowBackIcon />}
-                    onClick={() => navigate(-1)}
-                    sx={{ color: "#64748b", borderColor: "#e2e8f0" }}
-                >
-                    Back
-                </Button>
-
-                <Divider orientation="vertical" flexItem />
 
                 {/* Title + badge */}
                 <Box sx={{ flex: 1 }}>
@@ -128,6 +115,18 @@ export default function ContactView() {
                         />
                     </Box>
                 </Box>
+                <Divider orientation="vertical" flexItem />
+                 {/* Back */}
+                <Button
+                    size="small"
+                    variant="outlined"
+                    color="inherit"
+                    startIcon={<ArrowBackIcon />}
+                    onClick={() => navigate(-1)}
+                    sx={{ color: "#64748b", borderColor: "#e2e8f0" }}
+                >
+                    Back
+                </Button>
 
             </Box>
 

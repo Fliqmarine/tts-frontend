@@ -20,6 +20,7 @@ const countries = getCountries();
 
 const createEmptyForm = () => ({
     companyName: "",
+    eoriUiseNo: "",
     stationCode: "",
     city: "",
     country: "",
@@ -34,7 +35,7 @@ const createEmptyForm = () => ({
         email: "",
         phone: "",
         country: "",
-        creditLimit: "",
+        // creditLimit: "",
         useBillingCurrency: false,
         paymentTerms: "",
         currency: "",
@@ -52,6 +53,7 @@ const createFormFromHub = (hub) => {
     return {
         ...emptyForm,
         companyName: hub.companyName ?? "",
+        eoriUiseNo: hub.eoriUiseNo ?? "",
         stationCode: hub.stationCode ?? "",
         city: hub.city ?? "",
         country: hub.country ?? "",
@@ -160,6 +162,7 @@ export default function HubDialog({ open, onClose, onSaved, hub = null }) {
         const contactData = {
             groupId: "Hub",
             companyName: form.companyName.trim(),
+            eoriUiseNo: form.eoriUiseNo.trim(),
             stationCode: form.stationCode.trim(),
             city: form.city.trim(),
             country: form.country,
@@ -191,7 +194,7 @@ export default function HubDialog({ open, onClose, onSaved, hub = null }) {
             scroll="paper"
             sx={{
                 "& .MuiDialog-paper": {
-                    height: { xs: "calc(100dvh - 16px)", sm: "70vh" },
+                    height: { xs: "calc(100dvh - 16px)", sm: "80vh" },
                     maxHeight: "calc(100% - 32px)",
                     width: { xs: "calc(100% - 16px)", sm: "calc(100% - 64px)" },
                     m: { xs: 1, sm: 4 },
@@ -237,17 +240,17 @@ export default function HubDialog({ open, onClose, onSaved, hub = null }) {
                         <Column>
                             <Section title="Hub Details">
                                 <Box sx={twoCols}>
-                                    <Field label="Company Name" value={form.companyName} onChange={updateField("companyName")} required />
-                                    <Field label="Station Code" value={form.stationCode} onChange={updateField("stationCode")} />
+                                    <Field label="Company Name" value={form.companyName} onChange={updateField("companyName")} required sx={fullRow} />
+                                    <Field label="EORI/UISE No" value={form.eoriUiseNo} onChange={updateField("eoriUiseNo")}  />
+                                    <Field label="Station Code" value={form.stationCode} onChange={updateField("stationCode")} required />
                                     <CountrySelect label="Country" value={form.country} onChange={updateField("country")} required />
                                     <Field label="City" value={form.city} onChange={updateField("city")} required />
                                     <Field label="Postal Code" value={form.postalCode} onChange={updateField("postalCode")} />
                                     <Field label="VAT No" value={form.vatNo} onChange={updateField("vatNo")} />
-                                    <Field label="Address" value={form.address} onChange={updateField("address")} required multiline minRows={2}  sx={fullRow} />
-                                    <Field label="Notify Party" value={form.notifyParty} onChange={updateField("notifyParty")} multiline minRows={2}  sx={fullRow} />
+                                    <Field label="Address" value={form.address} onChange={updateField("address")} required multiline minRows={3}  sx={fullRow} />
+                                    <Field label="Notify Party" value={form.notifyParty} onChange={updateField("notifyParty")} multiline minRows={3}  sx={fullRow} />
                                 </Box>
                             </Section>
-
                             <Section title="Coordinator In Charge">
                                 <Box sx={twoCols}>
                                     <Field label="Name" value={coord.name} onChange={updateNested("coordinatorInCharge", "name")} required sx={fullRow} />
@@ -255,6 +258,9 @@ export default function HubDialog({ open, onClose, onSaved, hub = null }) {
                                     <PhoneField value={coord.phone} country={form.country} onChange={(phone) => setForm((current) => ({ ...current, coordinatorInCharge: { ...current.coordinatorInCharge, phone } }))} required />
                                 </Box>
                             </Section>
+                            
+
+                            
                         </Column>
 
                         {/* Column 2 */}
@@ -265,26 +271,29 @@ export default function HubDialog({ open, onClose, onSaved, hub = null }) {
                                     <Field label="Email" type="email" value={acc.email} onChange={updateNested("accountingDetails", "email")} required />
                                     <PhoneField value={acc.phone} country={acc.country} onChange={(phone) => setForm((current) => ({ ...current, accountingDetails: { ...current.accountingDetails, phone } }))} required />
                                     <CountrySelect label="Country" value={acc.country} onChange={updateNested("accountingDetails", "country")} />
-                                    <Field label="Credit Limit" value={acc.creditLimit} onChange={updateNested("accountingDetails", "creditLimit")} required />
+                                    {/* <Field label="Credit Limit" value={acc.creditLimit} onChange={updateNested("accountingDetails", "creditLimit")} required /> */}
                                     <Field label="Currency" value={acc.currency} onChange={updateNested("accountingDetails", "currency")} required />
                                     <Field label="Payment Terms" value={acc.paymentTerms} onChange={updateNested("accountingDetails", "paymentTerms")} required />
                                     <Field label="Billing Address" value={acc.billingAddress} onChange={updateNested("accountingDetails", "billingAddress")} multiline minRows={3} sx={fullRow} />
                                     <Field label="Special Instructions" value={acc.specialInstructions} onChange={updateNested("accountingDetails", "specialInstructions")} multiline minRows={3} sx={fullRow} />
                                 </Box>
                             </Section>
+                            <Section title="TTS - Bank Details">
+                                <Field label="Bank Details" value={form.bankDetails} onChange={updateField("bankDetails")} required multiline minRows={3.5} />
+                            </Section>
+                            
                         </Column>
 
                         {/* Column 3 */}
                         <Column>
-                            <Section title="Multiple Email">
-                                <Field label="Email" type="email" value={form.multipleEmail} onChange={updateField("multipleEmail")} />
-                            </Section>
+
                             <Section title="Key Account Manager">
                                 <Field label="Opp Manager" value={form.keyAccountManager} onChange={updateField("keyAccountManager")} required />
                             </Section>
-                            <Section title="TTS - Bank Details">
-                                <Field label="Bank Details" value={form.bankDetails} onChange={updateField("bankDetails")} required multiline minRows={6} />
+                            <Section title="Multiple Email">
+                                <Field label="Email" type="email" value={form.multipleEmail} onChange={updateField("multipleEmail")} />
                             </Section>
+                            
                         </Column>
                     </Box>
 
