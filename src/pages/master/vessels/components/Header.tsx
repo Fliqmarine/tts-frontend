@@ -1,16 +1,12 @@
 import { Box, Button, Typography } from "@mui/material";
 import DirectionsBoatFilledOutlined from "@mui/icons-material/DirectionsBoatFilledOutlined";
 import { Add } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
 
+interface HeaderProps {
+    onCreate: () => void;
+}
 
-export default function Header() {
-    const navigate = useNavigate();
-
-    const handleAddVessel = () => {
-        navigate("/master/vessels/vessel-create");
-    };
-
+export default function Header({ onCreate }: HeaderProps) {
     return (
         <Box
             sx={{
@@ -48,7 +44,7 @@ export default function Header() {
                 variant="contained"
                 color="primary"
                 startIcon={<Add />}
-                onClick={handleAddVessel}
+                onClick={onCreate}
                 sx={{
                     borderRadius: 2,
                     px: 3,

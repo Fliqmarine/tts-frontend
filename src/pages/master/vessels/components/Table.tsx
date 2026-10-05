@@ -1,9 +1,7 @@
 import {
-    Alert,
     Box,
     Button,
     Checkbox,
-    CircularProgress,
     IconButton,
     Paper,
     Switch,
@@ -21,7 +19,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import type { VesselFormState } from "../types/vessel.types";
 
 // ── Filter shape ──────────────────────────────────────────────────────────────
 export interface VesselFilters {
@@ -40,10 +38,14 @@ export interface Vessel {
     picName: string;
     picEmail: string;
     isActive: boolean;
+    formData?: VesselFormState;
 }
 
 interface VesselListTableProps {
     filters?: VesselFilters;
+    vessels: Vessel[];
+    setVessels: React.Dispatch<React.SetStateAction<Vessel[]>>;
+    onEdit: (vessel: Vessel) => void;
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
@@ -51,7 +53,7 @@ const headCellSx = {
     whiteSpace: "nowrap" as const,
 };
 
-const DEMO_VESSELS: Vessel[] = [
+export const DEMO_VESSELS: Vessel[] = [
     { id: 1, vesselName: "MV Atlantic Star", clientName: "Maersk Line", vesselCode: "ATL-001", imoNo: "9321483", picName: "John Smith", picEmail: "john.smith@maersk.com", isActive: true },
     { id: 2, vesselName: "MV Pacific Explorer", clientName: "MSC", vesselCode: "PAC-002", imoNo: "9456712", picName: "Maria Garcia", picEmail: "maria.garcia@msc.com", isActive: true },
     { id: 3, vesselName: "MV Indian Voyager", clientName: "CMA CGM", vesselCode: "IND-003", imoNo: "9578234", picName: "Ahmed Hassan", picEmail: "ahmed.hassan@cma-cgm.com", isActive: false },
@@ -66,18 +68,15 @@ const DEMO_VESSELS: Vessel[] = [
     { id: 12, vesselName: "MV Coral Empress", clientName: "Wan Hai", vesselCode: "COR-012", imoNo: "9489012", picName: "Min Soo Park", picEmail: "minsoo.park@wanhai.com", isActive: true },
 ];
 
-export default function VesselListTable({ filters }: VesselListTableProps) {
-    const navigate = useNavigate();
-
+export default function VesselListTable({ filters, vessels, setVessels, onEdit }: VesselListTableProps) {
     // ── State ─────────────────────────────────────────────────────────────────
-    const [vessels, setVessels] = useState<Vessel[]>(DEMO_VESSELS);
     const [selected, setSelected] = useState<number[]>([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(15);
 
     // ── Client-side filter ────────────────────────────────────────────────────
     const filtered = vessels.filter((v) => {
-        const search = filters?.search?.toLowerCase() ?? "";
+        const search = filters?.search?.trim().toLowerCase() ?? "";
         const clientMatch = !filters?.client || v.clientName === filters.client;
         const activeMatch = filters?.active === undefined || v.isActive === filters.active;
         const searchMatch =
@@ -304,11 +303,8 @@ export default function VesselListTable({ filters }: VesselListTableProps) {
                                                 <IconButton
                                                     size="small"
                                                     color="primary"
-                                                    onClick={() =>
-                                                        navigate(`/master/vessels/vessel-edit/${vessel.id}`, {
-                                                            state: { vessel },
-                                                        })
-                                                    }
+                                                    aria-label={`Edit ${vessel.vesselName}`}
+                                                    onClick={() => onEdit(vessel)}
                                                 >
                                                     <EditIcon sx={{ fontSize: "1rem" }} />
                                                 </IconButton>

@@ -2,15 +2,20 @@ import {
     Box,
     Button,
     Dialog,
+    Divider,
     IconButton,
+    InputAdornment,
     MenuItem,
     Stack,
     TextField,
     Typography,
 } from "@mui/material";
-import { CALCULATION_RULES, type CalculationRule, type TariffMaster } from "../types/trariffMaster.types";
+import { alpha } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
+import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
+import CalculateOutlinedIcon from "@mui/icons-material/CalculateOutlined";
 import { useEffect, useState } from "react";
+import { CALCULATION_RULES, type CalculationRule, type TariffMaster } from "../types/trariffMaster.types";
 
 interface TariffMasterDialogProps {
     open: boolean;
@@ -19,7 +24,10 @@ interface TariffMasterDialogProps {
     onSubmit: (data: TariffMaster) => void;
 }
 
-const emptyForm: { name: string; calculation_rule: CalculationRule } = { name: "", calculation_rule: "None" };
+const emptyForm: { name: string; calculation_rule: CalculationRule } = {
+    name: "",
+    calculation_rule: "None",
+};
 
 export default function TariffMasterDialog({
     open,
@@ -28,88 +36,142 @@ export default function TariffMasterDialog({
     tariffMaster,
 }: TariffMasterDialogProps) {
     const isEdit = !!tariffMaster?.id;
-
     const [form, setForm] = useState(emptyForm);
+    const [touched, setTouched] = useState(false);
 
-    // When dialog opens, seed form with existing data (edit) or clear it (create)
     useEffect(() => {
         if (open) {
+            setTouched(false);
             setForm(
                 tariffMaster
                     ? {
-                        name: tariffMaster.name || "",
-                        calculation_rule: tariffMaster.calculation_rule || "None"
-                    }
+                          name: tariffMaster.name || "",
+                          calculation_rule: tariffMaster.calculation_rule || "None",
+                      }
                     : emptyForm
             );
         }
     }, [open, tariffMaster]);
 
+    const nameError = touched && !form.name.trim();
+
     const handleChange = (field: "name" | "calculation_rule", value: string) => {
-        setForm((prev) => field === "name"
-            ? { ...prev, name: value }
-            : { ...prev, calculation_rule: value as CalculationRule }
+        setForm((prev) =>
+            field === "name"
+                ? { ...prev, name: value }
+                : { ...prev, calculation_rule: value as CalculationRule }
         );
     };
 
-    const handleSubmit = () => {
-        const payload: TariffMaster = {
+    const handleSubmit = (e?: React.FormEvent) => {
+        e?.preventDefault();
+        setTouched(true);
+        if (!form.name.trim()) return;
+
+        onSubmit({
             id: tariffMaster?.id ?? 0, // 0 = new record (backend assigns real id)
-            name: form.name,
+            name: form.name.trim(),
             calculation_rule: form.calculation_rule,
-        };
-        onSubmit(payload);
+        });
         onClose();
     };
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-            <Box
-                sx={{
-
-                    display: "flex",
-                    flexDirection: "column",
-                }}
-            >
-                {/* ── STEP 1: Dialog Header ── */}
+        <Dialog
+            open={open}
+            onClose={onClose}
+            maxWidth="xs"
+            fullWidth
+            PaperProps={{
+                sx: {
+                    borderRadius: 3,
+                    overflow: "hidden",
+                    boxShadow: "0 24px 48px rgba(0,0,0,0.18)",
+                },
+            }}
+        >
+            <Box component="form" onSubmit={handleSubmit} noValidate>
+                {/* Header */}
                 <Box
                     sx={{
                         px: 3,
-                        py: 2,
+                        py: 2.5,
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "space-between",
-                        bgcolor: "primary.main",
-                        color: "primary.contrastText",
+                        gap: 2,
+                        bgcolor: (t) => alpha(t.palette.primary.main, 0.06),
+                        borderBottom: 1,
+                        borderColor: "divider",
                     }}
                 >
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                        {isEdit ? "Edit Tariff" : "Add Tariff"}
-                    </Typography>
-                    <IconButton onClick={onClose} color="inherit">
-                        <CloseIcon />
+                    <Box
+                        sx={{
+                            width: 44,
+                            height: 44,
+                            borderRadius: 2,
+                            display: "grid",
+                            placeItems: "center",
+                            bgcolor: "primary.main",
+                            color: "primary.contrastText",
+                            boxShadow: (t) => `0 6px 16px ${alpha(t.palette.primary.main, 0.35)}`,
+                        }}
+                    >
+                        <SellOutlinedIcon />
+                    </Box>
+
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+                            {isEdit ? "Edit Tariff" : "Add Tariff"}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            {isEdit
+                                ? "Update the tariff details below"
+                                : "Create a new tariff and choose how it's calculated"}
+                        </Typography>
+                    </Box>
+
+                    <IconButton onClick={onClose} size="small" aria-label="close">
+                        <CloseIcon fontSize="small" />
                     </IconButton>
                 </Box>
 
-                {/* ── STEP 2: Dialog Form Body (scrollable) ── */}
-                <Box sx={{ flex: 1, overflowY: "auto", px: 3, py: 3 }}>
+                {/* Body */}
+                <Box sx={{ px: 3, py: 3 }}>
                     <Stack spacing={3}>
                         <TextField
                             label="Tariff Name"
                             fullWidth
+                            autoFocus
+                            required
                             value={form.name}
                             onChange={(e) => handleChange("name", e.target.value)}
+                            onBlur={() => setTouched(true)}
                             placeholder="e.g. Air Freight Charges"
-                            size="small"
-                            required
+                            error={nameError}
+                            helperText={nameError ? "Tariff name is required" : " "}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SellOutlinedIcon fontSize="small" color="action" />
+                                    </InputAdornment>
+                                ),
+                            }}
                         />
+
                         <TextField
                             label="Calculation Rule"
                             fullWidth
                             select
                             value={form.calculation_rule}
                             onChange={(e) => handleChange("calculation_rule", e.target.value)}
-                            size="small"
+                            helperText="Determines how this charge is calculated on invoices"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <CalculateOutlinedIcon fontSize="small" color="action" />
+                                    </InputAdornment>
+                                ),
+                            }}
                         >
                             {CALCULATION_RULES.map((rule) => (
                                 <MenuItem key={rule} value={rule}>
@@ -120,30 +182,32 @@ export default function TariffMasterDialog({
                     </Stack>
                 </Box>
 
-                {/* ── STEP 3: Dialog Footer with Save / Cancel ── */}
+                <Divider />
+
+                {/* Footer */}
                 <Box
                     sx={{
                         px: 3,
                         py: 2,
-                        borderTop: 1,
-                        borderColor: "divider",
                         display: "flex",
-                        gap: 2,
+                        gap: 1.5,
                         justifyContent: "flex-end",
+                        bgcolor: (t) => alpha(t.palette.grey[500], 0.04),
                     }}
                 >
-                    <Button variant="outlined" onClick={onClose} sx={{ textTransform: "none" }}>
+                    <Button
+                        onClick={onClose}
+                        color="inherit"
+                        sx={{ textTransform: "none", borderRadius: 2, px: 2.5 }}
+                    >
                         Cancel
                     </Button>
                     <Button
+                        type="submit"
                         variant="contained"
-                        onClick={handleSubmit}
-                        // disabled={!form.name?.trim()}
-                        color="primary"
-                        sx={{
-                            textTransform: "none",
-                            fontWeight: 600,
-                        }}
+                        disableElevation
+                        disabled={!form.name.trim()}
+                        sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, px: 3 }}
                     >
                         {isEdit ? "Save Changes" : "Add Tariff"}
                     </Button>

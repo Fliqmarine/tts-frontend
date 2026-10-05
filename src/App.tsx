@@ -5,7 +5,6 @@ import DashboardPage from "./pages/dashboard/DashBoard";
 import UsersIndex from "./pages/master/users/UsersIndex";
 import ContactsIndex from "./pages/master/contact-list/ContactsIndex";
 import VesselsIndex from "./pages/master/vessels/VesselsIndex";
-import VesselCreate from "./pages/master/vessels/VesselCreate";
 import HubIndexPage from "./pages/master/hub/HubIndexPage";
 import HubLocationsIndex from "./pages/master/hub-locations/HubLocationsIndex";
 import VendorsIndex from "./pages/master/vendors/VendorsIndex";
@@ -25,7 +24,6 @@ import GLCodeParentIndex from "./pages/master/finance-master/gl-code-parent/GLCo
 import ContactEdit from "./pages/master/contact-list/ContactEdit";
 import ContactView from "./pages/master/contact-list/ContactView";
 import ClientIndex from "./pages/master/client/ClientIndexPage";
-import VesselEdit from "./pages/master/vessels/VesselEdit";
 
 
 
@@ -51,8 +49,6 @@ function App() {
                   <Route path="/master/contact-list/contact-view/:id" element={<ContactView />} />
 
                   <Route path="/master/vessels" element={<VesselsIndex />} />
-                  <Route path="/master/vessels/vessel-create" element={<VesselCreate />} />
-                  <Route path="/master/vessels/vessel-edit/:id" element={<VesselEdit />} />
 
                   <Route path="/master/vendors" element={<VendorsIndex />} />
                   <Route path="/master/banks" element={<BanksIndex />} />
@@ -73,7 +69,7 @@ function App() {
                   <Route path="/stocks/follow-up" element={<FollowUpPage />} />
                   <Route path="/stocks/history" element={<StockHistoryPage />} />
 
-                  
+                  z
 
                 </Route>
             </Routes>
