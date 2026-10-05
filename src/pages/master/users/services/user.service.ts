@@ -38,6 +38,9 @@ export const createUser = async (
   if (data.employeeId) formData.append("employeeId", data.employeeId);
   if (data.jobTitle) formData.append("jobTitle", data.jobTitle);
   if (data.department) formData.append("department", data.department);
+  if (data.clientId !== undefined) formData.append("clientId", data.clientId);
+  if (data.hubId !== undefined) formData.append("hubId", data.hubId);
+  if (data.backupPicId !== undefined) formData.append("backupPicId", data.backupPicId);
 
   if (avatar) {
     formData.append("avatar", avatar);
@@ -60,9 +63,9 @@ export const updateUser = async (
   avatar?: File | null,
 ): Promise<User> => {
   const formData = new FormData();
-  formData.append("name", data.name);
-  formData.append("email", data.email);
-  formData.append("role", data.role);
+  if (data.name !== undefined) formData.append("name", data.name);
+  if (data.email !== undefined) formData.append("email", data.email);
+  if (data.role !== undefined) formData.append("role", data.role);
 
   formData.append(
     "isActive",
@@ -72,6 +75,9 @@ export const updateUser = async (
   if (data.employeeId) formData.append("employeeId", data.employeeId);
   if (data.jobTitle) formData.append("jobTitle", data.jobTitle);
   if (data.department) formData.append("department", data.department);
+  if (data.clientId !== undefined) formData.append("clientId", data.clientId);
+  if (data.hubId !== undefined) formData.append("hubId", data.hubId);
+  if (data.backupPicId !== undefined) formData.append("backupPicId", data.backupPicId);
 
   if (data.password) {
     formData.append("password", data.password);

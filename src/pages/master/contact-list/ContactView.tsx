@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
     Alert,
     Box,
     Button,
     Chip,
-    CircularProgress,
     Divider,
     Paper,
     Stack,
@@ -13,8 +11,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { getContact } from "./services/contact.service";
-import type { Contact } from "./types/contact.types";
+import { loadDemoContacts } from "./data/demoContacts";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function SectionHeader({ title }: { title: string }) {
@@ -64,36 +61,11 @@ function InfoRow({ label, value }: { label: string; value?: string | null }) {
 export default function ContactView() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-
-    const [contact, setContact] = useState<Contact | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (!id) return;
-        (async () => {
-            try {
-                const data = await getContact(Number(id));
-                setContact(data);
-            } catch {
-                setError("Failed to load contact. Please try again.");
-            } finally {
-                setLoading(false);
-            }
-        })();
-    }, [id]);
+    const contact = loadDemoContacts().find((item) => item.id === Number(id));
 
     // ── States ────────────────────────────────────────────────────────────────
-    if (loading) {
-        return (
-            <Paper sx={{ p: 5, display: "flex", justifyContent: "center" }}>
-                <CircularProgress color="error" size={32} />
-            </Paper>
-        );
-    }
-
-    if (error || !contact) {
-        return <Alert severity="error">{error ?? "Contact not found."}</Alert>;
+    if (!contact) {
+        return <Alert severity="error">Contact not found.</Alert>;
     }
 
     // ── View ──────────────────────────────────────────────────────────────────
@@ -157,18 +129,6 @@ export default function ContactView() {
                     </Box>
                 </Box>
 
-                {/* Edit action */}
-                <Button
-                    size="small"
-                    variant="contained"
-                    color="error"
-                    startIcon={<EditIcon />}
-                    onClick={() =>
-                        navigate(`/master/contact-list/contact-edit/${contact.id}`)
-                    }
-                >
-                    Edit
-                </Button>
             </Box>
 
             {/* Body — 2-column layout */}
@@ -184,10 +144,6 @@ export default function ContactView() {
                     >
                         <SectionHeader title="Contact Details" />
                         <InfoRow label="Company Name" value={contact.companyName} />
-                        <InfoRow label="Initial" value={contact.initial} />
-                        <InfoRow label="Email" value={contact.email} />
-                        <InfoRow label="Phone" value={contact.phone} />
-                        <InfoRow label="Fax No." value={contact.faxNo} />
                         <InfoRow label="Station Code" value={contact.stationCode} />
                         <InfoRow label="EORI / UISE No." value={contact.eoriUiseNo} />
                         <InfoRow label="Notify Party" value={contact.notifyParty} />
@@ -197,23 +153,19 @@ export default function ContactView() {
                         <InfoRow label="Country" value={contact.country} />
                         <InfoRow label="Postal Code" value={contact.postalCode} />
                         <InfoRow label="VAT No." value={contact.vatNo} />
-                        {contact.description && (
-                            <InfoRow label="Description" value={contact.description} />
-                        )}
                     </Box>
 
-                    {/* Person in Charge */}
-                    {contact.personIncharge && (
+                    {/* Coordinator In Charge */}
+                    {contact.coordinatorInCharge && (
                         <Box
                             component={Paper}
                             elevation={0}
                             sx={{ p: 2, border: "1px solid", borderColor: "divider", borderRadius: 2 }}
                         >
-                            <SectionHeader title="Person in Charge" />
-                            <InfoRow label="Name" value={contact.personIncharge.name} />
-                            <InfoRow label="Email" value={contact.personIncharge.email} />
-                            <InfoRow label="Phone" value={contact.personIncharge.phone} />
-                            <InfoRow label="Fax No." value={contact.personIncharge.faxNo} />
+                            <SectionHeader title="Coordinator In Charge" />
+                            <InfoRow label="Name" value={contact.coordinatorInCharge.name} />
+                            <InfoRow label="Email" value={contact.coordinatorInCharge.email} />
+                            <InfoRow label="Phone" value={contact.coordinatorInCharge.phone} />
                         </Box>
                     )}
                 </Box>
@@ -232,7 +184,6 @@ export default function ContactView() {
                             <InfoRow label="Name" value={contact.accountingDetails.name} />
                             <InfoRow label="Email" value={contact.accountingDetails.email} />
                             <InfoRow label="Phone" value={contact.accountingDetails.phone} />
-                            <InfoRow label="Fax No." value={contact.accountingDetails.faxNo} />
                             <InfoRow label="Country" value={contact.accountingDetails.country} />
                             <InfoRow label="Credit Limit" value={contact.accountingDetails.creditLimit} />
                             <InfoRow
@@ -249,17 +200,16 @@ export default function ContactView() {
                         </Box>
                     )}
 
-                    {/* Client extras */}
-                    {(contact.oppManager || contact.bankDetails || contact.clientHubs) && (
+                    {/* Additional Details */}
+                    {(contact.keyAccountManager || contact.bankDetails) && (
                         <Box
                             component={Paper}
                             elevation={0}
                             sx={{ p: 2, border: "1px solid", borderColor: "divider", borderRadius: 2 }}
                         >
                             <SectionHeader title="Additional Details" />
-                            <InfoRow label="Key Account / Opp Mgr" value={contact.oppManager} />
+                            <InfoRow label="Key Account Manager" value={contact.keyAccountManager} />
                             <InfoRow label="Bank Details" value={contact.bankDetails} />
-                            <InfoRow label="Client Hubs" value={contact.clientHubs} />
                         </Box>
                     )}
 

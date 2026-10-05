@@ -58,6 +58,9 @@ export interface NavigationChild {
     icon?: ReactNode;
 }
 
+export const isNavigationPathActive = (pathname: string, path: string) =>
+    pathname === path || pathname.startsWith(`${path}/`);
+
 export const navigationMenus: NavigationMenu[] = [
     {
         label: "Stocks",
@@ -226,12 +229,17 @@ export const navigationMenus: NavigationMenu[] = [
         ],
     },
     {
-        label: "Master",
+        label: "Ops-Master",
         children: [
             {
-                label: "Users",
-                path: "/master/users",
-                icon: <PeopleIcon fontSize="small" />,
+                label: "Hub Locations",
+                path: "/master/hub-locations",
+                icon: <WarehouseIcon fontSize="small" />,
+            },
+            {
+                label: "Hub",
+                path: "/master/hub",
+                icon: <WarehouseIcon fontSize="small" />,
             },
             {
                 label: "Contact List",
@@ -239,9 +247,25 @@ export const navigationMenus: NavigationMenu[] = [
                 icon: <ContactsIcon fontSize="small" />,
             },
             {
+                label: "Client",
+                path: "/master/client",
+                icon: <PeopleIcon fontSize="small" />,
+            },
+           
+            {
                 label: "Vessels",
                 path: "/master/vessels",
                 icon: <DirectionsBoatIcon fontSize="small" />,
+            },
+        ],
+    },
+    {
+        label: "Finance - Master",
+        children: [
+            {
+                label: "Currency",
+                path: "/master/currency",
+                icon: <CurrencyExchangeIcon fontSize="small" />,
             },
             {
                 label: "Vendors",
@@ -253,6 +277,32 @@ export const navigationMenus: NavigationMenu[] = [
                 path: "/master/banks",
                 icon: <AccountBalanceIcon fontSize="small" />,
             },
+           
+            {
+                label: "Gl Code Parents",
+                path: "/master/finance-master/gl-code-parent",
+                icon: <AccountTreeIcon fontSize="small" />,
+            },
+            {
+                label: "Gl Code Children",
+                path: "/master/finance-master/gl-code-child",
+                icon: <FolderOpenIcon fontSize="small" />,
+            },
+            {
+                label: "Gl Code Sub Children",
+                path: "/master/finance-master/gl-code-subchild",
+                icon: <ArticleIcon fontSize="small" />,
+            },
+        ],
+    },
+    {
+        label: "Master",
+        children: [
+            {
+                label: "Users",
+                path: "/master/users",
+                icon: <PeopleIcon fontSize="small" />,
+            },
             {
                 label: "Tariff Master",
                 path: "/master/tariff-master",
@@ -263,41 +313,12 @@ export const navigationMenus: NavigationMenu[] = [
                 path: "/master/airport-codes",
                 icon: <ConnectingAirportsIcon fontSize="small" />,
             },
-            {
-                label: "Currency",
-                path: "/master/currency",
-                icon: <CurrencyExchangeIcon fontSize="small" />,
-            },
-            {
+             {
                 label: "Cargo",
                 path: "/master/cargo",
                 icon: <LocalShippingOutlinedIcon fontSize="small" />,
             },
-            {
-                label: "Hub",
-                path: "/master/hub",
-                icon: <WarehouseIcon fontSize="small" />,
-            },
-            {
-                label: "Finance Master",
-                children: [
-                    {
-                        label: "Gl Code Parents",
-                        path: "/master/finance-master/gl-code-parent",
-                        icon: <AccountTreeIcon fontSize="small" />,
-                    },
-                    {
-                        label: "Gl Code Children",
-                        path: "/master/finance-master/gl-code-child",
-                        icon: <FolderOpenIcon fontSize="small" />,
-                    },
-                    {
-                        label: "Gl Code Sub Children",
-                        path: "/master/finance-master/gl-code-subchild",
-                        icon: <ArticleIcon fontSize="small" />,
-                    },
-                ],
-            },
+
         ],
     },
 ];
@@ -324,7 +345,9 @@ const NestedMenuItemPopup = ({ item }: { item: NavigationChild }) => {
     const location = useLocation();
 
     const hasChildren = item.children && item.children.length > 0;
-    const childActive = item.path ? location.pathname.startsWith(item.path) : false;
+    const childActive = item.path
+        ? isNavigationPathActive(location.pathname, item.path)
+        : false;
 
     if (!hasChildren) {
         return (
@@ -385,7 +408,9 @@ const NestedMenuItemPopup = ({ item }: { item: NavigationChild }) => {
                         sx={{ minWidth: 220, py: 0.5, borderRadius: 2, border: "1px solid rgba(0,0,0,0.06)" }}
                     >
                         {item.children!.map((child, index) => {
-                            const isChildActive = child.path ? location.pathname.startsWith(child.path) : false;
+                            const isChildActive = child.path
+                                ? isNavigationPathActive(location.pathname, child.path)
+                                : false;
                             return (
                                 <ListItemButton
                                     key={child.path || index}
@@ -420,9 +445,11 @@ export default function NavigationMenu() {
 
     const isMenuActive = (menu: (typeof navigationMenus)[number]) =>
         menu.children.some((child) => {
-            if (child.path && location.pathname.startsWith(child.path)) return true;
+            if (child.path && isNavigationPathActive(location.pathname, child.path)) return true;
             if (child.children) {
-                return child.children.some((c) => c.path && location.pathname.startsWith(c.path));
+                return child.children.some(
+                    (c) => c.path && isNavigationPathActive(location.pathname, c.path)
+                );
             }
             return false;
         });
@@ -443,7 +470,7 @@ export default function NavigationMenu() {
                         <Button
                             endIcon={<KeyboardArrowDownIcon />}
                             sx={(theme: any) => ({
-                                color: active || isOpen ? theme.palette.secondary.main : "#ffffff",
+                                color: active || isOpen ? theme.palette.primary.main : "#000000",
                                 fontWeight: active ? 700 : 600,
                                 fontSize: "0.775rem",
                                 borderRadius: 0,
@@ -459,12 +486,12 @@ export default function NavigationMenu() {
                                     transform: "translateX(-50%)",
                                     width: active || isOpen ? "100%" : "0%",
                                     height: "2px",
-                                    backgroundColor: theme.palette.secondary.main,
+                                    backgroundColor: theme.palette.primary.main,
                                     transition: "width 0.3s ease",
                                 },
                                 "&:hover": {
-                                    color: theme.palette.secondary.main,
-                                    backgroundColor: "rgba(255,255,255,0.08)",
+                                    color: theme.palette.primary.main,
+                                    backgroundColor: theme.palette.action.hover,
                                 },
                             })}
                         >

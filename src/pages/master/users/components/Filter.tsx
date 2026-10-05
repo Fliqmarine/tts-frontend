@@ -1,3 +1,4 @@
+import { ROLE_OPTIONS } from "../types/user.types";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import {
@@ -106,34 +107,9 @@ export default function UserIndexFilter({
                     "& .MuiOutlinedInput-root": { borderRadius: 2 },
                 }}
             >
-               <MenuItem value="Vendor">
-                  Client
-                </MenuItem>
-
-                <MenuItem value="Vendor">
-                  Documentation
-                </MenuItem>
-
-                <MenuItem value="Employee">
-                  Key Account Manager
-                </MenuItem>
-
-                <MenuItem value="Employee">
-                  operations Manager
-                </MenuItem>
-
-                <MenuItem value="SuperAdmin">
-                  Manager
-                </MenuItem>
-
-                <MenuItem value="Client">
-                  Fiance Executive
-                </MenuItem>
-
-                <MenuItem value="Client">
-                  Finance Manager
-                </MenuItem>
-                
+                                {ROLE_OPTIONS.map((role) => (
+                                        <MenuItem key={role} value={role}>{role}</MenuItem>
+                                ))}
             </TextField>
         </Box>
     );

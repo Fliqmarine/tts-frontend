@@ -38,7 +38,7 @@ export default function HubIndexHeader({ onCreate }: HubIndexHeaderProps) {
                     variant="h5"
                     sx={{ fontWeight: 700, color: "text.primary" }}
                 >
-                    Hubs
+                    Hub Locations
                 </Typography>
             </Box>
 
@@ -53,7 +53,7 @@ export default function HubIndexHeader({ onCreate }: HubIndexHeaderProps) {
                     py: 1,
                 }}
             >
-                Add Hub
+                Add Hub Location
             </Button>
         </Box>
     );

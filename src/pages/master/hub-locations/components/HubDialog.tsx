@@ -1,13 +1,13 @@
-import { Box, Button, Dialog, IconButton, Stack, TextField, Typography, FormControlLabel, Switch, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, Button, Dialog, IconButton, TextField, Typography, FormControlLabel, Switch, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import type { Hub } from "../types/hub.types";
+import type { HubLocations } from "../types/hubLocations.types";
 import { useEffect, useState } from "react";
 
 interface HubDialogProps {
     open: boolean;
     onClose: () => void;
-    hub?: Hub | null;
-    onSubmit?: (data: Hub) => void;
+    hubLocations?: HubLocations | null;
+    onSubmit?: (data: HubLocations) => void;
 }
 
 const COUNTRIES = [
@@ -23,8 +23,8 @@ const COUNTRIES = [
     "Germany",
 ];
 
-export default function HubDialog({ open, onClose, hub, onSubmit }: HubDialogProps) {
-    const isEdit = !!hub?.id;
+export default function HubDialog({ open, onClose, hubLocations, onSubmit }: HubDialogProps) {
+    const isEdit = !!hubLocations?.id;
     const emptyForm = {
         contactCode: "",
         name: "",
@@ -39,20 +39,20 @@ export default function HubDialog({ open, onClose, hub, onSubmit }: HubDialogPro
     useEffect(() => {
         if (open) {
             setForm(
-                hub
+                hubLocations
                     ? {
-                        contactCode: hub.contactCode,
-                        name: hub.name,
-                        stationCode: hub.stationCode,
-                        email: hub.email,
-                        telephoneNo: hub.telephoneNo,
-                        country: hub.country,
-                        isActive: hub.isActive,
+                        contactCode: hubLocations.contactCode || "",
+                        name: hubLocations.name || "",
+                        stationCode: hubLocations.stationCode || "",
+                        email: hubLocations.email || "",
+                        telephoneNo: hubLocations.telephoneNo || "",
+                        country: hubLocations.country || "",
+                        isActive: hubLocations.isActive ?? true,
                     }
                     : emptyForm
             );
         }
-    }, [open, hub]);
+    }, [open, hubLocations]);
 
     const handleChange = (field: keyof typeof form, value: any) => {
         setForm((prev) => ({ ...prev, [field]: value }));
@@ -60,8 +60,8 @@ export default function HubDialog({ open, onClose, hub, onSubmit }: HubDialogPro
 
     const handleSubmit = () => {
         if (!onSubmit) return;
-        const payload: Hub = {
-            id: hub?.id ?? 0,
+        const payload: HubLocations = {
+            id: hubLocations?.id ?? 0,
             contactCode: form.contactCode,
             name: form.name,
             stationCode: form.stationCode,
@@ -212,7 +212,7 @@ export default function HubDialog({ open, onClose, hub, onSubmit }: HubDialogPro
                     <Button
                         variant="contained"
                         onClick={handleSubmit}
-                        disabled={!form.contactCode.trim() || !form.name.trim() || !form.stationCode.trim() || !form.email.trim() || !form.country}
+                        // disabled={!form.contactCode?.trim() || !form.name?.trim() || !form.stationCode?.trim() || !form.email?.trim() || !form.country}
                         color="primary"
                         sx={{
                             textTransform: "none",

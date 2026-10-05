@@ -8,7 +8,7 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import type { TariffMaster } from "../types/trariffMaster.types";
+import { CALCULATION_RULES, type CalculationRule, type TariffMaster } from "../types/trariffMaster.types";
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useState } from "react";
 
@@ -19,9 +19,7 @@ interface TariffMasterDialogProps {
     onSubmit: (data: TariffMaster) => void;
 }
 
-const CALCULATION_RULES = ["None", "Kg * Rate", "Order * Rate"];
-
-const emptyForm = { name: "", calculation_rule: "None" };
+const emptyForm: { name: string; calculation_rule: CalculationRule } = { name: "", calculation_rule: "None" };
 
 export default function TariffMasterDialog({
     open,
@@ -38,21 +36,27 @@ export default function TariffMasterDialog({
         if (open) {
             setForm(
                 tariffMaster
-                    ? { name: tariffMaster.name, calculation_rule: tariffMaster.calculation_rule }
+                    ? {
+                        name: tariffMaster.name || "",
+                        calculation_rule: tariffMaster.calculation_rule || "None"
+                    }
                     : emptyForm
             );
         }
     }, [open, tariffMaster]);
 
-    const handleChange = (field: string, value: string) => {
-        setForm((prev) => ({ ...prev, [field]: value }));
+    const handleChange = (field: "name" | "calculation_rule", value: string) => {
+        setForm((prev) => field === "name"
+            ? { ...prev, name: value }
+            : { ...prev, calculation_rule: value as CalculationRule }
+        );
     };
 
     const handleSubmit = () => {
         const payload: TariffMaster = {
             id: tariffMaster?.id ?? 0, // 0 = new record (backend assigns real id)
             name: form.name,
-            calculation_rule: form.calculation_rule as any,
+            calculation_rule: form.calculation_rule,
         };
         onSubmit(payload);
         onClose();
@@ -106,7 +110,6 @@ export default function TariffMasterDialog({
                             value={form.calculation_rule}
                             onChange={(e) => handleChange("calculation_rule", e.target.value)}
                             size="small"
-                            required
                         >
                             {CALCULATION_RULES.map((rule) => (
                                 <MenuItem key={rule} value={rule}>
@@ -135,7 +138,7 @@ export default function TariffMasterDialog({
                     <Button
                         variant="contained"
                         onClick={handleSubmit}
-                        disabled={!form.name.trim()}
+                        // disabled={!form.name?.trim()}
                         color="primary"
                         sx={{
                             textTransform: "none",

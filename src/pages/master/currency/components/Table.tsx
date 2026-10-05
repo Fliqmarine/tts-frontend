@@ -66,11 +66,11 @@ export default function CurrencyIndexTable({ onEdit }: CurrencyIndexTableProps) 
         alert(`Exporting ${selected.length} items (Placeholder)`);
     };
 
-    const handleActiveChange = (id: number, active: boolean) => {
-        setRows((prev) =>
-            prev.map((row) => (row.id === id ? { ...row, active } : row))
-        );
-    }
+        const handleActiveChange = (id: number, active: boolean) => {
+            setRows((prev) =>
+                prev.map((row) => (row.id === id ? { ...row, active } : row))
+            );
+        }
 
     return (
         <Box>
@@ -93,7 +93,7 @@ export default function CurrencyIndexTable({ onEdit }: CurrencyIndexTableProps) 
                     overflow: "hidden",
                 }}
             >
-                <Table size="small">
+                <Table size="small" stickyHeader >
                     <TableHead>
                         <TableRow>
                             <TableCell padding="checkbox" sx={{ pl: 1.5 }}>

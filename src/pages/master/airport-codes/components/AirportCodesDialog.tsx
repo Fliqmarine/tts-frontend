@@ -1,7 +1,9 @@
-import { Box, Button, Dialog, IconButton, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Dialog, IconButton, MenuItem, TextField, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import type { AirportCodes } from "../types/airportCodes.types";
 import { useEffect, useState } from "react";
+import { getCountries } from "react-phone-number-input";
+import en from "react-phone-number-input/locale/en.json";
 
 interface AirportCodesDialogProps {
     open: boolean;
@@ -12,6 +14,10 @@ interface AirportCodesDialogProps {
 
 export default function AirportCodesDialog({ open, onClose, airportCode, onSubmit }: AirportCodesDialogProps) {
     const isEdit = !!airportCode?.id;
+    const countries = getCountries().map((code) => ({
+        code,
+        name: (en as Record<string, string>)[code] || code,
+    }));
     const emptyForm = {
         city_name: "",
         airport_code: "",
@@ -23,7 +29,7 @@ export default function AirportCodesDialog({ open, onClose, airportCode, onSubmi
         if (open) {
             setForm(
                 airportCode
-                    ? { city_name: airportCode.city_name, airport_code: airportCode.airport_code, airport_name: airportCode.airport_name, country: airportCode.country }
+                    ? { city_name: airportCode.city_name || "", airport_code: airportCode.airport_code || "", airport_name: airportCode.airport_name || "", country: airportCode.country || "" }
                     : emptyForm
             );
         }
@@ -115,14 +121,23 @@ export default function AirportCodesDialog({ open, onClose, airportCode, onSubmi
                             required
                         />
                         <TextField
+                            select
                             label="Country"
                             fullWidth
                             value={form.country}
                             onChange={(e) => handleChange("country", e.target.value)}
-                            placeholder="e.g. USA"
                             size="small"
                             required
-                        />
+                        >
+                            {form.country && !countries.some(({ code }) => code === form.country) && (
+                                <MenuItem value={form.country}>{form.country}</MenuItem>
+                            )}
+                            {countries.map(({ code, name }) => (
+                                <MenuItem key={code} value={code}>
+                                    {name}
+                                </MenuItem>
+                            ))}
+                        </TextField>
                     </Box>
                 </Box>
                 <Box
@@ -142,7 +157,7 @@ export default function AirportCodesDialog({ open, onClose, airportCode, onSubmi
                     <Button
                         variant="contained"
                         onClick={handleSubmit}
-                        disabled={!form.city_name.trim() || !form.airport_code.trim() || !form.airport_name.trim() || !form.country.trim()}
+                        // disabled={!form.city_name?.trim() || !form.airport_code?.trim() || !form.airport_name?.trim() || !form.country?.trim()}
                         color="primary"
                         sx={{
                             textTransform: "none",

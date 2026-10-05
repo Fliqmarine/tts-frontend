@@ -25,10 +25,10 @@ export default function CargoDialog({ open, onClose, cargo, onSubmit }: CargoDia
             setForm(
                 cargo
                     ? {
-                        cargo_name: cargo.cargo_name,
-                        description: cargo.description,
-                        hsv_code: cargo.hsv_code,
-                        active: cargo.active,
+                        cargo_name: cargo.cargo_name || "",
+                        description: cargo.description || "",
+                        hsv_code: cargo.hsv_code || "",
+                        active: cargo.active ?? true,
                     }
                     : emptyForm
             );
@@ -159,7 +159,7 @@ export default function CargoDialog({ open, onClose, cargo, onSubmit }: CargoDia
                     <Button
                         variant="contained"
                         onClick={handleSubmit}
-                        disabled={!form.cargo_name.trim() || !form.hsv_code.trim()}
+                        // disabled={!form.cargo_name?.trim() || !form.hsv_code?.trim()}
                         color="primary"
                         sx={{
                             textTransform: "none",

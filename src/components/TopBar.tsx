@@ -7,7 +7,7 @@ import {
     Drawer,
     FormControlLabel,
     FormGroup,
-    IconButton,
+    IconButton, 
     List,
     ListItemButton,
     ListItemText,
@@ -22,7 +22,10 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
-import NavigationMenu, { navigationMenus } from "../config/MenuConfig";
+import NavigationMenu, {
+    isNavigationPathActive,
+    navigationMenus,
+} from "../config/MenuConfig";
 import type { NavigationChild } from "../config/MenuConfig";
 import { useColorMode } from "../theme/ColorModeContext"; 
 // import ProfileMenu from "./profile/ProfileMenu";
@@ -102,7 +105,9 @@ const MobileMenuNode = ({
     const [open, setOpen] = useState(false);
     const location = useLocation();
     const hasChildren = !!item.children?.length;
-    const isActive = item.path ? location.pathname.startsWith(item.path) : false;
+    const isActive = item.path
+        ? isNavigationPathActive(location.pathname, item.path)
+        : false;
 
     const handleClick = () => {
         if (hasChildren) {
@@ -191,7 +196,20 @@ function TopBar() {
     }, [location.pathname]);
 
     return (
-        <AppBar position="sticky" elevation={2}>
+        <AppBar
+            position="sticky"
+            elevation={3}
+            sx={(theme) => ({
+                backgroundColor: theme.palette.background.default,
+                borderBottom: `3px solid ${theme.palette.primary.main}`,
+                "& .MuiToolbar-root": {
+                    color: theme.palette.text.primary,
+                },
+                "& .MuiIconButton-root": {
+                    color: theme.palette.text.primary,
+                },
+            })}
+        >
             <Container maxWidth={false} disableGutters sx={{ px: { xs: 1, sm: 2 } }}>
                 <Toolbar variant="dense" sx={{ display: "flex", justifyContent: "space-between", minHeight: { xs: 52, md: 56 } }}>
                     {/* Logo + Nav */}
@@ -210,12 +228,12 @@ function TopBar() {
                             component={Link}
                             to="/dashboard"
                             sx={{
-                                marginBottom: 1,
+                                // marginBottom: 2,
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "flex-start",
                                 transition: "box-shadow 0.2s ease, transform 0.2s ease",
-                                filter: "brightness(0) invert(1)",
+                                // filter: (theme) => theme.palette.mode === "dark" ? "brightness(0) invert(1)" : "none",
                                 textDecoration: "none",
                                 "&:hover": {
                                     transform: "scale(1.05)",

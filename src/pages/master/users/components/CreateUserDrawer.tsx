@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { createUser, updateUser, } from "../services/user.service";
-import { Box, Button, Drawer, IconButton, MenuItem, Stack, TextField, Typography, Avatar, Alert, FormControlLabel, Switch, Paper, InputAdornment } from "@mui/material";
+import { createUser, getUsers, updateUser } from "../services/user.service";
+import { Box, Button, Drawer, IconButton, MenuItem, Stack, TextField, Typography, Avatar, Alert, FormControlLabel, Switch, InputAdornment } from "@mui/material";
 import axios from "axios";
-import type { User } from "../types/user.types";
+import { ROLE_OPTIONS, type User } from "../types/user.types";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonIcon from "@mui/icons-material/Person";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
@@ -17,12 +17,29 @@ interface CreateUserDrawerProps {
   onCreated: () => void;
 }
 
+const CLIENT_OPTIONS = [
+  { id: "1001", name: "Northstar Freight" },
+  { id: "1002", name: "Cedar & Coast Trading" },
+  { id: "1003", name: "Pacific Bridge Logistics" },
+];
+
+const HUB_OPTIONS = [
+  { id: "1", name: "Global Hub NY" },
+  { id: "2", name: "Euro Hub Berlin" },
+  { id: "3", name: "Asia Hub Tokyo" },
+  { id: "4", name: "Middle East Hub Dubai" },
+  { id: "5", name: "UK Hub London" },
+];
 
 export default function CreateUserDrawer({ open, onClose, onCreated, user }: CreateUserDrawerProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
+  const [clientId, setClientId] = useState("");
+  const [hubId, setHubId] = useState("");
+  const [backupPicId, setBackupPicId] = useState("");
+  const [backupPicOptions, setBackupPicOptions] = useState<User[]>([]);
   const [isActive, setIsActive] = useState(true);
   const [initial, setInitial] = useState("");
   const [avatar, setAvatar] = useState<File | null>(null);
@@ -38,6 +55,9 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
       setEmail("");
       setPassword("");
       setRole("");
+      setClientId("");
+      setHubId("");
+      setBackupPicId("");
       setIsActive(true);
       setInitial("");
       setAvatar(null);
@@ -48,6 +68,9 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
     setName(user.name);
     setEmail(user.email);
     setRole(user.role);
+    setClientId(user.clientId ?? "");
+    setHubId(user.hubId ?? "");
+    setBackupPicId(user.backupPicId ?? "");
     setIsActive(user.isActive);
     setInitial(user.initial ? user.initial.toUpperCase() : "");
     setAvatar(null);
@@ -61,11 +84,33 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
     }
   }, [user]);
 
+  useEffect(() => {
+    if (!open || role !== "Operations Executive") return;
+
+    let isCurrent = true;
+    getUsers()
+      .then((users) => {
+        if (isCurrent) {
+          setBackupPicOptions(users.filter((candidate) => candidate.isActive && candidate.id !== user?.id));
+        }
+      })
+      .catch(() => {
+        if (isCurrent) setBackupPicOptions([]);
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [open, role, user?.id]);
+
   const handleCancel = () => {
     setName("");
     setEmail("");
     setPassword("");
     setRole("");
+    setClientId("");
+    setHubId("");
+    setBackupPicId("");
     setIsActive(true);
     setInitial("");
     setAvatar(null);
@@ -91,6 +136,9 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
             email,
             password,
             role: role as User["role"],
+            clientId,
+            hubId,
+            backupPicId,
             isActive,
             initial,
           },
@@ -103,6 +151,9 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
             email,
             password,
             role: role as User["role"],
+            clientId,
+            hubId,
+            backupPicId,
             isActive,
             initial,
           },
@@ -114,6 +165,9 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
       setEmail("");
       setPassword("");
       setRole("");
+      setClientId("");
+      setHubId("");
+      setBackupPicId("");
       setIsActive(true);
       setInitial("");
 
@@ -143,6 +197,12 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
       anchor="right"
       open={open}
       onClose={onClose}
+      sx={{
+        "& .MuiDrawer-paper": {
+          bgcolor: "#fff",
+          color: "#1A1F36",
+        },
+      }}
     >
       <Box
         sx={{
@@ -153,6 +213,8 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
           height: "100%",
           display: "flex",
           flexDirection: "column",
+          bgcolor: "#fff",
+          color: "#1A1F36",
         }}
       >
         {/* Header */}
@@ -245,10 +307,7 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
             overflowY: "auto",
           }}
         >
-          <Box
-            component={Paper}
-            sx={{ p: 3 }}
-          >
+          <Box>
             <Stack
               spacing={3}
               sx={{
@@ -328,10 +387,14 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
                 variant="outlined"
                 label="Role"
                 value={role}
-                onChange={(event) =>
-                  setRole(event.target.value)
-                }
+                onChange={(event) => {
+                  setRole(event.target.value);
+                  setClientId("");
+                  setHubId("");
+                  setBackupPicId("");
+                }}
                 fullWidth
+                required
                 slotProps={{
                   input: {
                     startAdornment: (
@@ -342,35 +405,40 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
                   }
                 }}
               >
-                <MenuItem value="Vendor">
-                  Client
-                </MenuItem>
-
-                <MenuItem value="Vendor">
-                  Documentation
-                </MenuItem>
-
-                <MenuItem value="Employee">
-                  Key Account Manager
-                </MenuItem>
-
-                <MenuItem value="Employee">
-                  operations Manager
-                </MenuItem>
-
-                <MenuItem value="SuperAdmin">
-                  Manager
-                </MenuItem>
-
-                <MenuItem value="Client">
-                  Fiance Executive
-                </MenuItem>
-
-                <MenuItem value="Client">
-                  Finance Manager
-                </MenuItem>
-
+                {ROLE_OPTIONS.map((roleOption) => (
+                  <MenuItem key={roleOption} value={roleOption}>
+                    {roleOption}
+                  </MenuItem>
+                ))}
               </TextField>
+
+              {role === "Client" && (
+                <TextField select label="Client" value={clientId} onChange={(event) => setClientId(event.target.value)} fullWidth required>
+                  <MenuItem value=""><em>Select Client</em></MenuItem>
+                  {CLIENT_OPTIONS.map((clientOption) => (
+                    <MenuItem key={clientOption.id} value={clientOption.id}>{clientOption.name}</MenuItem>
+                  ))}
+                </TextField>
+              )}
+
+              {role === "Hub" && (
+                <TextField select label="Hub" value={hubId} onChange={(event) => setHubId(event.target.value)} fullWidth required>
+                  <MenuItem value=""><em>Select Hub</em></MenuItem>
+                  {HUB_OPTIONS.map((hubOption) => (
+                    <MenuItem key={hubOption.id} value={hubOption.id}>{hubOption.name}</MenuItem>
+                  ))}
+                </TextField>
+              )}
+
+              {role === "Operations Executive" && (
+                <TextField select label="Backup PIC" value={backupPicId} onChange={(event) => setBackupPicId(event.target.value)} fullWidth required>
+                  <MenuItem value=""><em>Select Backup PIC</em></MenuItem>
+                  {backupPicOptions.map((backupPic) => (
+                    <MenuItem key={backupPic.id} value={String(backupPic.id)}>{backupPic.name}</MenuItem>
+                  ))}
+                </TextField>
+              )}
+
 
               <TextField
                 label="Initial"

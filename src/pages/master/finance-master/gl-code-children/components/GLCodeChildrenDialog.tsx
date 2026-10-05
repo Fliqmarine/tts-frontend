@@ -13,12 +13,12 @@ interface GLCodeChildrenDialogProps {
 
 export default function GLCodeChildrenDialog({ open, onClose, glCode, onSubmit }: GLCodeChildrenDialogProps) {
     const isEdit = !!glCode?.id;
-    const emptyForm: Omit<GLCodeChildren, "id"> = {
-        glCodeParentId: "",
+    const emptyForm = {
+        glCodeParentId: "" as any,
         name: "",
         code: "",
         active: true,
-    };
+    } as Omit<GLCodeChildren, "id">;
     const [form, setForm] = useState(emptyForm);
 
     useEffect(() => {
@@ -26,10 +26,10 @@ export default function GLCodeChildrenDialog({ open, onClose, glCode, onSubmit }
             setForm(
                 glCode
                     ? {
-                        glCodeParentId: glCode.glCodeParentId,
-                        name: glCode.name,
-                        code: glCode.code,
-                        active: glCode.active,
+                        glCodeParentId: (glCode.glCodeParentId || "") as any,
+                        name: glCode.name || "",
+                        code: glCode.code || "",
+                        active: glCode.active ?? true,
                     }
                     : emptyForm
             );
@@ -135,7 +135,7 @@ export default function GLCodeChildrenDialog({ open, onClose, glCode, onSubmit }
                 <Button
                     variant="contained"
                     onClick={handleSubmit}
-                    disabled={!form.code.trim() || !form.name.trim() || !form.glCodeParentId}
+                    // disabled={!form.code?.trim() || !form.name?.trim() || !form.glCodeParentId}
                     color="primary"
                     sx={{
                         textTransform: "none",

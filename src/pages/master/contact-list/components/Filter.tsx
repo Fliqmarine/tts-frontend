@@ -70,8 +70,6 @@ export default function ContactsIndexFilter({ filters, onFilterChange }: Contact
                 sx={{ minWidth: 160, "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
             >
                 <MenuItem value="">All</MenuItem>
-                <MenuItem value="Client">Client</MenuItem>
-                <MenuItem value="Hub">Hub</MenuItem>
                 <MenuItem value="TTS Agent">TTS Agent</MenuItem>
                 <MenuItem value="Sub Agent">Sub Agent</MenuItem>
                 <MenuItem value="Sub Agent Onboard">Sub Agent Onboard</MenuItem>
@@ -100,6 +98,18 @@ export default function ContactsIndexFilter({ filters, onFilterChange }: Contact
                 )}
                 sx={{ minWidth: 160, "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
             />
+            <TextField
+                label="Status"
+                size="small"
+                select
+                value={filters.status ?? ""}
+                onChange={(e) => handleChange("status", e.target.value)}
+                sx={{ minWidth: 140, "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+            >
+                <MenuItem value="">All statuses</MenuItem>
+                <MenuItem value="active">Active</MenuItem>
+                <MenuItem value="inactive">Inactive</MenuItem>
+            </TextField>
         </Box>
     );
 }

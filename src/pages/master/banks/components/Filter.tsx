@@ -1,9 +1,10 @@
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, MenuItem, TextField, Typography } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
 
 export interface Filters {
     search: string;
+    
 }
 
 interface BanksIndexFilterProps {
@@ -24,6 +25,8 @@ export default function Filter({
             sx={{
                 display: "flex",
                 flexDirection: { xs: "column", sm: "row" },
+
+                flexWrap: "wrap",
                 gap: 2,
                 alignItems: { sm: "center" },
             }}
@@ -72,6 +75,9 @@ export default function Filter({
                     }}
                 />
             </Box>
+            
+           
+            
         </Box>
     );
 }

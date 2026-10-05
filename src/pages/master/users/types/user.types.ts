@@ -2,13 +2,27 @@ import { z } from "zod";
 
 // ── Schemas ───────────────────────────────────────────────────────────────────
 
-const ROLE_OPTIONS = ["Documentation", "Key Account Manager", "operations Manager", "Manager", "Fiance Executive", "Finance Manager", "Client",] as const;
+export const ROLE_OPTIONS = [
+  "Client",
+  "Hub",
+  "Documentation",
+  "Operations Executive",
+  "Finance Executive",
+  "Finance Manager",
+  "Manager",
+] as const;
 
 export const UserSchema = z.object({
   id: z.number(),
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
   role: z.enum(ROLE_OPTIONS),
+  employeeId: z.string().optional(),
+  jobTitle: z.string().optional(),
+  department: z.string().optional(),
+  clientId: z.string().optional(),
+  hubId: z.string().optional(),
+  backupPicId: z.string().optional(),
   initial: z.string().min(2, "initial must be at least 2 characters").nullable().optional().or(z.literal("")),
   avatar: z.string().nullable(),
   isActive: z.boolean(),
@@ -21,6 +35,12 @@ export const CreateUserSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   role: z.enum(ROLE_OPTIONS),
+  employeeId: z.string().optional(),
+  jobTitle: z.string().optional(),
+  department: z.string().optional(),
+  clientId: z.string().optional(),
+  hubId: z.string().optional(),
+  backupPicId: z.string().optional(),
   initial: z.string().min(2, "initial must be at least 2 characters").nullable().optional().or(z.literal("")),
   isActive: z.boolean().optional().default(true),
 });
@@ -30,6 +50,12 @@ export const UpdateUserSchema = z.object({
   email: z.string().email().optional(),
   password: z.string().min(6).optional(),
   role: z.enum(ROLE_OPTIONS).optional(),
+  employeeId: z.string().optional(),
+  jobTitle: z.string().optional(),
+  department: z.string().optional(),
+  clientId: z.string().optional(),
+  hubId: z.string().optional(),
+  backupPicId: z.string().optional(),
   isActive: z.boolean().optional(),
   initial: z.string().min(2, "initial must be at least 2 characters").nullable().optional().or(z.literal("")),
 

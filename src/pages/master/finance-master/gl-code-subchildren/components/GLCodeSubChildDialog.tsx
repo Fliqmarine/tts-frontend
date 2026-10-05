@@ -26,11 +26,11 @@ export default function GLCodeSubChildDialog({ open, onClose, glCode, onSubmit }
             setForm(
                 glCode
                     ? {
-                        glCodeParentName: glCode.glCodeParentName,
-                        glCodeChildrenName: glCode.glCodeChildrenName,
-                        name: glCode.name,
-                        code: glCode.code,
-                        active: glCode.active,
+                        glCodeParentName: glCode.glCodeParentName || "",
+                        glCodeChildrenName: glCode.glCodeChildrenName || "",
+                        name: glCode.name || "",
+                        code: glCode.code || "",
+                        active: glCode.active ?? true,
                     }
                     : emptyForm
             );
@@ -153,7 +153,7 @@ export default function GLCodeSubChildDialog({ open, onClose, glCode, onSubmit }
                 <Button
                     variant="contained"
                     onClick={handleSubmit}
-                    disabled={!form.code.trim() || !form.name.trim() || !form.glCodeParentName || !form.glCodeChildrenName}
+                    // disabled={!form.code?.trim() || !form.name?.trim() || !form.glCodeParentName || !form.glCodeChildrenName}
                     color="primary"
                     sx={{
                         textTransform: "none",

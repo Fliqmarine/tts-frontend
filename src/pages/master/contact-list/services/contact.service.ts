@@ -10,13 +10,13 @@ export const createContact = async (
 
     // Top-level fields
     formData.append("groupId", data.groupId);
-    if (data.description) formData.append("description", data.description);
+    //if (data.description) formData.append("description", data.description);
     formData.append("companyName", data.companyName);
-    formData.append("email", data.email);
-    formData.append("phone", data.phone);
+    //formData.append("email", data.email);
+    //formData.append("phone", data.phone);
 
-    if (data.initial) formData.append("initial", data.initial);
-    if (data.faxNo) formData.append("faxNo", data.faxNo);
+    //if (data.initial) formData.append("initial", data.initial);
+   // if (data.faxNo) formData.append("faxNo", data.faxNo);
     if (data.address) formData.append("address", data.address);
     if (data.city) formData.append("city", data.city);
     if (data.country) formData.append("country", data.country);
@@ -26,14 +26,13 @@ export const createContact = async (
     if (data.eoriUiseNo) formData.append("eoriUiseNo", data.eoriUiseNo);
     if (data.notifyParty) formData.append("notifyParty", data.notifyParty);
     if (data.airportCode) formData.append("airportCode", data.airportCode);
-    if (data.oppManager) formData.append("oppManager", data.oppManager);
+    if (data.keyAccountManager) formData.append("oppManager", data.keyAccountManager);
     if (data.bankDetails) formData.append("bankDetails", data.bankDetails);
-    if (data.clientHubs) formData.append("clientHubs", data.clientHubs);
+    //if (data.clientHubs) formData.append("clientHubs", data.clientHubs);
     if (data.multipleEmail) formData.append("multipleEmail", data.multipleEmail);
 
-    // Person in charge (serialize as JSON)
-    if (data.personIncharge) {
-        formData.append("personIncharge", JSON.stringify(data.personIncharge));
+    if (data.coordinatorInCharge) {
+        formData.append("coordinatorInCharge", JSON.stringify(data.coordinatorInCharge));
     }
 
     // Accounting details (serialize as JSON)
@@ -78,8 +77,8 @@ export const updateContact = async (
         }
     });
 
-    if (data.personIncharge) {
-        formData.append("personIncharge", JSON.stringify(data.personIncharge));
+    if (data.coordinatorInCharge) {
+        formData.append("coordinatorInCharge", JSON.stringify(data.coordinatorInCharge));
     }
     if (data.accountingDetails) {
         formData.append("accountingDetails", JSON.stringify(data.accountingDetails));

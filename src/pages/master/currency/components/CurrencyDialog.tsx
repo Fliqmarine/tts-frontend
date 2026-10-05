@@ -39,12 +39,12 @@ export default function CurrencyDialog({ open, onClose, currency, onSubmit }: Cu
             setForm(
                 currency
                     ? {
-                        code: currency.code,
-                        country: currency.country,
-                        currency: currency.currency,
-                        symbol: currency.symbol,
-                        active: currency.active,
-                        conversion_rate: currency.conversion_rate,
+                        code: currency.code || "",
+                        country: currency.country || "",
+                        currency: currency.currency || "",
+                        symbol: currency.symbol || "",
+                        active: currency.active ?? true,
+                        conversion_rate: currency.conversion_rate ?? 1.00,
                     }
                     : emptyForm
             );
@@ -164,8 +164,8 @@ export default function CurrencyDialog({ open, onClose, currency, onSubmit }: Cu
                             placeholder="e.g. 1.00"
                             size="small"
                             required
+                            helperText="* Enter the amount to be converted to USD."
                         />
-
                         <FormControlLabel
                             control={
                                 <Switch
@@ -195,7 +195,7 @@ export default function CurrencyDialog({ open, onClose, currency, onSubmit }: Cu
                     <Button
                         variant="contained"
                         onClick={handleSubmit}
-                        disabled={!form.code.trim() || !form.country || !form.currency.trim() || !form.symbol.trim()}
+                        // disabled={!form.code?.trim() || !form.country || !form.currency?.trim() || !form.symbol?.trim()}
                         color="primary"
                         sx={{
                             textTransform: "none",

@@ -1,7 +1,7 @@
 import { Box, MenuItem, TextField, Typography } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
-import type { HubFilters } from "../types/hub.types";
+import type { HubFilters } from "../types/hubLocations.types";
 
 // Sample station codes – replace with API-driven list when ready
 const STATION_CODES = [
@@ -13,9 +13,10 @@ const STATION_CODES = [
 interface HubIndexFilterProps {
     filters: HubFilters;
     onFilterChange: (filters: HubFilters) => void;
+    stationCodes: string[];
 }
 
-export default function HubListFilter({ filters, onFilterChange }: HubIndexFilterProps) {
+export default function HubListFilter({ filters, onFilterChange, stationCodes }: HubIndexFilterProps) {
     const handleChange = (key: keyof HubFilters, value: string) => {
         onFilterChange({ ...filters, [key]: value || undefined });
     };
@@ -76,7 +77,7 @@ export default function HubListFilter({ filters, onFilterChange }: HubIndexFilte
                 sx={{ minWidth: 180, "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
             >
                 <MenuItem value="">All Stations</MenuItem>
-                {STATION_CODES.map((code) => (
+                {[...new Set([...STATION_CODES, ...stationCodes])].sort().map((code) => (
                     <MenuItem key={code} value={code}>
                         {code}
                     </MenuItem>

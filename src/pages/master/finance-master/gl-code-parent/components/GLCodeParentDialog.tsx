@@ -14,12 +14,12 @@ const TYPES = ["Income", "Expense"];
 
 export default function GLCodeParentDialog({ open, onClose, glCode, onSubmit }: GLCodeParentDialogProps) {
     const isEdit = !!glCode?.id;
-    const emptyForm: Omit<GLCodeParent, "id"> = {
+    const emptyForm = {
         name: "",
         code: "",
-        type: "",
+        type: "" as any,
         active: true,
-    };
+    } as Omit<GLCodeParent, "id">;
     const [form, setForm] = useState(emptyForm);
 
     useEffect(() => {
@@ -27,10 +27,10 @@ export default function GLCodeParentDialog({ open, onClose, glCode, onSubmit }: 
             setForm(
                 glCode
                     ? {
-                        name: glCode.name,
-                        code: glCode.code,
-                        type: glCode.type,
-                        active: glCode.active,
+                        name: glCode.name || "",
+                        code: glCode.code || "",
+                        type: (glCode.type || "") as any,
+                        active: glCode.active ?? true,
                     }
                     : emptyForm
             );
@@ -134,7 +134,7 @@ export default function GLCodeParentDialog({ open, onClose, glCode, onSubmit }: 
                 <Button
                     variant="contained"
                     onClick={handleSubmit}
-                    disabled={!form.code.trim() || !form.type.trim()}
+                    // disabled={!form.name?.trim() || !form.code?.trim() || !form.type?.trim()}
                     color="primary"
                     sx={{
                         textTransform: "none",

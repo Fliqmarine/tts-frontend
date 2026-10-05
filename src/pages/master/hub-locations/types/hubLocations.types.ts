@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 
-export const HubSchema = z.object({
+export const HubLocationsSchema = z.object({
     id: z.number(),
     contactCode: z.string().min(1, "Contact code is required"),
     name: z.string().min(1, "Hub name is required"),
@@ -13,14 +13,19 @@ export const HubSchema = z.object({
     isActive: z.boolean(),
 });
 
-export const CreateHubSchema = HubSchema.omit({ id: true });
+export const CreateHubLocationsSchema = HubLocationsSchema.omit({ id: true });
 
 // ── Derived Types ─────────────────────────────────────────────────────────────
 
-export type Hub = z.infer<typeof HubSchema>;
-export type CreateHub = z.infer<typeof CreateHubSchema>;
+export type HubLocations = z.infer<typeof HubLocationsSchema>;
+export type CreateHubLocations = z.infer<typeof CreateHubLocationsSchema>;
+
+export interface HubFilters {
+    search?: string;
+    stationCode?: string;
+}
 
 // ── Safe Parse Helpers ────────────────────────────────────────────────────────
 
-export const parseHub = (raw: unknown): Hub => HubSchema.parse(raw);
-export const parseHubs = (raw: unknown): Hub[] => z.array(HubSchema).parse(raw);
+export const parseHub = (raw: unknown): HubLocations => HubLocationsSchema.parse(raw);
+export const parseHubs = (raw: unknown): HubLocations[] => z.array(HubLocationsSchema).parse(raw);

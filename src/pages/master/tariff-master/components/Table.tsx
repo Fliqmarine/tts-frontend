@@ -22,7 +22,7 @@ const headCellSx = {
     whiteSpace: "nowrap" as const,
 };
 
-const DEMO_TARIFF_MASTERS: TariffMaster[] = [
+export const DEMO_TARIFF_MASTERS: TariffMaster[] = [
     { id: 1, name: "Air Tariff", calculation_rule: "None" },
     { id: 2, name: "Air Freight Charges", calculation_rule: "Per Kg" },
     { id: 3, name: "Ocean Freight Charges", calculation_rule: "Per Container" },
@@ -40,11 +40,12 @@ const DEMO_TARIFF_MASTERS: TariffMaster[] = [
 const TOTAL_COLUMNS = 4;
 
 interface TariffMasterIndexTableProps {
+    rows: TariffMaster[];
     onEdit: (tariff: TariffMaster) => void;
+    onDelete: (tariff: TariffMaster) => void;
 }
 
-export default function TariffMasterIndexTable({ onEdit }: TariffMasterIndexTableProps) {
-    const [rows, setRows] = useState<TariffMaster[]>(DEMO_TARIFF_MASTERS);
+export default function TariffMasterIndexTable({ rows, onEdit, onDelete }: TariffMasterIndexTableProps) {
     const [page, setPage] = useState(0);
 
     const [selected, setSelected] = useState<number[]>([]);
@@ -70,10 +71,6 @@ export default function TariffMasterIndexTable({ onEdit }: TariffMasterIndexTabl
 
     const handleExport = () => {
         alert(`Exporting ${selected.length} items (Placeholder)`);
-    };
-
-    const handleDelete = (id: number) => {
-        setRows((prev) => prev.filter((r) => r.id !== id));
     };
 
     const handleChangePage = (_: unknown, newPage: number) => {
@@ -161,7 +158,7 @@ export default function TariffMasterIndexTable({ onEdit }: TariffMasterIndexTabl
                                                     <IconButton
                                                         size="small"
                                                         color="error"
-                                                        onClick={() => handleDelete(tariff.id)}
+                                                        onClick={() => onDelete(tariff)}
                                                     >
                                                         <DeleteIcon fontSize="small" />
                                                     </IconButton>

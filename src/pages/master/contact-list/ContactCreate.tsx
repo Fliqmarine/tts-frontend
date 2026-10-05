@@ -14,13 +14,6 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
-
-import { styled } from "@mui/material/styles";
 import { createContact } from "./services/contact.service";
 import type { CreateContactRequest } from "./types/contact.types";
 import { forwardRef } from "react";
@@ -28,30 +21,19 @@ import PhoneInput, { getCountries } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import type { Value } from "react-phone-number-input";
 import en from "react-phone-number-input/locale/en.json";
-
-const VisuallyHiddenInput = styled("input")({
-    clip: "rect(0 0 0 0)",
-    clipPath: "inset(50%)",
-    height: 1,
-    overflow: "hidden",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    whiteSpace: "nowrap",
-    width: 1,
-});
+import type { TextFieldProps } from "@mui/material";
 
 const SECTION_HEADER_SX = {
-    py: 0.5,
-    px: 2,
     display: "flex",
     alignItems: "center",
-    bgcolor: "primary.main",
-    color: "primary.contrastText",
-    borderRadius: 1,
+    gap: 1.2,
+    width: "100%",
+    pb: 1,
+    mb: 1.5,
+    borderBottom: "2px solid #7d7d7d",
 } as const;
 
-const PhoneInputField = forwardRef<HTMLInputElement, any>((props, ref) => (
+const PhoneInputField = forwardRef<HTMLInputElement, TextFieldProps>((props, ref) => (
     <TextField label="Telephone" {...props} inputRef={ref} />
 ));
 PhoneInputField.displayName = "PhoneInputField";
@@ -62,12 +44,12 @@ PhoneInputField.displayName = "PhoneInputField";
 // ─────────────────────────────────────────────────────────────────
 interface FormState {
     groupId: string;
-    description: string;
+    //description: string;
     companyName: string;
-    initial: string;
-    email: string;
-    phone: string;
-    faxNo: string;
+    //initial: string;
+    //email: string;
+    //phone: string;
+    //faxNo: string;
     address: string;
     city: string;
     country: string;
@@ -78,36 +60,36 @@ interface FormState {
     notifyParty: string;
     airportCode: string;
     multipleEmail: string;
-    oppManager: string;
+    keyAccountManager: string;
     bankDetails: string;
-    clientHubs: string;
+    //clientHubs: string;
 
-    personIncharge: { name: string; email: string; phone: string; faxNo: string };
+    coordinatorInCharge: { name: string; email: string; phone: string; };
 
     accountingDetails: {
         name: string;
         email: string;
         phone: string;
-        faxNo: string;
+        //faxNo: string;
         country: string;
         creditLimit: string;
         paymentTerms: string;
         currency: string;
         billingAddress: string;
         specialInstructions: string;
-        useBillingCurrency: boolean;
+        //useBillingCurrency: boolean;
     };
 
 }
 
 const INITIAL_FORM_STATE: FormState = {
-    groupId: "Client",
-    description: "",
+    groupId: "TTS Agent",
+    //description: "",
     companyName: "",
-    initial: "",
-    email: "",
-    phone: "",
-    faxNo: "",
+    //initial: "",
+    //email: "",
+    //phone: "",
+    //faxNo: "",
     address: "",
     city: "",
     country: "",
@@ -118,18 +100,18 @@ const INITIAL_FORM_STATE: FormState = {
     notifyParty: "",
     airportCode: "",
     multipleEmail: "",
-    oppManager: "",
+    keyAccountManager: "",
     bankDetails: "",
-    clientHubs: "",
-    personIncharge: { name: "", email: "", phone: "", faxNo: "" },
+    //clientHubs: "",
+    coordinatorInCharge: { name: "", email: "", phone: "", },
     accountingDetails: {
         name: "",
         email: "",
         phone: "",
-        faxNo: "",
+        //faxNo: "",
         country: "",
         creditLimit: "",
-        useBillingCurrency: false,
+       // useBillingCurrency: false,
         paymentTerms: "",
         currency: "",
         billingAddress: "",
@@ -137,7 +119,6 @@ const INITIAL_FORM_STATE: FormState = {
     },
 };
 
-// ─────────────────────────────────────────────────────────────────
 // Field/section config — this is the data that used to be 2000+
 // lines of repeated JSX. "key" is a dot-path into FormState.
 // ─────────────────────────────────────────────────────────────────
@@ -160,22 +141,21 @@ interface SectionConfig {
 }
 
 interface GroupConfig {
-    showUpload: boolean;
-    personInchargeStandalone: boolean;
+    coordinatorInChargeStandalone: boolean;
     hasAccounting: boolean;
-    accountingVariant?: "client" | "standard";
+    accountingVariant?: "standard";
     hasExtraColumn: boolean; // Client-only: key account manager / bank detail / client hubs
     contactRows: FieldConfig[][];
 }
 
-const PERSON_INCHARGE_ROWS: FieldConfig[][] = [
+const COORDINATOR_IN_CHARGE_ROWS: FieldConfig[][] = [
     [
-        { key: "personIncharge.name", label: "Name", required: true },
-        { key: "personIncharge.email", type: "email", label: "Email", required: true },
+        { key: "coordinatorInCharge.name", label: "Name", required: true },
     ],
     [
-        { key: "personIncharge.phone", label: "Phone", type: "tel", required: true },
-        { key: "personIncharge.faxNo", label: "Fax No" },
+        { key: "coordinatorInCharge.email", type: "email", label: "Email", required: true },
+        { key: "coordinatorInCharge.phone", label: "Phone", type: "tel", required: true },
+       // { key: "coordinatorInCharge.faxNo", label: "Fax No" },
     ],
 ];
 
@@ -188,115 +168,35 @@ const ACCOUNTING_ROWS_STANDARD: FieldConfig[][] = [
     ],
     [
         { key: "accountingDetails.phone", label: "Phone", type: "tel", required: true },
-        { key: "accountingDetails.faxNo", label: "Fax No" },
+        { key: "accountingDetails.country", label: "Country" },
     ],
     [
-        { key: "accountingDetails.country", label: "Country" },
         { key: "accountingDetails.paymentTerms", label: "Payment Terms", required: true },
+        { key: "accountingDetails.currency", label: "Currency", required: true },
     ],
-    [{ key: "accountingDetails.currency", label: "Currency", required: true, size: "small" }],
-    [{ key: "accountingDetails.billingAddress", label: "Billing Address", multiline: true, rows: 2 }],
-    [{ key: "accountingDetails.specialInstructions", label: "Special Instructions", multiline: true, rows: 2 }],
-];
-
-const ACCOUNTING_ROWS_CLIENT: FieldConfig[][] = [
-    [
-        { key: "accountingDetails.name", label: "Name", required: true },
-        { key: "accountingDetails.email", label: "Email" },
-    ],
-    [
-        { key: "accountingDetails.phone", label: "Phone", type: "tel", required: true },
-        { key: "accountingDetails.faxNo", label: "Fax No" },
-    ],
-    [
-        { key: "accountingDetails.country", label: "Country" },
-        { key: "accountingDetails.creditLimit", label: "Credit Limit", required: true },
-    ],
-    [
-        { key: "accountingDetails.paymentTerms", label: "Payment Terms", required: true, size: "small" },
-        { key: "accountingDetails.currency", label: "Currency", required: true, size: "small" },
-    ],
-    [{ key: "accountingDetails.billingAddress", label: "Billing Address", multiline: true, rows: 2 }],
-    [{ key: "accountingDetails.specialInstructions", label: "Special Instructions", multiline: true, rows: 2 }],
+    
+    [{ key: "accountingDetails.billingAddress", label: "Billing Address", multiline: true, rows: 3.5 }],
+    [{ key: "accountingDetails.specialInstructions", label: "Special Instructions", multiline: true, rows: 3.5 }],
 ];
 
 const GROUP_CONFIGS: Record<string, GroupConfig> = {
-    Client: {
-        showUpload: true,
-        personInchargeStandalone: true,
-        hasAccounting: true,
-        accountingVariant: "client",
-        hasExtraColumn: true,
-        contactRows: [
-            [{ key: "companyName", label: "Company Name", required: true }],
-            [
-                { key: "initial", label: "Initial", required: true },
-                { key: "email", label: "Email", type: "email", required: true },
-            ],
-            [
-                { key: "phone", label: "Phone", type: "tel", required: true },
-                { key: "faxNo", label: "Fax No" },
-            ],
-            [
-                { key: "city", label: "City", required: true },
-                { key: "country", label: "Country", required: true },
-            ],
-            [{ key: "address", label: "Address", required: true, multiline: true, rows: 3 }],
-            [
-                { key: "postalCode", label: "Postal Code" },
-                { key: "vatNo", label: "Vat No" },
-            ],
-        ],
-    },
-    Hub: {
-        showUpload: true,
-        personInchargeStandalone: false,
-        hasAccounting: true,
-        accountingVariant: "standard",
-        hasExtraColumn: false,
-        contactRows: [
-            [{ key: "companyName", label: "Company Name", required: true }],
-            [
-                { key: "stationCode", label: "Station Code", required: true },
-                { key: "email", label: "Email", type: "email", required: true },
-            ],
-            [
-                { key: "phone", label: "Phone", type: "tel", required: true },
-                { key: "faxNo", label: "Fax No" },
-            ],
-            [
-                { key: "eoriUiseNo", label: "EORI / UISE No." },
-                { key: "country", label: "Country", required: true },
-                { key: "city", label: "City", required: true },
-            ],
-            [{ key: "notifyParty", label: "Notify Party", required: true, multiline: true, rows: 1 }],
-            [{ key: "address", label: "Address", required: true, multiline: true, rows: 3 }],
-            [
-                { key: "postalCode", label: "Postal Code" },
-                { key: "vatNo", label: "Vat No" },
-            ],
-        ],
-    },
-    // TTS Agent, Sub Agent, Sub Agent Onboard, Sub Agent Export share the same
-    // field layout in the original file (Notify Party + Airport Code together),
-    // differing only in whether the upload button is shown.
-    "TTS Agent": buildAgentConfig(true),
-    "Sub Agent": buildAgentConfig(false),
-    "Sub Agent Onboard": buildAgentConfig(false),
-    "Sub Agent Export": buildAgentConfig(false),
+    // TTS Agent, Sub Agent, Sub Agent Onboard, and Sub Agent Export share a field layout.
+    "TTS Agent": buildAgentConfig(),
+    "Sub Agent": buildAgentConfig(),
+    "Sub Agent Onboard": buildAgentConfig(),
+    "Sub Agent Export": buildAgentConfig(),
     "Owners Agent": {
-        showUpload: false,
-        personInchargeStandalone: false,
+        coordinatorInChargeStandalone: true,
         hasAccounting: false,
         hasExtraColumn: false,
         contactRows: [
             [{ key: "companyName", label: "Company Name", required: true }],
+            // [
+            //     { key: "email", label: "Email", type: "email", required: true },
+            //     { key: "phone", label: "Phone", type: "tel", required: true },
+            // ],
             [
-                { key: "email", label: "Email", type: "email", required: true },
-                { key: "phone", label: "Phone", type: "tel", required: true },
-            ],
-            [
-                { key: "faxNo", label: "Fax No" },
+                //{ key: "faxNo", label: "Fax No" },
                 { key: "eoriUiseNo", label: "EORI / UISE No." },
             ],
             [
@@ -304,10 +204,12 @@ const GROUP_CONFIGS: Record<string, GroupConfig> = {
                 { key: "city", label: "City", required: true },
             ],
             [
-                { key: "notifyParty", label: "Notify Party", required: true, multiline: true, rows: 1 },
                 { key: "airportCode", label: "Airport Code", required: true },
             ],
-            [{ key: "address", label: "Address", required: true, multiline: true, rows: 3 }],
+            [   { key: "address", label: "Address", required: true, multiline: true, rows: 3 }],
+           
+            [   { key: "notifyParty", label: "Notify Party", multiline: true, rows: 3 },],
+            
             [
                 { key: "postalCode", label: "Postal Code" },
                 { key: "vatNo", label: "Vat No" },
@@ -315,18 +217,17 @@ const GROUP_CONFIGS: Record<string, GroupConfig> = {
         ],
     },
     Supplier: {
-        showUpload: true,
-        personInchargeStandalone: false,
+        coordinatorInChargeStandalone: true,
         hasAccounting: false,
         hasExtraColumn: false,
         contactRows: [
             [{ key: "companyName", label: "Company Name", required: true }],
+            // [
+            //     { key: "email", label: "Email", type: "email", required: true },
+            //     { key: "phone", label: "Phone", type: "tel", required: true },
+            // ],
             [
-                { key: "email", label: "Email", type: "email", required: true },
-                { key: "phone", label: "Phone", type: "tel", required: true },
-            ],
-            [
-                { key: "faxNo", label: "Fax No" },
+               // { key: "faxNo", label: "Fax No" },
                 { key: "eoriUiseNo", label: "EORI / UISE No." },
             ],
             [
@@ -338,38 +239,38 @@ const GROUP_CONFIGS: Record<string, GroupConfig> = {
                 { key: "postalCode", label: "Postal Code" },
                 { key: "vatNo", label: "Vat No" },
             ],
-            [{ key: "notifyParty", label: "Notify Party", required: true, multiline: true, rows: 1 }],
+              [{ key: "notifyParty", label: "Notify Party",  multiline: true, rows: 3 }],
         ],
     },
 };
 
-function buildAgentConfig(showUpload: boolean): GroupConfig {
+function buildAgentConfig(): GroupConfig {
     return {
-        showUpload,
-        personInchargeStandalone: false,
+        coordinatorInChargeStandalone: false,
         hasAccounting: true,
         accountingVariant: "standard",
         hasExtraColumn: false,
         contactRows: [
             [{ key: "companyName", label: "Company Name", required: true }],
             [
-                { key: "stationCode", label: "Station Code", required: true },
-                { key: "email", label: "Email", type: "email", required: true },
-            ],
-            [
-                { key: "phone", label: "Phone", type: "tel", required: true },
-                { key: "faxNo", label: "Fax No" },
-            ],
-            [
                 { key: "eoriUiseNo", label: "EORI / UISE No." },
+            ],
+            // [
+            //     { key: "phone", label: "Phone", type: "tel", required: true },
+            //     { key: "faxNo", label: "Fax No" },
+            // ],
+            [
+                
                 { key: "country", label: "Country", required: true },
                 { key: "city", label: "City", required: true },
             ],
             [
-                { key: "notifyParty", label: "Notify Party", required: true, multiline: true, rows: 1 },
                 { key: "airportCode", label: "Airport Code", required: true },
+                { key: "stationCode", label: "Station Code", required: true },
             ],
-            [{ key: "address", label: "Address", required: true, multiline: true, rows: 3 }],
+            [   { key: "address", label: "Address", required: true, multiline: true, rows: 3 }],
+            [   { key: "notifyParty", label: "Notify Party", multiline: true, rows: 3 },],
+
             [
                 { key: "postalCode", label: "Postal Code" },
                 { key: "vatNo", label: "Vat No" },
@@ -379,7 +280,7 @@ function buildAgentConfig(showUpload: boolean): GroupConfig {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// Path-based get/set for the nested FormState (personIncharge.*,
+// Path-based get/set for the nested FormState (coordinatorIncharge.*,
 // accountingDetails.*). Plain loops, no lodash/fluent chains.
 // ─────────────────────────────────────────────────────────────────
 function getValue(data: FormState, path: string): string | boolean {
@@ -397,9 +298,10 @@ function setValue(data: FormState, path: string, value: string | boolean): FormS
         return { ...data, [parts[0]]: value };
     }
     const [parent, child] = parts;
+    const parentValue = (data as unknown as Record<string, unknown>)[parent];
     return {
         ...data,
-        [parent]: { ...(data as any)[parent] as object, [child]: value },
+        [parent]: { ...(parentValue as Record<string, unknown>), [child]: value },
     };
 }
 
@@ -412,8 +314,6 @@ export default function CreateContactPage() {
         message: "",
         severity: "success",
     });
-    const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-
     const [formData, setFormData] = useState<FormState>(INITIAL_FORM_STATE);
 
     const updateField = (path: string, value: string | boolean) => {
@@ -436,12 +336,12 @@ export default function CreateContactPage() {
         try {
             const payload: CreateContactRequest = {
                 groupId: formData.groupId as CreateContactRequest["groupId"],
-                description: formData.description,
+               // description: formData.description,
                 companyName: formData.companyName,
-                initial: formData.initial,
-                email: formData.email,
-                phone: formData.phone,
-                faxNo: formData.faxNo,
+               // initial: formData.initial,
+               // email: formData.email,
+               // phone: formData.phone,
+              //  faxNo: formData.faxNo,
                 address: formData.address,
                 city: formData.city,
                 country: formData.country,
@@ -452,13 +352,13 @@ export default function CreateContactPage() {
                 notifyParty: formData.notifyParty,
                 airportCode: formData.airportCode,
                 multipleEmail: formData.multipleEmail,
-                oppManager: formData.oppManager,
+                keyAccountManager: formData.keyAccountManager,
                 bankDetails: formData.bankDetails,
-                clientHubs: formData.clientHubs,
-                personIncharge: formData.personIncharge,
+               // clientHubs: formData.clientHubs,
+                coordinatorInCharge: formData.coordinatorInCharge,
                 accountingDetails: formData.accountingDetails,
             };
-            await createContact(payload, uploadedFiles);
+            await createContact(payload);
             setSnackbar({ open: true, message: "Contact saved successfully!", severity: "success" });
             setTimeout(() => navigate(-1), 1200);
         } catch (err: unknown) {
@@ -473,7 +373,6 @@ export default function CreateContactPage() {
 
     const handleCancel = () => {
         setFormData(INITIAL_FORM_STATE);
-        setUploadedFiles([]);
     };
 
     // ── Field / section renderers ──────────────────────────────
@@ -499,7 +398,6 @@ export default function CreateContactPage() {
                 <Box key={field.key} sx={{ flex: 1, display: 'flex', alignItems: 'center', '& .PhoneInputCountry': { mr: 1 } }}>
                     <PhoneInput
                         international
-                        defaultCountry=""
                         value={getValue(formData, field.key) as Value}
                         onChange={(val) => updateField(field.key, val || "")}
                         inputComponent={PhoneInputField}
@@ -565,7 +463,19 @@ export default function CreateContactPage() {
             <>
                 {section.title && (
                     <Box sx={SECTION_HEADER_SX}>
-                        <Typography variant="subtitle2">{section.title}</Typography>
+                        <Box
+                            sx={{
+                                width: 4,
+                                height: 18,
+                                borderRadius: 1,
+                                background: "linear-gradient(180deg, #5A73FF 0%, #3D5AFE 100%)",
+                                mr: 1,
+                                flexShrink: 0,
+                            }}
+                        />
+                        <Typography variant="subtitle2" sx={{ color: "#3D5AFE", fontWeight: 700 }}>
+                            {section.title}
+                        </Typography>
                     </Box>
                 )}
                 {renderRows(section.rows)}
@@ -573,7 +483,7 @@ export default function CreateContactPage() {
         );
         if (section.standalonePaper) {
             return (
-                <Box key={key} component={Paper} sx={{ py: 2, px: 2, gap: 1.5, display: "flex", flexDirection: "column" }}>
+                <Box key={key} component={Paper} elevation={3} sx={{ py: 2, px: 2, gap: 1.5, display: "flex", flexDirection: "column" }}>
                     {body}
                 </Box>
             );
@@ -585,102 +495,22 @@ export default function CreateContactPage() {
         );
     };
 
-    const renderUploadButton = () => (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Button
-                    component="label"
-                    role={undefined}
-                    variant={uploadedFiles.length > 0 ? "outlined" : "contained"}
-                    tabIndex={-1}
-                    startIcon={uploadedFiles.length > 0 ? <CheckCircleIcon color="success" /> : <CloudUploadIcon />}
-                    color={uploadedFiles.length > 0 ? "success" : "primary"}
-                    sx={{ flexShrink: 0 }}
-                >
-                    {uploadedFiles.length > 0 ? "Add more files" : "Upload files"}
-                    <VisuallyHiddenInput
-                        type="file"
-                        multiple
-                        accept="image/jpeg,image/png,application/pdf"
-                        onChange={(event) => {
-                            const newFiles = Array.from(event.target.files ?? []);
-                            setUploadedFiles((prev) => [...prev, ...newFiles]);
-                            event.target.value = "";
-                        }}
-                    />
-                </Button>
-                {uploadedFiles.length > 0 && (
-                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                        {uploadedFiles.length} file{uploadedFiles.length > 1 ? "s" : ""} selected
-                    </Typography>
-                )}
-            </Box>
-            {uploadedFiles.length > 0 && (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                    {uploadedFiles.map((file, idx) => (
-                        <Tooltip key={idx} title={file.name}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 0.5,
-                                    px: 1,
-                                    py: 0.25,
-                                    borderRadius: 1,
-                                    border: '1px solid',
-                                    borderColor: 'success.light',
-                                    bgcolor: 'rgba(46,125,50,0.06)',
-                                    maxWidth: 180,
-                                }}
-                            >
-                                <InsertDriveFileIcon sx={{ fontSize: 13, color: 'success.main', flexShrink: 0 }} />
-                                <Typography
-                                    variant="caption"
-                                    sx={{
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
-                                        color: 'success.main',
-                                        fontWeight: 500,
-                                    }}
-                                >
-                                    {file.name}
-                                </Typography>
-                                <IconButton
-                                    size="small"
-                                    onClick={() => setUploadedFiles((prev) => prev.filter((_, i) => i !== idx))}
-                                    sx={{ p: 0.15, ml: 0.25, flexShrink: 0 }}
-                                >
-                                    <Typography variant="caption" sx={{ lineHeight: 1, color: 'text.secondary', fontSize: 10 }}>✕</Typography>
-                                </IconButton>
-                            </Box>
-                        </Tooltip>
-                    ))}
-                </Box>
-            )}
-        </Box>
-    );
-
     const renderColumn1 = (config: GroupConfig) => (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, flex: "1 1 330px" }}>
-            <Box component={Paper} sx={{ flex: 1, py: 2, px: 2, gap: 1, display: "flex", flexDirection: "column" }}>
+            <Box component={Paper} elevation={3} sx={{ flex: 1, py: 2, px: 2, gap: 1, display: "flex", flexDirection: "column" }}>
                 {renderRows(config.contactRows)}
-                {config.showUpload && renderUploadButton()}
-                {!config.personInchargeStandalone &&
-                    renderSection({ title: "Person in charge", rows: PERSON_INCHARGE_ROWS }, "person-incharge")}
             </Box>
-            {config.personInchargeStandalone &&
-                renderSection(
-                    { title: "Person in charge", rows: PERSON_INCHARGE_ROWS, standalonePaper: true },
-                    "person-incharge",
-                )}
+            {renderSection(
+                { title: "Coordinator In Charge", rows: COORDINATOR_IN_CHARGE_ROWS, standalonePaper: true },
+                "coordinator-in-charge",
+            )}
         </Box>
     );
 
     const renderColumn2 = (config: GroupConfig) => {
         if (!config.hasAccounting) {
             return (
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 2, flex: "1 1 330px" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2, flex: "1 1 330px", }}>
                     {renderSection(
                         { title: "Multiple Email", rows: MULTIPLE_EMAIL_ROWS, standalonePaper: true },
                         "multi-email",
@@ -688,27 +518,50 @@ export default function CreateContactPage() {
                 </Box>
             );
         }
-        const accountingRows = config.accountingVariant === "client" ? ACCOUNTING_ROWS_CLIENT : ACCOUNTING_ROWS_STANDARD;
+        const accountingRows = ACCOUNTING_ROWS_STANDARD;
         return (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2, flex: "1 1 330px" }}>
-                <Box component={Paper} sx={{ flex: 1, py: 2, px: 2, gap: 1.5, display: "flex", flexDirection: "column" }}>
+                <Box component={Paper} elevation={3} sx={{ flex: 1, py: 2, px: 2, gap: 1.5, display: "flex", flexDirection: "column", }}>
                     <Box sx={SECTION_HEADER_SX}>
-                        <Typography variant="subtitle2">Accounting details</Typography>
+                        <Box
+                            sx={{
+                                width: 4,
+                                height: 18,
+                                borderRadius: 1,
+                                background: "linear-gradient(180deg, #5A73FF 0%, #3D5AFE 100%)",
+                                flexShrink: 0,
+                                
+                            }}
+                        />
+                        <Typography variant="subtitle2" sx={{ color: "#3D5AFE", fontWeight: 700 }}>
+                            Accounting details
+                        </Typography>
                     </Box>
                     {renderRows(accountingRows)}
-                    {config.accountingVariant === "client" &&
-                        renderField({
-                            key: "accountingDetails.useBillingCurrency",
-                            label: "Use billing currency",
-                            type: "checkbox",
-                        })}
-                    {renderSection(
-                        { title: "Multiple Email", rows: MULTIPLE_EMAIL_ROWS, standalonePaper: true },
-                        "multi-email",
-                    )}
+                </Box>
+                <Box component={Paper} elevation={3} sx={{ flex: 1, py: 2, px: 2, gap: 1.5, display: "flex", flexDirection: "column", }}>
+                    <Box sx={SECTION_HEADER_SX}>
+                        <Box
+                            sx={{
+                                width: 4,
+                                height: 18,
+                                borderRadius: 1,
+                                background: "linear-gradient(180deg, #5A73FF 0%, #3D5AFE 100%)",
+                                flexShrink: 0,
+                                
+                            }}
+                        />
+                        <Typography variant="subtitle2" sx={{ color: "#3D5AFE", fontWeight: 700 }}>
+                           Multiple Email
+                        </Typography>
+                    </Box>
+                    {renderRows( MULTIPLE_EMAIL_ROWS )}
+                        
+                    
                 </Box>
             </Box>
         );
+
     };
 
     const renderColumn3 = (config: GroupConfig) => {
@@ -763,17 +616,18 @@ export default function CreateContactPage() {
                         onChange={(event) => updateField("groupId", event.target.value)}
                         sx={{ width: 200 }}
                     >
+                        {/* <MenuItem value="">Select a group</MenuItem> */}
                         {Object.keys(GROUP_CONFIGS).map((group) => (
                             <MenuItem key={group} value={group}>
                                 {group}
                             </MenuItem>
                         ))}
                     </TextField>
-                    <TextField
+                    {/* <TextField
                         label="Description"
                         value={formData.description}
                         onChange={(event) => updateField("description", event.target.value)}
-                    />
+                    /> */}
                 </Box>
                 <Box sx={{ display: "flex", flexDirection: "row", gap: 2, alignItems: "center" }}>
                     <Button variant="outlined" color="error" onClick={handleCancel} disabled={isSaving}>
