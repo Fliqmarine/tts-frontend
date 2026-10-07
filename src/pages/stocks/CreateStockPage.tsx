@@ -4,7 +4,7 @@ import DangerousOutlinedIcon from '@mui/icons-material/DangerousOutlined';
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import MedicationOutlinedIcon from '@mui/icons-material/MedicationOutlined';
 import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined';
-import AirportShuttleOutlinedIcon from '@mui/icons-material/AirportShuttleOutlined';
+import CargoSvg from '../../assets/Cargo_svg.svg';
 import React, { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -171,7 +171,12 @@ function CreateStockPage({ onChange }: any) {
     const imageFiles = uploadedFiles.filter(f => f.type.startsWith('image/'));
 
     const renderUploadedFiles = (files: File[]) => files.length > 0 && (
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+        <Box sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignContent: 'flex-start',
+            gap: 0.5,
+        }}>
             {files.map((file) => {
                 const fileIndex = uploadedFiles.indexOf(file);
 
@@ -228,8 +233,12 @@ function CreateStockPage({ onChange }: any) {
             >
                 <Typography variant="h5" sx={{ fontWeight: 600 }}>Create Stock</Typography>
                 <Box sx={{ display: "flex", gap: 2 }}>
-                    <Button variant="outlined">Cancel</Button>
-                    <Button variant="contained">Save</Button>
+                    <Button variant="outlined" color="error">
+                        Cancel
+                    </Button>
+                    <Button variant="contained" color="primary">
+                        Save
+                        </Button>
                 </Box>
             </Box>
 
@@ -261,25 +270,25 @@ function CreateStockPage({ onChange }: any) {
                             <TextField size="small" label="Entry Date" fullWidth required disabled />
                             <TextField size="small" label="Country of Origin" fullWidth required />
                             <TextField size="small" label="Cargo Status" fullWidth required />
-                            <TextField size="small" label="Cargo Description" fullWidth required />
-                            <TextField size="small" label="HS Code" fullWidth required disabled />
+                            <TextField size="small" label="Cargo Description" fullWidth  />
+                            <TextField size="small" label="HS Code" fullWidth required  />
                             <TextField size="small" label="Currency" fullWidth required />
-                            <TextField size="small" label="Cargo Value" fullWidth required />
+                            <TextField size="small" label="Cargo Value" fullWidth  />
                             <TextField size="small" label="Mode of Arrival" fullWidth required />
                             <TextField size="small" label="EU Reference" fullWidth required />
                             <TextField size="small" label="Transit ID No" fullWidth required />
                             <TextField
-                            size="small"
-                            label="Storage Type"
-                            fullWidth
-                            required
-                        />
+                                size="small"
+                                label="Storage Type"
+                                fullWidth
+                            />
                         </Box>
                     </Box>
                 </Box>
 
                 {/* Column 2: Mode of arrival / uploads (2fr) */}
-                <Box component={Paper} elevation={3} sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1.5 }}>
+                <Box component={Paper} elevation={3} sx={{ p: 1.5, display: "flex", flexDirection: "column", gap: 0.2, maxHeight: 495
+                    , overflowY: "auto" }}>
                     <Box
                         sx={{
                             display: "flex",
@@ -289,7 +298,7 @@ function CreateStockPage({ onChange }: any) {
                         }}
                     >
                         <SectionHeader
-                            title="Stock Details"
+                            title="Attachments & Charges"
                             icon={<Inventory2OutlinedIcon sx={{ fontSize: 26 }} />}
                         />
                         
@@ -302,7 +311,7 @@ function CreateStockPage({ onChange }: any) {
                         }}>
 
                     </Box>
-                    <Box sx={{ display: "flex", justifyContent: "left", gap: 2, ml: 6 }}>
+                    <Box sx={{ display: "flex", justifyContent: "left", mt:0.5, }}>
                         <FormControl sx={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 1 }}>
                             <FormLabel>Pickup Charges</FormLabel>
                             <RadioGroup
@@ -335,7 +344,6 @@ function CreateStockPage({ onChange }: any) {
                         sx={{
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: 0.75,
                             mt: 1,
                             border: isDragging ? '2px dashed' : '2px dashed transparent',
                             borderColor: isDragging ? 'primary.main' : 'transparent',
@@ -345,9 +353,9 @@ function CreateStockPage({ onChange }: any) {
                             transition: 'all 0.15s ease',
                         }}
                     >
-                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1 }}>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, pr: { sm: 1 }, pb: { xs: 1, sm: 0 }, borderRight: { xs: 0, sm: '1px solid' }, borderBottom: { xs: '1px solid', sm: 0 }, borderColor: 'divider' }}>
-                                {/* <Typography variant="caption" sx={{ fontWeight: 600 }}>Documents</Typography> */}
+                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 1, p: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Documents</Typography>
                                 <Button
                                     component="label"
                                     role={undefined}
@@ -368,10 +376,12 @@ function CreateStockPage({ onChange }: any) {
                                         }}
                                     />
                                 </Button>
-                                {renderUploadedFiles(documentFiles)}
+                                {documentFiles.length > 0 ? renderUploadedFiles(documentFiles) : (
+                                    <Typography variant="caption" color="text.secondary">No documents uploaded</Typography>
+                                )}
                             </Box>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, pl: { sm: 1 }, pt: { xs: 1, sm: 0 } }}>
-                                {/* <Typography variant="caption" sx={{ fontWeight: 600 }}>Images</Typography> */}
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 1, p: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Images</Typography>
                                 <Button
                                     component="label"
                                     role={undefined}
@@ -392,26 +402,23 @@ function CreateStockPage({ onChange }: any) {
                                         }}
                                     />
                                 </Button>
-                                {renderUploadedFiles(imageFiles)}
+                                {imageFiles.length > 0 ? renderUploadedFiles(imageFiles) : (
+                                    <Typography variant="caption" color="text.secondary">No images uploaded</Typography>
+                                )}
                             </Box>
                         </Box>
 
                         <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 1 }}>
                             {isDragging && (
                                 <Typography variant="caption" color="primary">
-                                    Drop files to upload
-                                </Typography>
-                            )}
-                            {uploadedFiles.length > 0 && (
-                                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                                    {uploadedFiles.length} file{uploadedFiles.length > 1 ? "s" : ""} selected
+                                    Drop files to upload    
                                 </Typography>
                             )}
                         </Box>
                     </Box>
                     <Box
                         sx={{
-                            mt: 1,
+                            mt: 0.5,
                             flexGrow: 1,
                             display: "flex",
                             flexDirection: "column"
@@ -425,10 +432,11 @@ function CreateStockPage({ onChange }: any) {
                                 // flexGrow: 1,
                                 padding: "10px",
                                 borderColor: "#ccc",
-                                borderRadius: "4px",
+                                borderRadius: "10px",
                                 fontFamily: "inherit",
                                 resize: "vertical"
                             }}
+                            
                         />
                     </Box>
 
@@ -441,7 +449,7 @@ function CreateStockPage({ onChange }: any) {
                             p: 2,
                             display: "flex",
                             flexDirection: "column",
-                            gap: 1,
+                           
                             gridColumn: { xs: "span 1", md: "span 1" },
                             border: "1px solid #000000",
                         }}
@@ -519,10 +527,13 @@ function CreateStockPage({ onChange }: any) {
                     component={Paper}
                     elevation={3}
                     sx={{
-                        p: 2,
+                        p: 2,   
                         display: "flex",
                         flexDirection:"column", gap: 1,
+                        // maxHeight: 250,
+                        // overflowY: "auto",
                         gridColumn: { xs: "span 1", md: "span 2" },
+
                         
                     }}
                 >
@@ -531,12 +542,12 @@ function CreateStockPage({ onChange }: any) {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "space-between",
-                            mb: 1
+                            
                         }}
                     >
                         <SectionHeader
                             title="Cargo Details"
-                            icon={<AirportShuttleOutlinedIcon sx={{ fontSize: 26 }} />}
+                            icon={<Box component="img" src={CargoSvg} alt="Cargo" sx={{ width: 48, height: 36,  }} />}
                         />
                         <Button size="small" startIcon={<AddIcon />} variant="outlined" onClick={handleAddCargo}>
                             Add Cargo Detail

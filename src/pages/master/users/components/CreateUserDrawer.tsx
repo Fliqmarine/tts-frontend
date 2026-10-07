@@ -504,6 +504,7 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
             variant="outlined"
             onClick={handleCancel}
             disabled={loading}
+            color="error"
           >
             Cancel
           </Button>

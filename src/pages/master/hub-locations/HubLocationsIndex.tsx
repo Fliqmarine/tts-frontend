@@ -16,7 +16,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import type { HubLocations, HubFilters } from "./types/hubLocations.types.ts";
 import HubListFilter from "./components/Filter";
 import HubIndexHeader from "./components/Header";
-import HubDialog from "./components/HubDialog";
+import HubLocationsDialog from "./components/HubLocationsDialog.tsx";
 
 export default function HubLocationsIndex() {
 
@@ -238,28 +238,13 @@ export default function HubLocationsIndex() {
                     </Typography>
                 </Paper>
             )}
-            <HubDialog
+            <HubLocationsDialog
                 open={dialogOpen}
                 hubLocations={hubLocationToEdit}
                 onClose={closeDialog}
                 onSubmit={saveHub}
             />
-            <Snackbar
-                open={notification !== null}
-                autoHideDuration={4000}
-                onClose={() => setNotification(null)}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            >
-                {notification && (
-                    <Alert
-                        severity={notification.severity}
-                        onClose={() => setNotification(null)}
-                        sx={{ width: "100%" }}
-                    >
-                        {notification.message}
-                    </Alert>
-                )}
-            </Snackbar>
+            
         </Stack>
     );
 }

@@ -1,5 +1,5 @@
 import { Add } from "@mui/icons-material";
-import GroupsIcon from "@mui/icons-material/Groups";
+import WarehouseIcon from "@mui/icons-material/Groups";
 import { Box, Button, Typography } from "@mui/material";
 
 export default function HubIndexHeader({ onCreate }) {
@@ -26,7 +26,7 @@ export default function HubIndexHeader({ onCreate }) {
 						color: theme.palette.primary.contrastText,
 					})}
 				>
-					<GroupsIcon sx={{ fontSize: 26 }} />
+					<WarehouseIcon sx={{ fontSize: 26 }} />
 				</Box>
 
 				<Typography variant="h5" sx={{ fontWeight: 700, color: "text.primary" }}>

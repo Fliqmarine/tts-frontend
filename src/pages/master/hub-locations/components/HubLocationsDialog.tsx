@@ -1,9 +1,11 @@
-import { Box, Button, Dialog, IconButton, TextField, Typography, FormControlLabel, Switch, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, Button, Dialog, Divider, IconButton, TextField, Typography, FormControlLabel, Switch, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
+import HubOutlinedIcon from "@mui/icons-material/HubOutlined";
 import type { HubLocations } from "../types/hubLocations.types";
 import { useEffect, useState } from "react";
 
-interface HubDialogProps {
+interface HubLocationsDialogProps {
     open: boolean;
     onClose: () => void;
     hubLocations?: HubLocations | null;
@@ -23,7 +25,7 @@ const COUNTRIES = [
     "Germany",
 ];
 
-export default function HubDialog({ open, onClose, hubLocations, onSubmit }: HubDialogProps) {
+export default function HubLocationsDialog({ open, onClose, hubLocations, onSubmit }: HubLocationsDialogProps) {
     const isEdit = !!hubLocations?.id;
     const emptyForm = {
         contactCode: "",
@@ -75,45 +77,37 @@ export default function HubDialog({ open, onClose, hubLocations, onSubmit }: Hub
     };
 
     return (
-        <Dialog
-            open={open}
-            onClose={onClose}
-            maxWidth="sm"
-            fullWidth
-        >
-            <Box
-                sx={{
-
-                    display: "flex",
-                    flexDirection: "column",
-                }}
-            >
+        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+            <Box component="form" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} noValidate>
                 <Box
                     sx={{
                         px: 3,
-                        py: 2,
+                        py: 2.5,
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "space-between",
-                        bgcolor: "primary.main",
-                        color: "primary.contrastText",
+                        gap: 2,
+                        bgcolor: (t) => alpha(t.palette.primary.main, 0.06),
+                        borderBottom: 1,
+                        borderColor: "divider",
                     }}
                 >
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    <Box sx={{ width: 44, height: 44, borderRadius: 1, display: "grid", placeItems: "center", bgcolor: "primary.main", color: "primary.contrastText", boxShadow: (t) => `0 6px 16px ${alpha(t.palette.primary.main, 0.35)}` }}>
+                        <HubOutlinedIcon />
+                    </Box>
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
                         {isEdit ? "Edit Hub" : "Add Hub"}
                     </Typography>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                        <IconButton onClick={onClose} color="inherit">
-                            <CloseIcon />
-                        </IconButton>
                     </Box>
+                    <IconButton onClick={onClose} size="small" aria-label="close"><CloseIcon fontSize="small" /></IconButton>
                 </Box>
-                <Box sx={{ flex: 1, overflowY: "auto", px: 3, py: 3 }}>
+                <Box sx={{ px: 3, py: 3 }}>
                     <Box
                         sx={{
                             display: "grid",
                             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-                            gap: 3,
+                            columnGap: 2,
+                            rowGap: 2.5,
                         }}
 
                     >
@@ -123,7 +117,6 @@ export default function HubDialog({ open, onClose, hubLocations, onSubmit }: Hub
                             value={form.contactCode}
                             onChange={(e) => handleChange("contactCode", e.target.value)}
                             placeholder="e.g. C001"
-                            size="small"
                             required
                         />
 
@@ -133,7 +126,6 @@ export default function HubDialog({ open, onClose, hubLocations, onSubmit }: Hub
                             value={form.name}
                             onChange={(e) => handleChange("name", e.target.value)}
                             placeholder="e.g. Global Hub NY"
-                            size="small"
                             required
                         />
 
@@ -143,7 +135,6 @@ export default function HubDialog({ open, onClose, hubLocations, onSubmit }: Hub
                             value={form.stationCode}
                             onChange={(e) => handleChange("stationCode", e.target.value)}
                             placeholder="e.g. NYX1"
-                            size="small"
                             required
                         />
 
@@ -154,7 +145,6 @@ export default function HubDialog({ open, onClose, hubLocations, onSubmit }: Hub
                             value={form.email}
                             onChange={(e) => handleChange("email", e.target.value)}
                             placeholder="e.g. ny@hub.com"
-                            size="small"
                             required
                         />
 
@@ -164,11 +154,10 @@ export default function HubDialog({ open, onClose, hubLocations, onSubmit }: Hub
                             value={form.telephoneNo}
                             onChange={(e) => handleChange("telephoneNo", e.target.value)}
                             placeholder="e.g. +1 212 555 0199"
-                            size="small"
                             required
                         />
 
-                        <FormControl fullWidth size="small" required>
+                        <FormControl fullWidth required>
                             <InputLabel>Country</InputLabel>
                             <Select
                                 value={form.country}
@@ -195,28 +184,31 @@ export default function HubDialog({ open, onClose, hubLocations, onSubmit }: Hub
                         />
                     </Box>
                 </Box>
+                <Divider />
                 <Box
                     sx={{
                         px: 3,
                         py: 2,
-                        borderTop: 1,
-                        borderColor: "divider",
                         display: "flex",
-                        gap: 2,
+                        gap: 1.5,
                         justifyContent: "flex-end",
+                        bgcolor: (t) => alpha(t.palette.grey[500], 0.04),
                     }}
                 >
-                    <Button variant="outlined" onClick={onClose} sx={{ textTransform: "none" }}>
+                    <Button onClick={onClose} color="error" variant="outlined" sx={{ textTransform: "none", borderRadius: 2, px: 2.5 }}>
                         Cancel
                     </Button>
                     <Button
+                        type="submit"
                         variant="contained"
-                        onClick={handleSubmit}
+                        disableElevation
                         // disabled={!form.contactCode?.trim() || !form.name?.trim() || !form.stationCode?.trim() || !form.email?.trim() || !form.country}
                         color="primary"
                         sx={{
                             textTransform: "none",
                             fontWeight: 600,
+                            borderRadius: 2,
+                            px: 3,
                         }}
                     >
                         {isEdit ? "Save Changes" : "Add Hub"}

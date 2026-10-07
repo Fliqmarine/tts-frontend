@@ -17,8 +17,6 @@ import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import WarehouseIcon from "@mui/icons-material/Warehouse";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
-import FolderOpenIcon from "@mui/icons-material/FolderOpen";
-import ArticleIcon from "@mui/icons-material/Article";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import PaymentsIcon from "@mui/icons-material/Payments";
@@ -41,6 +39,8 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import HubOutlinedIcon from "@mui/icons-material/HubOutlined";
+
 
 
 
@@ -234,7 +234,7 @@ export const navigationMenus: NavigationMenu[] = [
             {
                 label: "Hub Locations",
                 path: "/master/hub-locations",
-                icon: <WarehouseIcon fontSize="small" />,
+                icon: <HubOutlinedIcon fontSize="small" />,
             },
             {
                 label: "Hub",
@@ -280,18 +280,18 @@ export const navigationMenus: NavigationMenu[] = [
            
             {
                 label: "Gl Code Parents",
-                path: "/master/finance-master/gl-code-parent",
+                path: "/master/gl-code-parent",
                 icon: <AccountTreeIcon fontSize="small" />,
             },
             {
                 label: "Gl Code Children",
-                path: "/master/finance-master/gl-code-child",
-                icon: <FolderOpenIcon fontSize="small" />,
+                path: "/master/gl-code-child",
+                icon: <AccountTreeIcon fontSize="small" />,
             },
             {
                 label: "Gl Code Sub Children",
-                path: "/master/finance-master/gl-code-subchild",
-                icon: <ArticleIcon fontSize="small" />,
+                path: "/master/gl-code-subchild",
+                icon: <AccountTreeIcon fontSize="small" />,
             },
         ],
     },

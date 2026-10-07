@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
-import WarehouseIcon from "@mui/icons-material/Warehouse";
+import HubOutlinedIcon from "@mui/icons-material/HubOutlined";
 import { Add } from "@mui/icons-material";
 
 interface HubIndexHeaderProps {
@@ -30,7 +30,7 @@ export default function HubIndexHeader({ onCreate }: HubIndexHeaderProps) {
                         color: theme.palette.primary.contrastText,
                     })}
                 >
-                    <WarehouseIcon
+                    <HubOutlinedIcon
                         sx={{ fontSize: 26 }}
                     />
                 </Box>

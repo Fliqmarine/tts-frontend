@@ -1,5 +1,7 @@
-import { Box, Button, Dialog, IconButton, Stack, TextField, Typography, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Switch } from "@mui/material";
+import { Box, Button, Dialog, Divider, IconButton, TextField, Typography, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Switch } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
+import CurrencyExchangeOutlinedIcon from "@mui/icons-material/CurrencyExchangeOutlined";
 import type { Currency } from "../types/currency.types";
 import { useEffect, useState } from "react";
 
@@ -77,39 +79,50 @@ export default function CurrencyDialog({ open, onClose, currency, onSubmit }: Cu
             maxWidth="sm"
             fullWidth
         >
-            <Box
-                sx={{
-
-                    display: "flex",
-                    flexDirection: "column",
-                }}
-            >
+            <Box component="form" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} noValidate>
                 <Box
                     sx={{
                         px: 3,
-                        py: 2,
+                        py: 2.5,
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "space-between",
-                        bgcolor: "primary.main",
-                        color: "primary.contrastText",
+                        gap: 2,
+                        bgcolor: (t) => alpha(t.palette.primary.main, 0.06),
+                        borderBottom: 1,
+                        borderColor: "divider",
                     }}
                 >
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                        {isEdit ? "Edit Currency" : "Add Currency"}
-                    </Typography>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                        <IconButton onClick={onClose} color="inherit">
-                            <CloseIcon />
-                        </IconButton>
+                    <Box
+                        sx={{
+                            width: 44,
+                            height: 44,
+                            borderRadius: 1,
+                            display: "grid",
+                            placeItems: "center",
+                            bgcolor: "primary.main",
+                            color: "primary.contrastText",
+                            boxShadow: (t) => `0 6px 16px ${alpha(t.palette.primary.main, 0.35)}`,
+                        }}
+                    >
+                        <CurrencyExchangeOutlinedIcon />
                     </Box>
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+                            {isEdit ? "Edit Currency" : "Add Currency"}
+                        </Typography>
+                    </Box>
+                    <IconButton onClick={onClose} size="small" aria-label="close">
+                        <CloseIcon fontSize="small" />
+                    </IconButton>
                 </Box>
-                <Box sx={{ flex: 1, overflowY: "auto", px: 3, py: 3 }}>
+
+                <Box sx={{ px: 3, py: 3 }}>
                     <Box
                         sx={{
                             display: "grid",
                             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-                            gap: 3,
+                            columnGap: 2,
+                            rowGap: 2.5,
                         }}
                     >
                         <TextField
@@ -118,11 +131,10 @@ export default function CurrencyDialog({ open, onClose, currency, onSubmit }: Cu
                             value={form.code}
                             onChange={(e) => handleChange("code", e.target.value)}
                             placeholder="e.g. USD"
-                            size="small"
                             required
                         />
 
-                        <FormControl fullWidth size="small" required>
+                        <FormControl fullWidth required>
                             <InputLabel>Country</InputLabel>
                             <Select
                                 value={form.country}
@@ -143,7 +155,6 @@ export default function CurrencyDialog({ open, onClose, currency, onSubmit }: Cu
                             value={form.currency}
                             onChange={(e) => handleChange("currency", e.target.value)}
                             placeholder="e.g. US Dollar"
-                            size="small"
                             required
                         />
                         <TextField
@@ -152,7 +163,6 @@ export default function CurrencyDialog({ open, onClose, currency, onSubmit }: Cu
                             value={form.symbol}
                             onChange={(e) => handleChange("symbol", e.target.value)}
                             placeholder="e.g. $"
-                            size="small"
                             required
                         />
                         <TextField
@@ -162,7 +172,6 @@ export default function CurrencyDialog({ open, onClose, currency, onSubmit }: Cu
                             value={form.conversion_rate}
                             onChange={(e) => handleChange("conversion_rate", e.target.value)}
                             placeholder="e.g. 1.00"
-                            size="small"
                             required
                             helperText="* Enter the amount to be converted to USD."
                         />
@@ -178,28 +187,32 @@ export default function CurrencyDialog({ open, onClose, currency, onSubmit }: Cu
                         />
                     </Box>
                 </Box>
+                <Divider />
+
                 <Box
                     sx={{
                         px: 3,
                         py: 2,
-                        borderTop: 1,
-                        borderColor: "divider",
                         display: "flex",
-                        gap: 2,
+                        gap: 1.5,
                         justifyContent: "flex-end",
+                        bgcolor: (t) => alpha(t.palette.grey[500], 0.04),
                     }}
                 >
-                    <Button variant="outlined" onClick={onClose} sx={{ textTransform: "none" }}>
+                    <Button onClick={onClose} color="error" variant="outlined" sx={{ textTransform: "none", borderRadius: 2, px: 2.5 }}>
                         Cancel
                     </Button>
                     <Button
+                        type="submit"
                         variant="contained"
-                        onClick={handleSubmit}
+                        disableElevation
                         // disabled={!form.code?.trim() || !form.country || !form.currency?.trim() || !form.symbol?.trim()}
                         color="primary"
                         sx={{
                             textTransform: "none",
                             fontWeight: 600,
+                            borderRadius: 2,
+                            px: 3,
                         }}
                     >
                         {isEdit ? "Save Changes" : "Add Currency"}

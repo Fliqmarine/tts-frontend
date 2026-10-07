@@ -1,5 +1,7 @@
-import { Box, Button, Dialog, DialogContent, DialogActions, TextField, FormControlLabel, Switch, Typography, IconButton, FormControl, InputLabel, Select, MenuItem, Stack } from "@mui/material";
+import { Box, Button, Dialog, Divider, TextField, FormControlLabel, Switch, Typography, IconButton, FormControl, InputLabel, Select, MenuItem, Stack } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
+import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
 import type { GLCodeParent } from "../types/glCodeParent.types";
 import { useEffect, useState } from "react";
 
@@ -55,38 +57,21 @@ export default function GLCodeParentDialog({ open, onClose, glCode, onSubmit }: 
     };
 
     return (
-        <Dialog
-            open={open}
-            onClose={onClose}
-            maxWidth="sm" fullWidth
-        >
-            <Box
-                sx={{
-                    px: 3,
-                    py: 2,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    bgcolor: "primary.main",
-                    color: "primary.contrastText",
-                }}
-            >
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    {isEdit ? "Edit GL Code Parent" : "Add GL Code Parent"}
-                </Typography>
-                <IconButton onClick={onClose} color="inherit" size="small">
-                    <CloseIcon />
-                </IconButton>
-            </Box>
+        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+            <Box component="form" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} noValidate>
+                <Box sx={{ px: 3, py: 2.5, display: "flex", alignItems: "center", gap: 2, bgcolor: (t) => alpha(t.palette.primary.main, 0.06), borderBottom: 1, borderColor: "divider" }}>
+                    <Box sx={{ width: 44, height: 44, borderRadius: 1, display: "grid", placeItems: "center", bgcolor: "primary.main", color: "primary.contrastText", boxShadow: (t) => `0 6px 16px ${alpha(t.palette.primary.main, 0.35)}` }}><AccountTreeOutlinedIcon /></Box>
+                    <Box sx={{ flex: 1, minWidth: 0 }}><Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>{isEdit ? "Edit GL Code Parent" : "Add GL Code Parent"}</Typography></Box>
+                    <IconButton onClick={onClose} size="small" aria-label="close"><CloseIcon fontSize="small" /></IconButton>
+                </Box>
 
-            <DialogContent dividers sx={{ p: 3 }}>
-                <Stack spacing={3}>
+            <Box sx={{ px: 3, py: 3 }}>
+                <Stack spacing={2.5}>
                     <TextField
                         label="Name"
                         fullWidth
                         value={form.name}
                         onChange={(e) => handleChange("name", e.target.value)}
-                        size="small"
                         required
                     />
                     <TextField
@@ -95,11 +80,10 @@ export default function GLCodeParentDialog({ open, onClose, glCode, onSubmit }: 
                         value={form.code}
                         onChange={(e) => handleChange("code", e.target.value)}
                         placeholder="e.g. 1000"
-                        size="small"
                         required
                     />
 
-                    <FormControl fullWidth size="small" required>
+                    <FormControl fullWidth required>
                         <InputLabel>Type</InputLabel>
                         <Select
                             value={form.type}
@@ -125,25 +109,30 @@ export default function GLCodeParentDialog({ open, onClose, glCode, onSubmit }: 
                         label="Active"
                     />
                 </Stack>
-            </DialogContent>
+            </Box>
 
-            <DialogActions sx={{ px: 3, py: 2 }}>
-                <Button variant="outlined" onClick={onClose} sx={{ textTransform: "none" }}>
+            <Divider />
+            <Box sx={{ px: 3, py: 2, display: "flex", gap: 1.5, justifyContent: "flex-end", bgcolor: (t) => alpha(t.palette.grey[500], 0.04) }}>
+                <Button onClick={onClose} color="error" variant="outlined" sx={{ textTransform: "none", borderRadius: 2, px: 2.5 }}>
                     Cancel
                 </Button>
                 <Button
+                    type="submit"
                     variant="contained"
-                    onClick={handleSubmit}
                     // disabled={!form.name?.trim() || !form.code?.trim() || !form.type?.trim()}
                     color="primary"
+                    disableElevation
                     sx={{
                         textTransform: "none",
                         fontWeight: 600,
+                        borderRadius: 2,
+                        px: 3,
                     }}
                 >
                     {isEdit ? "Save Changes" : "Create"}
                 </Button>
-            </DialogActions>
+            </Box>
+            </Box>
         </Dialog>
     );
 }

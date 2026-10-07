@@ -6,13 +6,18 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
+    Divider,
     FormControlLabel,
+    IconButton,
     MenuItem,
     Paper,
     TextField,
     Typography,
     type TextFieldProps,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import CloseIcon from "@mui/icons-material/Close";
+import DirectionsBoatOutlinedIcon from "@mui/icons-material/DirectionsBoatOutlined";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import type { Value } from "react-phone-number-input";
@@ -185,7 +190,7 @@ export default function VesselDialog({ open, onClose, onSaved, initialValues }: 
             scroll="paper"
             sx={{
                 "& .MuiDialog-paper": {
-                    height: { xs: "calc(100dvh - 16px)", sm: "min(58.5vh, 900px)" },
+                    height: { xs: "calc(100dvh - 16px)", sm: "min(62vh, 900px)" },
                     width: { xs: "calc(100% - 16px)", sm: "calc(70% - 64px)" },
                 },
             }}
@@ -195,27 +200,34 @@ export default function VesselDialog({ open, onClose, onSaved, initialValues }: 
                     sx={{
                         display: "flex",
                         alignItems: "center",
-                        gap: 1,
-                        py: 2,
-                        px: { xs: 2, sm: 3 },
-                        bgcolor: "primary.main",
-                        color: "primary.contrastText",
+                        gap: 2,
+                        py: 1,
+                        px: 3,
+                        bgcolor: (t) => alpha(t.palette.primary.main, 0.06),
+                        borderBottom: 1,
+                        borderColor: "divider",
                     }}
                 >
-                    <Typography variant="h6" component="span" sx={{ fontWeight: 600, flexGrow: 1 }}>
+                    <Box sx={{ width: 44, height: 44, borderRadius: 1, display: "grid", placeItems: "center", bgcolor: "primary.main", color: "primary.contrastText", boxShadow: (t) => `0 6px 16px ${alpha(t.palette.primary.main, 0.35)}` }}>
+                        <DirectionsBoatOutlinedIcon />
+                    </Box>
+                    <Typography variant="h6" component="span" sx={{ fontWeight: 700, lineHeight: 1.2, flexGrow: 1 }}>
                         {initialValues ? "Edit Vessel" : "Create Vessel"}
                     </Typography>
-                    <Button variant="outlined" color="inherit" onClick={handleClose}>
-                        Cancel
-                    </Button>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        sx={{ bgcolor: "background.paper", color: "primary.main" }}
-                    >
-                        Save
-                    </Button>
+                    <Box sx={{ px: 3, py: 2, display: "flex", justifyContent: "flex-end", gap: 1.5, bgcolor: (t) => alpha(t.palette.grey[500], 0.04) }}>
+                        <Button onClick={handleClose} color="error" variant="outlined" sx={{ textTransform: "none", borderRadius: 2, px: 2.5 }}>
+                            Cancel
+                        </Button>
+                        <Button type="submit" variant="contained" disableElevation sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, px: 3 }}>
+                            Save
+                        </Button>
+                    </Box>
+
+
+
+
                 </DialogTitle>
+
 
                 <DialogContent>
                     <Box
@@ -228,7 +240,7 @@ export default function VesselDialog({ open, onClose, onSaved, initialValues }: 
                             gap: GAP,
                             alignItems: "start",
                             justifyContent: "center",
-                            mt: "10px",
+                            mt: 2,
                         }}
                     >
                         <Box sx={{ display: "flex", flexDirection: "column", gap: GAP, minWidth: 0 }}>
@@ -355,6 +367,7 @@ export default function VesselDialog({ open, onClose, onSaved, initialValues }: 
                         </Box>
                     </Box>
                 </DialogContent>
+                
             </Box>
         </Dialog>
     );

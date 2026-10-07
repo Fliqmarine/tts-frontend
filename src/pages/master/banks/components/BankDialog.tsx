@@ -4,12 +4,15 @@ import {
     Box,
     Button,
     Dialog,
+    Divider,
     IconButton,
     MenuItem,
     TextField,
     Typography,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
+import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlined";
 import {
     type Bank,
     type BankFormState,
@@ -97,33 +100,30 @@ export default function BankDialog({
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-            <Box
-                sx={{
-
-                    display: "flex",
-                    flexDirection: "column",
-                }}
-            >
+            <Box>
                 {/* ── Header ──────────────────────────────────────────── */}
                 <Box
                     sx={{
                         px: 3,
-                        py: 2,
+                        py: 2.5,
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "space-between",
-                        bgcolor: "primary.main",
-                        color: "primary.contrastText",
+                        gap: 2,
+                        bgcolor: (t) => alpha(t.palette.primary.main, 0.06),
+                        borderBottom: 1,
+                        borderColor: "divider",
                     }}
                 >
-                    <Typography
-                        variant="h6"
-                        sx={{ fontWeight: 600 }}
-                    >
-                        {isEdit ? "Edit Bank" : "Create Bank"}
-                    </Typography>
-                    <IconButton onClick={onClose} color="inherit">
-                        <CloseIcon />
+                    <Box sx={{ width: 44, height: 44, borderRadius: 1, display: "grid", placeItems: "center", bgcolor: "primary.main", color: "primary.contrastText", boxShadow: (t) => `0 6px 16px ${alpha(t.palette.primary.main, 0.35)}` }}>
+                        <AccountBalanceOutlinedIcon />
+                    </Box>
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+                            {isEdit ? "Edit Bank" : "Create Bank"}
+                        </Typography>
+                    </Box>
+                    <IconButton onClick={onClose} size="small" aria-label="close">
+                        <CloseIcon fontSize="small" />
                     </IconButton>
                 </Box>
 
@@ -133,7 +133,8 @@ export default function BankDialog({
                     id="bank-dialog-form"
                     onSubmit={(e) => handleSubmit(e)}
                     sx={{
-                        p: 3,
+                        px: 3,
+                        py: 3,
                         flex: 1,
                         overflowY: "auto",
                     }}
@@ -142,7 +143,8 @@ export default function BankDialog({
                         sx={{
                             display: "grid",
                             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-                            gap: 3,
+                            columnGap: 2,
+                            rowGap: 2.5,
                         }}
                     >
                         {/* Entity */}
@@ -246,35 +248,26 @@ export default function BankDialog({
                 </Box>
 
                 {/* ── Footer ──────────────────────────────────────────── */}
+                <Divider />
                 <Box
                     sx={{
                         px: 3,
                         py: 2,
-                        borderTop: 1,
-                        borderColor: "divider",
                         display: "flex",
                         justifyContent: "flex-end",
                         gap: 1.5,
+                        bgcolor: (t) => alpha(t.palette.grey[500], 0.04),
                     }}
                 >
                     <Button
-                        variant="outlined"
                         onClick={onClose}
+                        color="error"
+                        variant="outlined"
                         disabled={loading}
+                        sx={{ textTransform: "none", borderRadius: 2, px: 2.5 }}
                     >
                         Cancel
                     </Button>
-
-                    {!isEdit && (
-                        <Button
-                            variant="outlined"
-                            color="primary"
-                            disabled={loading}
-                            onClick={(e) => handleSubmit(e as any, true)}
-                        >
-                            {loading ? "Creating…" : "Create & Create Other"}
-                        </Button>
-                    )}
 
                     <Button
                         type="submit"
@@ -282,8 +275,12 @@ export default function BankDialog({
                         variant="contained"
                         disabled={loading}
                         color="primary"
+                        disableElevation
                         sx={{
                             fontWeight: 600,
+                            textTransform: "none",
+                            borderRadius: 2,
+                            px: 3,
                         }}
                     >
                         {loading

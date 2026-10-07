@@ -38,11 +38,11 @@ export default function Filter({ filters, onChange }: FollowupFilterProps) {
     return (
         <Box
             sx={{
-                px: { xs: 1.5, sm: 2 },
+                // px: { xs: 1.5, sm: 2 },
+                // borderRadius: 1,
+                // border: 1,
+                // borderColor: "divider",
                 py: 1.5,
-                borderRadius: 3,
-                border: 1,
-                borderColor: "divider",
                 backgroundColor: "background.default",
             }}
         >

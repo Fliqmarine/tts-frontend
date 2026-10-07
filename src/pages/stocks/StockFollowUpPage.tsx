@@ -4,7 +4,7 @@ import StockFollowupHeader from "./components/StockFollowupHeader";
 import StockFollowupFilter, { type Filters } from "./components/StockFollowupFilter";
 import StockFollowupTable from "./components/StockFollowupTable";
 
-function FollowUpPage() {
+function StockFollowUpPage() {
     const [filters, setFilters] = useState<Filters>({
         search: "",
         client: "",
@@ -26,4 +26,4 @@ function FollowUpPage() {
     );
 }
 
-export default FollowUpPage;
+export default StockFollowUpPage;

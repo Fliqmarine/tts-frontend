@@ -6,11 +6,16 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
+    Divider,
+    IconButton,
     MenuItem,
     Paper,
     TextField,
     Typography,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import CloseIcon from "@mui/icons-material/Close";
+import HubOutlinedIcon from "@mui/icons-material/HubOutlined";
 import { getCountries } from "react-phone-number-input";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
@@ -190,11 +195,11 @@ export default function HubDialog({ open, onClose, onSaved, hub = null }) {
             open={open}
             onClose={handleClose}
             fullWidth
-            maxWidth="xl"
+            maxWidth="xl"   
             scroll="paper"
             sx={{
                 "& .MuiDialog-paper": {
-                    height: { xs: "calc(100dvh - 16px)", sm: "80vh" },
+                    height: { xs: "calc(100dvh - 16px)", sm: "82vh" },
                     maxHeight: "calc(100% - 32px)",
                     width: { xs: "calc(100% - 16px)", sm: "calc(100% - 64px)" },
                     m: { xs: 1, sm: 4 },
@@ -202,27 +207,30 @@ export default function HubDialog({ open, onClose, onSaved, hub = null }) {
             }}
         >
             <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
-                <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1, py: 3, px: 4, bgcolor: "primary.main", color: "primary.contrastText" }}>
-                    <Typography variant="h6" component="span" sx={{ fontWeight: 600, flexGrow: 1 }}>
+                <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 2, py: 2, px: 3, bgcolor: (t) => alpha(t.palette.primary.main, 0.06), borderBottom: 1, borderColor: "divider" }}>
+                    <Box sx={{ width: 44, height: 44, borderRadius: 1, display: "grid", placeItems: "center", bgcolor: "primary.main", color: "primary.contrastText", boxShadow: (t) => `0 6px 16px ${alpha(t.palette.primary.main, 0.35)}` }}>
+                        <HubOutlinedIcon />
+                    </Box>
+                    <Typography variant="h6" component="span" sx={{ fontWeight: 700, lineHeight: 1.2, flexGrow: 1 }}>
                         {isEditing ? "Edit Hub" : "Create Hub"}
                     </Typography>
-                    <Button  variant="outlined" color="inherit" onClick={handleClose} disabled={saving}>
-                        Cancel
-                    </Button>
-                    <Button
-                        
-                        type="submit"
-                        variant="outlined"
-                        disabled={saving}
-                        sx={{ bgcolor: "#fff", color: "primary.main", "&:hover": { bgcolor: "grey.100" } }}
-                    >
-                        {saving ? "Saving..." : isEditing ? "Save Changes" : "Save"}
-                    </Button>
+                    
+                    
+
+                    <Box sx={{ px: 3, py: 2, display: "flex", justifyContent: "flex-end", gap: 1.5, bgcolor: (t) => alpha(t.palette.grey[500], 0.04) }}>
+                        <Button variant= "outlined" onClick={handleClose} color="error" disabled={saving} sx={{ textTransform: "none", borderRadius: 2, px: 2.5 }}>
+                            Cancel
+                        </Button>
+                        <Button type="submit" variant="contained" disableElevation disabled={saving} sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, px: 3 }}>
+                            {saving ? "Saving..." : isEditing ? "Save Changes" : "Save"}
+                        </Button>
+                    </Box>
+
                 </DialogTitle>
 
                 <DialogContent 
                     
-                    sx={{  p: 3, 
+                    sx={{  p: 3,
                     display: "flex",
                     justifyContent: "center",  
                     alignItems: "flex-start",
@@ -303,6 +311,7 @@ export default function HubDialog({ open, onClose, onSaved, hub = null }) {
                         </Alert>
                     )}
                 </DialogContent>
+                
             </Box>
         </Dialog>
     );

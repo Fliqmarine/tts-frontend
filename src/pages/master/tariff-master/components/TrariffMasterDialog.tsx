@@ -4,7 +4,6 @@ import {
     Dialog,
     Divider,
     IconButton,
-    InputAdornment,
     MenuItem,
     Stack,
     TextField,
@@ -13,7 +12,6 @@ import {
 import { alpha } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
-import CalculateOutlinedIcon from "@mui/icons-material/CalculateOutlined";
 import { useEffect, useState } from "react";
 import { CALCULATION_RULES, type CalculationRule, type TariffMaster } from "../types/trariffMaster.types";
 
@@ -82,13 +80,6 @@ export default function TariffMasterDialog({
             onClose={onClose}
             maxWidth="xs"
             fullWidth
-            PaperProps={{
-                sx: {
-                    borderRadius: 3,
-                    overflow: "hidden",
-                    boxShadow: "0 24px 48px rgba(0,0,0,0.18)",
-                },
-            }}
         >
             <Box component="form" onSubmit={handleSubmit} noValidate>
                 {/* Header */}
@@ -108,7 +99,7 @@ export default function TariffMasterDialog({
                         sx={{
                             width: 44,
                             height: 44,
-                            borderRadius: 2,
+                            borderRadius: 1,
                             display: "grid",
                             placeItems: "center",
                             bgcolor: "primary.main",
@@ -122,11 +113,6 @@ export default function TariffMasterDialog({
                     <Box sx={{ flex: 1, minWidth: 0 }}>
                         <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
                             {isEdit ? "Edit Tariff" : "Add Tariff"}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {isEdit
-                                ? "Update the tariff details below"
-                                : "Create a new tariff and choose how it's calculated"}
                         </Typography>
                     </Box>
 
@@ -149,13 +135,6 @@ export default function TariffMasterDialog({
                             placeholder="e.g. Air Freight Charges"
                             error={nameError}
                             helperText={nameError ? "Tariff name is required" : " "}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SellOutlinedIcon fontSize="small" color="action" />
-                                    </InputAdornment>
-                                ),
-                            }}
                         />
 
                         <TextField
@@ -165,13 +144,6 @@ export default function TariffMasterDialog({
                             value={form.calculation_rule}
                             onChange={(e) => handleChange("calculation_rule", e.target.value)}
                             helperText="Determines how this charge is calculated on invoices"
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <CalculateOutlinedIcon fontSize="small" color="action" />
-                                    </InputAdornment>
-                                ),
-                            }}
                         >
                             {CALCULATION_RULES.map((rule) => (
                                 <MenuItem key={rule} value={rule}>
@@ -197,7 +169,8 @@ export default function TariffMasterDialog({
                 >
                     <Button
                         onClick={onClose}
-                        color="inherit"
+                        color="error"
+                        variant="outlined"
                         sx={{ textTransform: "none", borderRadius: 2, px: 2.5 }}
                     >
                         Cancel

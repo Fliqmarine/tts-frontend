@@ -16,11 +16,13 @@ import CargoIndex from "./pages/master/cargo/CargoIndex";
 import CreateContactPage from "./pages/master/contact-list/ContactCreate";
 import CreateStockPage from "./pages/stocks/CreateStockPage";
 import StockListPage from "./pages/stocks/StockIndexPage";
-import FollowUpPage from "./pages/stocks/FollowUpPage";
+import StockFollowUpPage from "./pages/stocks/StockFollowUpPage";
 import StockHistoryPage from "./pages/stocks/StockHistoryPage";
-import GLCodeSubChildrenIndex from "./pages/master/finance-master/gl-code-subchildren/GLCodeSubChildrenIndex";
-import GLCodeChildrenIndex from "./pages/master/finance-master/gl-code-children/GLCodeChildrenIndex";
-import GLCodeParentIndex from "./pages/master/finance-master/gl-code-parent/GLCodeParentIndex";
+import StockViewPage from "./pages/stocks/StockViewPage";
+import StockEditPage from "./pages/stocks/StockEditPage";
+import GLCodeSubChildrenIndex from "./pages/master/gl-code-subchildren/GLCodeSubChildrenIndex";
+import GLCodeChildrenIndex from "./pages/master/gl-code-children/GLCodeChildrenIndex";
+import GLCodeParentIndex from "./pages/master/gl-code-parent/GLCodeParentIndex";
 import ContactEdit from "./pages/master/contact-list/ContactEdit";
 import ContactView from "./pages/master/contact-list/ContactView";
 import ClientIndex from "./pages/master/client/ClientIndexPage";
@@ -60,13 +62,15 @@ function App() {
                   <Route path="/master/hub" element={<HubIndexPage />} />
                   <Route path="/master/hub-locations" element={<HubLocationsIndex />} />
 
-                  <Route path="/master/finance-master/gl-code-parent" element={<GLCodeParentIndex />} />
-                  <Route path="/master/finance-master/gl-code-child" element={<GLCodeChildrenIndex />} />
-                  <Route path="/master/finance-master/gl-code-subchild" element={<GLCodeSubChildrenIndex />} />
+                  <Route path="/master/gl-code-parent" element={<GLCodeParentIndex />} />
+                  <Route path="/master/gl-code-child" element={<GLCodeChildrenIndex />} />
+                  <Route path="/master/gl-code-subchild" element={<GLCodeSubChildrenIndex />} />
 
                   <Route path="/stocks/create-stock" element={<CreateStockPage />} />
                   <Route path="/stocks/stock-list" element={<StockListPage />} />
-                  <Route path="/stocks/follow-up" element={<FollowUpPage />} />
+                  <Route path="/stocks/follow-up" element={<StockFollowUpPage />} />
+                  <Route path="/stocks/view/:id" element={<StockViewPage />} />
+                  <Route path="/stocks/edit/:id" element={<StockEditPage />} />
                   <Route path="/stocks/history" element={<StockHistoryPage />} />
 
                   z

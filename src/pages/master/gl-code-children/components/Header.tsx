@@ -1,13 +1,12 @@
-import { Box, Button, Typography, } from "@mui/material";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import { Add } from "@mui/icons-material";
+import { Box, Button, Typography } from "@mui/material";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
 
-
-interface GLCodeSubChildrenIndexHeaderProps {
+interface GLCodeChildrenIndexHeaderProps {
     onCreate: () => void;
 }
 
-export default function GLCodeSubChildrenIndexHeader({ onCreate }: GLCodeSubChildrenIndexHeaderProps) {
+export default function GLCodeChildrenIndexHeader({ onCreate }: GLCodeChildrenIndexHeaderProps) {
     return (
         <Box
             sx={{
@@ -31,7 +30,7 @@ export default function GLCodeSubChildrenIndexHeader({ onCreate }: GLCodeSubChil
                         color: theme.palette.primary.contrastText,
                     })}
                 >
-                    <AccountBalanceIcon
+                    <AccountTreeIcon
                         sx={{ fontSize: 26 }}
                     />
                 </Box>
@@ -39,7 +38,7 @@ export default function GLCodeSubChildrenIndexHeader({ onCreate }: GLCodeSubChil
                     variant="h5"
                     sx={{ fontWeight: 700, color: "text.primary" }}
                 >
-                    GL Code Subchildren
+                    GL Code Children
                 </Typography>
             </Box>
 
@@ -54,8 +53,10 @@ export default function GLCodeSubChildrenIndexHeader({ onCreate }: GLCodeSubChil
                     py: 1,
                 }}
             >
-                Add Subchildren
+                Add GL Code
             </Button>
         </Box>
+
     );
+
 }

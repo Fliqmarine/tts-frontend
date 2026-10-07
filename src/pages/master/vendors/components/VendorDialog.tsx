@@ -4,6 +4,7 @@ import {
     Box,
     Button,
     Dialog,
+    Divider,
     FormControlLabel,
     IconButton,
     MenuItem,
@@ -11,7 +12,9 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
+import StoreOutlinedIcon from "@mui/icons-material/StoreOutlined";
 import {
     type Vendor,
     type VendorFormState,
@@ -103,32 +106,30 @@ export default function VendorDialog({
             maxWidth="sm"
             fullWidth
         >
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                }}
-            >
+            <Box>
                 {/* ── Header ──────────────────────────────────────────── */}
                 <Box
                     sx={{
                         px: 3,
-                        py: 2,
+                        py: 2.5,
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "space-between",
-                        bgcolor: "primary.main",
-                        color: "primary.contrastText",
+                        gap: 2,
+                        bgcolor: (t) => alpha(t.palette.primary.main, 0.06),
+                        borderBottom: 1,
+                        borderColor: "divider",
                     }}
                 >
-                    <Typography
-                        variant="h6"
-                        sx={{ fontWeight: 600 }}
-                    >
-                        {isEdit ? "Edit Vendor" : "Create Vendor"}
-                    </Typography>
-                    <IconButton onClick={onClose} color="inherit">
-                        <CloseIcon />
+                    <Box sx={{ width: 44, height: 44, borderRadius: 1, display: "grid", placeItems: "center", bgcolor: "primary.main", color: "primary.contrastText", boxShadow: (t) => `0 6px 16px ${alpha(t.palette.primary.main, 0.35)}` }}>
+                        <StoreOutlinedIcon />
+                    </Box>
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+                            {isEdit ? "Edit Vendor" : "Create Vendor"}
+                        </Typography>
+                    </Box>
+                    <IconButton onClick={onClose} size="small" aria-label="close">
+                        <CloseIcon fontSize="small" />
                     </IconButton>
                 </Box>
 
@@ -138,7 +139,8 @@ export default function VendorDialog({
                     id="vendor-Dialog-form"
                     onSubmit={(e) => handleSubmit(e)}
                     sx={{
-                        p: 3,
+                        px: 3,
+                        py: 3,
                         flex: 1,
                         overflowY: "auto",
                     }}
@@ -147,7 +149,8 @@ export default function VendorDialog({
                         sx={{
                             display: "grid",
                             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-                            gap: 3,
+                            columnGap: 2,
+                            rowGap: 2.5,
                         }}
                     >
                         {/* Vendor Name */}
@@ -242,44 +245,39 @@ export default function VendorDialog({
                 </Box>
 
                 {/* ── Footer ──────────────────────────────────────────── */}
+                <Divider />
                 <Box
                     sx={{
                         px: 3,
                         py: 2,
-                        borderTop: 1,
-                        borderColor: "divider",
                         display: "flex",
                         justifyContent: "flex-end",
                         gap: 1.5,
+                        bgcolor: (t) => alpha(t.palette.grey[500], 0.04),
                     }}
                 >
                     <Button
-                        variant="outlined"
                         onClick={onClose}
+                        color="error"
+                        variant="outlined"
                         disabled={loading}
+                        sx={{ textTransform: "none", borderRadius: 2, px: 2.5 }}
                     >
                         Cancel
                     </Button>
-
-                    {!isEdit && (
-                        <Button
-                            variant="outlined"
-                            color="primary"
-                            disabled={loading}
-                            onClick={(e) => handleSubmit(e as any, true)}
-                        >
-                            {loading ? "Creating…" : "Create & Create Other"}
-                        </Button>
-                    )}
 
                     <Button
                         type="submit"
                         form="vendor-Dialog-form"
                         variant="contained"
                         color="primary"
+                        disableElevation
                         disabled={loading}
                         sx={{
                             fontWeight: 600,
+                            textTransform: "none",
+                            borderRadius: 2,
+                            px: 3,
                         }}
                     >
                         {loading

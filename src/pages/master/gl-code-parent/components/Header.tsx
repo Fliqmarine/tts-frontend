@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import { Add } from "@mui/icons-material";
 
 interface GLCodeParentIndexHeaderProps {
@@ -30,7 +30,7 @@ export default function GLCodeParentIndexHeader({ onCreate }: GLCodeParentIndexH
                         color: theme.palette.primary.contrastText,
                     })}
                 >
-                    <AccountBalanceIcon
+                    <AccountTreeIcon
                         sx={{ fontSize: 26 }}
                     />
                 </Box>
