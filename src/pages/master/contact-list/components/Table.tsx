@@ -1,6 +1,7 @@
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
@@ -8,6 +9,10 @@ import {
     Button,
     Checkbox,
     Chip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     IconButton,
     Paper,
     Switch,
@@ -22,6 +27,7 @@ import {
     Tooltip,
     Typography,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Contact } from "../types/contact.types";
@@ -48,6 +54,23 @@ export default function ContactsIndexTable({ onDelete, filters }: ContactsIndexT
     const [activeById, setActiveById] = useState<Record<number, boolean>>({ 2102: false });
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [deleteTarget, setDeleteTarget] = useState<Contact | null>(null);
+
+    const handleConfirmDelete = () => {
+        if (!deleteTarget) return;
+
+        onDelete?.(deleteTarget);
+        const remaining = contacts.filter((contact) => contact.id !== deleteTarget.id);
+        saveDemoContacts(remaining);
+        setContacts(remaining);
+        setSelected((previous) => previous.filter((id) => id !== deleteTarget.id));
+        setActiveById((previous) => {
+            const next = { ...previous };
+            delete next[deleteTarget.id];
+            return next;
+        });
+        setDeleteTarget(null);
+    };
 
     const search = filters?.search?.toLowerCase() ?? "";
     const filtered = contacts.filter((contact) => {
@@ -155,12 +178,7 @@ export default function ContactsIndexTable({ onDelete, filters }: ContactsIndexT
                                                 <IconButton size="small" color="primary" onClick={() => navigate(`/master/contact-list/contact-edit/${contact.id}`)}><EditIcon sx={{ fontSize: "1rem" }} /></IconButton>
                                             </Tooltip>
                                             <Tooltip title="Delete" arrow>
-                                                <IconButton size="small" color="error" onClick={() => {
-                                                    onDelete?.(contact);
-                                                    const remaining = contacts.filter((item) => item.id !== contact.id);
-                                                    saveDemoContacts(remaining);
-                                                    setContacts(remaining);
-                                                }}><DeleteIcon sx={{ fontSize: "1rem" }} /></IconButton>
+                                                <IconButton size="small" color="error" onClick={() => setDeleteTarget(contact)}><DeleteIcon sx={{ fontSize: "1rem" }} /></IconButton>
                                             </Tooltip>
                                             <Tooltip title="More" arrow>
                                                 <IconButton size="small" color="default"><MoreVertIcon sx={{ fontSize: "1rem" }} /></IconButton>
@@ -189,6 +207,58 @@ export default function ContactsIndexTable({ onDelete, filters }: ContactsIndexT
                     </TableFooter>
                 </Table>
             </TableContainer>
+            <Dialog
+                open={deleteTarget !== null}
+                onClose={() => setDeleteTarget(null)}
+                aria-labelledby="delete-contact-title"
+                aria-describedby="delete-contact-description"
+                fullWidth
+                maxWidth="xs"
+                slotProps={{ paper: { sx: { borderRadius: 3, p: 1, boxShadow: (theme) => theme.shadows[10] } } }}
+            >
+                <DialogTitle
+                    id="delete-contact-title"
+                    component="div"
+                    sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, pt: 3, pb: 1 }}
+                >
+                    <Box
+                        sx={(theme) => ({
+                            width: 64,
+                            height: 64,
+                            borderRadius: "50%",
+                            display: "grid",
+                            placeItems: "center",
+                            bgcolor: alpha(theme.palette.error.main, 0.12),
+                            color: "error.main",
+                            boxShadow: `0 0 0 8px ${alpha(theme.palette.error.main, 0.06)}`,
+                        })}
+                    >
+                        <DeleteOutlinedIcon sx={{ fontSize: 32 }} />
+                    </Box>
+                    <Typography variant="h6" component="h2" fontWeight={700}>Delete contact?</Typography>
+                </DialogTitle>
+                <DialogContent sx={{ textAlign: "center", pb: 1 }}>
+                    <Typography id="delete-contact-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                        Are you sure you want to delete{" "}
+                        {deleteTarget?.companyName ? (
+                            <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                                “{deleteTarget.companyName}”
+                            </Box>
+                        ) : (
+                            "this contact"
+                        )}
+                        ? This action cannot be undone.
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pt: 2, pb: 3, gap: 1.5 }}>
+                    <Button onClick={() => setDeleteTarget(null)} variant="outlined" color="inherit" fullWidth sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, borderColor: "divider" }}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleConfirmDelete} color="error" variant="contained" fullWidth autoFocus disableElevation sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2 }}>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

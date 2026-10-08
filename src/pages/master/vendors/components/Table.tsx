@@ -3,6 +3,10 @@ import {
     Button,
     Checkbox,
     Chip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     IconButton,
     Paper,
     Switch,
@@ -19,6 +23,8 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import { alpha } from "@mui/material/styles";
 import { useState } from "react";
 import type { Vendor } from "../types/vendor.types";
 import type { VendorsFilters } from "./Filter";
@@ -48,6 +54,7 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
     const [selected, setSelected] = useState<number[]>([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(15);
+    const [deleteTarget, setDeleteTarget] = useState<Vendor | null>(null);
 
     const filtered = vendors.filter((v) => {
         const search = filters?.search?.toLowerCase() ?? "";
@@ -90,9 +97,18 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
         );
     };
 
-    const handleDelete = (id: number) => {
-        setVendors((prev) => prev.filter((v) => v.id !== id));
-        setSelected((prev) => prev.filter((sid) => sid !== id));
+    const handleConfirmDelete = () => {
+        if (!deleteTarget) return;
+
+        const nextVendors = vendors.filter((vendor) => vendor.id !== deleteTarget.id);
+        setVendors(nextVendors);
+        setSelected((prev) => prev.filter((id) => id !== deleteTarget.id));
+        setPage((currentPage) =>
+            currentPage > 0 && currentPage * rowsPerPage >= nextVendors.length
+                ? currentPage - 1
+                : currentPage,
+        );
+        setDeleteTarget(null);
     };
 
     const handleExport = () => {
@@ -132,7 +148,7 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                     <Typography variant="body2" color="primary.main" sx={{ fontWeight: 600 }}>
                         {selected.length} vendor{selected.length > 1 ? "s" : ""} selected
                     </Typography>
-                    <Box sx={{ display: "flex", gap: 1 }}>
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, justifyContent: "flex-end" }}>
                         <Button
                             variant="contained"
                             size="small"
@@ -174,10 +190,12 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                     borderRadius: "8px 8px 16px 16px",
                     border: "1px solid",
                     borderColor: "divider",
-                    overflow: "hidden",
+                    overflowX: "auto",
+                    overflowY: "hidden",
+                    mt: 2,
                 }}
             >
-                <Table size="small">
+                <Table size="small" sx={{ minWidth: { xs: 680, sm: "100%" } }}>
                     <TableHead>
                         <TableRow>
                             <TableCell padding="checkbox" sx={{ pl: 1.5 }}>
@@ -272,7 +290,7 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                                                     <IconButton
                                                         size="small"
                                                         color="error"
-                                                        onClick={() => handleDelete(vendor.id)}
+                                                        onClick={() => setDeleteTarget(vendor)}
                                                     >
                                                         <DeleteIcon sx={{ fontSize: "1rem" }} />
                                                     </IconButton>
@@ -297,9 +315,113 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                     sx={{
                         borderTop: "1px solid",
                         borderColor: "divider",
+                        "& .MuiTablePagination-toolbar": {
+                            px: { xs: 1, sm: 2 },
+                            flexWrap: { xs: "wrap", sm: "nowrap" },
+                            justifyContent: { xs: "center", sm: "flex-end" },
+                        },
+                        "& .MuiTablePagination-selectLabel": {
+                            display: { xs: "none", sm: "block" },
+                        },
                     }}
                 />
             </TableContainer>
+
+            <Dialog
+                open={deleteTarget !== null}
+                onClose={() => setDeleteTarget(null)}
+                aria-labelledby="delete-vendor-title"
+                aria-describedby="delete-vendor-description"
+                fullWidth
+                maxWidth="xs"
+                slotProps={{
+                    paper: {
+                        sx: {
+                            borderRadius: 3,
+                            p: 1,
+                            boxShadow: (theme) => theme.shadows[10],
+                        },
+                    },
+                }}
+            >
+                <DialogTitle
+                    id="delete-vendor-title"
+                    component="div"
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: 2,
+                        pt: 3,
+                        pb: 1,
+                    }}
+                >
+                    <Box
+                        sx={(theme) => ({
+                            width: 64,
+                            height: 64,
+                            borderRadius: "50%",
+                            display: "grid",
+                            placeItems: "center",
+                            bgcolor: alpha(theme.palette.error.main, 0.12),
+                            color: "error.main",
+                            boxShadow: `0 0 0 8px ${alpha(theme.palette.error.main, 0.06)}`,
+                        })}
+                    >
+                        <DeleteOutlinedIcon sx={{ fontSize: 32 }} />
+                    </Box>
+                    <Typography variant="h6" component="h2" fontWeight={700}>
+                        Delete vendor?
+                    </Typography>
+                </DialogTitle>
+
+                <DialogContent sx={{ textAlign: "center", pb: 1 }}>
+                    <Typography
+                        id="delete-vendor-description"
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ lineHeight: 1.6 }}
+                    >
+                        Are you sure you want to delete{" "}
+                        {deleteTarget?.vendorName ? (
+                            <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                                “{deleteTarget.vendorName}”
+                            </Box>
+                        ) : (
+                            "this vendor"
+                        )}
+                        ? This action cannot be undone.
+                    </Typography>
+                </DialogContent>
+
+                <DialogActions sx={{ px: 3, pt: 2, pb: 3, gap: 1.5 }}>
+                    <Button
+                        onClick={() => setDeleteTarget(null)}
+                        variant="outlined"
+                        color="inherit"
+                        fullWidth
+                        sx={{
+                            textTransform: "none",
+                            fontWeight: 600,
+                            borderRadius: 2,
+                            borderColor: "divider",
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleConfirmDelete}
+                        color="error"
+                        variant="contained"
+                        fullWidth
+                        autoFocus
+                        disableElevation
+                        sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2 }}
+                    >
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

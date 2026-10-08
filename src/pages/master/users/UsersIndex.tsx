@@ -1,13 +1,16 @@
 ﻿import { useState } from "react";
 import {
   Stack,
+  Box,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
+  Typography,
   Button
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 
 import UserIndexHeader from "./components/Header";
 import UserIndexTable from "./components/Table";
@@ -108,24 +111,44 @@ export default function UsersIndex() {
       <Dialog
         open={selectedDeleteUser !== null}
         onClose={() => setSelectedDeleteUser(null)}
+        aria-labelledby="delete-user-title"
+        aria-describedby="delete-user-description"
+        fullWidth
+        maxWidth="xs"
+        slotProps={{ paper: { sx: { borderRadius: 3, p: 1, boxShadow: (theme) => theme.shadows[10] } } }}
       >
-        <DialogTitle>
-          Delete User
+        <DialogTitle
+          id="delete-user-title"
+          component="div"
+          sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, pt: 3, pb: 1 }}
+        >
+          <Box sx={(theme) => ({ width: 64, height: 64, borderRadius: "50%", display: "grid", placeItems: "center", bgcolor: alpha(theme.palette.error.main, 0.12), color: "error.main", boxShadow: `0 0 0 8px ${alpha(theme.palette.error.main, 0.06)}` })}>
+            <DeleteOutlinedIcon sx={{ fontSize: 32 }} />
+          </Box>
+          <Typography variant="h6" component="h2" fontWeight={700}>
+            Delete user?
+          </Typography>
         </DialogTitle>
 
-        <DialogContent>
-          <DialogContentText>
+        <DialogContent sx={{ textAlign: "center", pb: 1 }}>
+          <Typography id="delete-user-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
             Are you sure you want to delete{" "}
-            <strong>
-              {selectedDeleteUser?.name}
-            </strong>
-            ?
-          </DialogContentText>
+            {selectedDeleteUser?.name ? (
+              <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                “{selectedDeleteUser.name}”
+              </Box>
+            ) : "this user"}?
+            {" "}This action cannot be undone.
+          </Typography>
         </DialogContent>
 
-        <DialogActions>
+        <DialogActions sx={{ px: 3, pt: 2, pb: 3, gap: 1.5 }}>
           <Button
             onClick={() => setSelectedDeleteUser(null)}
+            variant="outlined"
+            color="inherit"
+            fullWidth
+            sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, borderColor: "divider" }}
           >
             Cancel
           </Button>
@@ -134,6 +157,10 @@ export default function UsersIndex() {
             onClick={handleConfirmDelete}
             color="error"
             variant="contained"
+            fullWidth
+            autoFocus
+            disableElevation
+            sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2 }}
           >
             Delete
           </Button>

@@ -2,6 +2,10 @@ import {
     Box,
     Button,
     Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     IconButton,
     Paper,
     Switch,
@@ -17,7 +21,9 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import { alpha } from "@mui/material/styles";
 import { useState } from "react";
 import type { VesselFormState } from "../types/vessel.types";
 
@@ -73,6 +79,7 @@ export default function VesselListTable({ filters, vessels, setVessels, onEdit }
     const [selected, setSelected] = useState<number[]>([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(15);
+    const [deleteTarget, setDeleteTarget] = useState<Vessel | null>(null);
 
     // ── Client-side filter ────────────────────────────────────────────────────
     const filtered = vessels.filter((v) => {
@@ -125,8 +132,17 @@ export default function VesselListTable({ filters, vessels, setVessels, onEdit }
     };
 
     // ── Delete handler ────────────────────────────────────────────────────────
-    const handleDelete = (id: number) => {
-        setVessels((prev) => prev.filter((v) => v.id !== id));
+    const handleConfirmDelete = () => {
+        if (!deleteTarget) return;
+        const nextVessels = vessels.filter((vessel) => vessel.id !== deleteTarget.id);
+        setVessels(nextVessels);
+        setSelected((prev) => prev.filter((id) => id !== deleteTarget.id));
+        setPage((currentPage) =>
+            currentPage > 0 && currentPage * rowsPerPage >= nextVessels.length
+                ? currentPage - 1
+                : currentPage,
+        );
+        setDeleteTarget(null);
         setSelected((prev) => prev.filter((sid) => sid !== id));
     };
 
@@ -170,7 +186,7 @@ export default function VesselListTable({ filters, vessels, setVessels, onEdit }
                     <Typography variant="body2" color="primary.main" sx={{ fontWeight: 600 }}>
                         {selected.length} vessel{selected.length > 1 ? "s" : ""} selected
                     </Typography>
-                    <Box sx={{ display: "flex", gap: 1 }}>
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, justifyContent: "flex-end" }}>
                         <Button
                             variant="contained"
                             size="small"
@@ -212,10 +228,12 @@ export default function VesselListTable({ filters, vessels, setVessels, onEdit }
                     borderRadius: "8px 8px 16px 16px",
                     border: "1px solid",
                     borderColor: "divider",
-                    overflow: "hidden",
+                    overflowX: "auto",
+                    overflowY: "hidden",
+                    mt: 2,
                 }}
             >
-                <Table size="small">
+                <Table size="small" sx={{ minWidth: { xs: 1000, sm: "100%" } }}>
                     <TableHead>
                         <TableRow>
                             <TableCell padding="checkbox" sx={{ pl: 1.5 }}>
@@ -313,7 +331,7 @@ export default function VesselListTable({ filters, vessels, setVessels, onEdit }
                                                     <IconButton
                                                         size="small"
                                                         color="error"
-                                                        onClick={() => handleDelete(vessel.id)}
+                                                        onClick={() => setDeleteTarget(vessel)}
                                                     >
                                                         <DeleteIcon sx={{ fontSize: "1rem" }} />
                                                     </IconButton>
@@ -338,9 +356,69 @@ export default function VesselListTable({ filters, vessels, setVessels, onEdit }
                     sx={{
                         borderTop: "1px solid",
                         borderColor: "divider",
+                        "& .MuiTablePagination-toolbar": {
+                            px: { xs: 1, sm: 2 },
+                            flexWrap: { xs: "wrap", sm: "nowrap" },
+                            justifyContent: { xs: "center", sm: "flex-end" },
+                        },
+                        "& .MuiTablePagination-selectLabel": {
+                            display: { xs: "none", sm: "block" },
+                        },
                     }}
                 />
             </TableContainer>
+            <Dialog
+                open={deleteTarget !== null}
+                onClose={() => setDeleteTarget(null)}
+                aria-labelledby="delete-vessel-title"
+                aria-describedby="delete-vessel-description"
+                fullWidth
+                maxWidth="xs"
+                slotProps={{ paper: { sx: { borderRadius: 3, p: 1, boxShadow: (theme) => theme.shadows[10] } } }}
+            >
+                <DialogTitle
+                    id="delete-vessel-title"
+                    component="div"
+                    sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, pt: 3, pb: 1 }}
+                >
+                    <Box
+                        sx={(theme) => ({
+                            width: 64,
+                            height: 64,
+                            borderRadius: "50%",
+                            display: "grid",
+                            placeItems: "center",
+                            bgcolor: alpha(theme.palette.error.main, 0.12),
+                            color: "error.main",
+                            boxShadow: `0 0 0 8px ${alpha(theme.palette.error.main, 0.06)}`,
+                        })}
+                    >
+                        <DeleteOutlinedIcon sx={{ fontSize: 32 }} />
+                    </Box>
+                    <Typography variant="h6" component="h2" fontWeight={700}>Delete vessel?</Typography>
+                </DialogTitle>
+                <DialogContent sx={{ textAlign: "center", pb: 1 }}>
+                    <Typography id="delete-vessel-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                        Are you sure you want to delete{" "}
+                        {deleteTarget?.vesselName ? (
+                            <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                                “{deleteTarget.vesselName}”
+                            </Box>
+                        ) : (
+                            "this vessel"
+                        )}
+                        ? This action cannot be undone.
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pt: 2, pb: 3, gap: 1.5 }}>
+                    <Button onClick={() => setDeleteTarget(null)} variant="outlined" color="inherit" fullWidth sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, borderColor: "divider" }}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleConfirmDelete} color="error" variant="contained" fullWidth autoFocus disableElevation sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2 }}>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -8,6 +9,10 @@ import {
 	Box,
 	Button,
 	Checkbox,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
 	IconButton,
 	Paper,
 	Switch,
@@ -15,18 +20,26 @@ import {
 	TableBody,
 	TableCell,
 	TableContainer,
-	TableFooter,
 	TableHead,
 	TablePagination,
 	TableRow,
 	Tooltip,
 	Typography,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 
 export default function ClientIndexTable({ clients = [], onDelete, onEdit, onView, onStatusChange, filters = {} }) {
 	const [selected, setSelected] = useState([]);
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
+	const [deleteTarget, setDeleteTarget] = useState(null);
+
+	const handleConfirmDelete = () => {
+		if (!deleteTarget) return;
+		onDelete?.(deleteTarget);
+		setSelected((previous) => previous.filter((id) => id !== deleteTarget.id));
+		setDeleteTarget(null);
+	};
 
 	const search = filters.search?.trim().toLowerCase() ?? "";
 	const filteredClients = clients.filter((client) => {
@@ -77,7 +90,7 @@ export default function ClientIndexTable({ clients = [], onDelete, onEdit, onVie
 					<Typography variant="body2" color="primary.main" sx={{ fontWeight: 600 }}>
 						{selected.length} items selected
 					</Typography>
-					<Box sx={{ display: "flex", gap: 1 }}>
+					<Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, justifyContent: "flex-end" }}>
 						<Button
 							variant="contained"
 							size="small"
@@ -103,9 +116,9 @@ export default function ClientIndexTable({ clients = [], onDelete, onEdit, onVie
 			<TableContainer
 				component={Paper}
 				elevation={3}
-				sx={{ border: "1px solid", borderColor: "divider", overflow: "hidden" }}
+				sx={{ border: "1px solid", borderColor: "divider", overflowX: "auto", overflowY: "hidden", mt: 2 }}
 			>
-				<Table size="small">
+				<Table size="small" sx={{ minWidth: { xs: 1200, sm: "100%" } }}>
 					<TableHead>
 						<TableRow>
 							<TableCell padding="checkbox">
@@ -198,7 +211,7 @@ export default function ClientIndexTable({ clients = [], onDelete, onEdit, onVie
 													</IconButton>
 												</Tooltip>
 												<Tooltip title="Delete" arrow>
-													<IconButton size="small" color="error" onClick={() => onDelete?.(client)}>
+										<IconButton size="small" color="error" onClick={() => setDeleteTarget(client)}>
 														<DeleteIcon sx={{ fontSize: "1rem" }} />
 													</IconButton>
 												</Tooltip>
@@ -214,25 +227,73 @@ export default function ClientIndexTable({ clients = [], onDelete, onEdit, onVie
 							})
 						)}
 					</TableBody>
-
-					<TableFooter>
-						<TableRow>
-							<TablePagination
-								colSpan={10}
-								count={filteredClients.length}
-								page={safePage}
-								rowsPerPage={rowsPerPage}
-								rowsPerPageOptions={[5, 10, 25]}
-								onPageChange={(_, nextPage) => setPage(nextPage)}
-								onRowsPerPageChange={(event) => {
-									setRowsPerPage(Number.parseInt(event.target.value, 10));
-									setPage(0);
-								}}
-							/>
-						</TableRow>
-					</TableFooter>
 				</Table>
+				<TablePagination
+					component="div"
+					count={filteredClients.length}
+					page={safePage}
+					rowsPerPage={rowsPerPage}
+					rowsPerPageOptions={[5, 10, 25]}
+					onPageChange={(_, nextPage) => setPage(nextPage)}
+					onRowsPerPageChange={(event) => {
+						setRowsPerPage(Number.parseInt(event.target.value, 10));
+						setPage(0);
+					}}
+					sx={{ borderTop: "1px solid", borderColor: "divider", "& .MuiTablePagination-toolbar": { px: { xs: 1, sm: 2 }, flexWrap: { xs: "wrap", sm: "nowrap" }, justifyContent: { xs: "center", sm: "flex-end" } }, "& .MuiTablePagination-selectLabel": { display: { xs: "none", sm: "block" } } }}
+				/>
 			</TableContainer>
+			<Dialog
+				open={deleteTarget !== null}
+				onClose={() => setDeleteTarget(null)}
+				aria-labelledby="delete-client-title"
+				aria-describedby="delete-client-description"
+				fullWidth
+				maxWidth="xs"
+				slotProps={{ paper: { sx: { borderRadius: 3, p: 1, boxShadow: (theme) => theme.shadows[10] } } }}
+			>
+				<DialogTitle
+					id="delete-client-title"
+					component="div"
+					sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, pt: 3, pb: 1 }}
+				>
+					<Box
+						sx={(theme) => ({
+							width: 64,
+							height: 64,
+							borderRadius: "50%",
+							display: "grid",
+							placeItems: "center",
+							bgcolor: alpha(theme.palette.error.main, 0.12),
+							color: "error.main",
+							boxShadow: `0 0 0 8px ${alpha(theme.palette.error.main, 0.06)}`,
+						})}
+					>
+						<DeleteOutlinedIcon sx={{ fontSize: 32 }} />
+					</Box>
+					<Typography variant="h6" component="h2" fontWeight={700}>Delete client?</Typography>
+				</DialogTitle>
+				<DialogContent sx={{ textAlign: "center", pb: 1 }}>
+					<Typography id="delete-client-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+						Are you sure you want to delete{" "}
+						{deleteTarget?.companyName ? (
+							<Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+								“{deleteTarget.companyName}”
+							</Box>
+						) : (
+							"this client"
+						)}
+						? This action cannot be undone.
+					</Typography>
+				</DialogContent>
+				<DialogActions sx={{ px: 3, pt: 2, pb: 3, gap: 1.5 }}>
+					<Button onClick={() => setDeleteTarget(null)} variant="outlined" color="inherit" fullWidth sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, borderColor: "divider" }}>
+						Cancel
+					</Button>
+					<Button onClick={handleConfirmDelete} color="error" variant="contained" fullWidth autoFocus disableElevation sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2 }}>
+						Delete
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</Box>
 	);
 }

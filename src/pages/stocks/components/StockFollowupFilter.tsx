@@ -42,25 +42,26 @@ export default function Filter({ filters, onChange }: FollowupFilterProps) {
                 // borderRadius: 1,
                 // border: 1,
                 // borderColor: "divider",
-                py: 1.5,
+                py: 2,
                 backgroundColor: "background.default",
             }}
         >
-            {/* Main row: label + search + 4 fields, all evenly sized, ending with expand button */}
+            {/* Seven primary filters; mobile uses two columns and desktop shows them together. */}
             <Box
                 sx={{
                     display: "grid",
-                    gap: 1.5,
+                    gap: 0.5,
                     alignItems: "center",
                     gridTemplateColumns: {
-                        xs: "1fr",
-                        sm: "auto 1fr 1fr",
-                        md: "auto repeat(3, 1fr)",
-                        lg: "auto 1.4fr repeat(4, 1fr) 44px",
+                        xs: "repeat(2, minmax(0, 1fr))",
+                        sm: "repeat(2, minmax(0, 1fr))",
+                        md: "repeat(3, minmax(0, 1fr))",
+                        lg: "repeat(4, minmax(0, 1fr))",
+                        xl: "auto minmax(130px, 1.2fr) repeat(6, minmax(100px, 1fr)) 36px",
                     },
                 }}
             >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1, whiteSpace: "nowrap" }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, whiteSpace: "nowrap", gridColumn: { xs: "span 2", xl: "auto" } }}>
                     <FilterListIcon sx={{ color: "text.secondary", fontSize: 20 }} />
                     <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 600 }}>
                         Filters
@@ -150,72 +151,6 @@ export default function Filter({ filters, onChange }: FollowupFilterProps) {
                     <MenuItem value="Key Account Manager 3">Key Account Manager 3</MenuItem>
                 </TextField>
 
-                <Tooltip title={showMore ? "Hide more filters" : "Show more filters"}>
-                    <IconButton
-                        aria-label={showMore ? "Hide more filters" : "Show more filters"}
-                        onClick={() => setShowMore((open) => !open)}
-                        size="small"
-                        sx={{
-                            justifySelf: { xs: "flex-start", lg: "center" },
-                            border: 1,
-                            borderColor: "divider",
-                            borderRadius: 2,
-                            backgroundColor: "background.paper",
-                            width: 40,
-                            height: 40,
-                            transition: "transform 180ms ease, background-color 120ms ease",
-                            transform: showMore ? "rotate(180deg)" : "none",
-                            "&:hover": { backgroundColor: "action.hover" },
-                        }}
-                    >
-                        <ExpandMoreIcon fontSize="small" />
-                    </IconButton>
-                </Tooltip>
-            </Box>
-
-            {/* Extra fields */}
-            <Collapse in={showMore} timeout="auto" unmountOnExit>
-                <Box
-                    sx={{
-                        display: "grid",
-                        gridTemplateColumns: {
-                            xs: "1fr",
-                            sm: "repeat(2, 1fr)",
-                            lg: "repeat(4, 1fr)",
-                        },
-                        gap: 1.5,
-                        mt: 1.5,
-                        pt: 1.5,
-                        borderTop: 1,
-                        borderColor: "divider",
-                    }}
-                >
-                   
-
-                    <TextField
-                        label="Transit Number"
-                        size="small"
-                        fullWidth
-                        value={filters.transit_number}
-                        onChange={(e) => handleChange("transit_number", e.target.value)}
-                        sx={fieldSx}
-                    />
-
-                    <TextField
-                        select
-                        label="Status"
-                        size="small"
-                        fullWidth
-                        value={filters.status}
-                        onChange={(e) => handleChange("status", e.target.value)}
-                        sx={fieldSx}
-                    >
-                        <MenuItem value="">All</MenuItem>
-                        <MenuItem value="Status 1">Status 1</MenuItem>
-                        <MenuItem value="Status 2">Status 2</MenuItem>
-                        <MenuItem value="Status 3">Status 3</MenuItem>
-                    </TextField>
-                    
                 <TextField
                     select
                     label="Station"
@@ -246,7 +181,71 @@ export default function Filter({ filters, onChange }: FollowupFilterProps) {
                     <MenuItem value="Supplier 3">Supplier 3</MenuItem>
                 </TextField>
 
-                    
+                <Tooltip title={showMore ? "Hide more filters" : "Show more filters"}>
+                    <IconButton
+                        aria-label={showMore ? "Hide more filters" : "Show more filters"}
+                        onClick={() => setShowMore((open) => !open)}
+                        size="small"
+                        sx={{
+                            justifySelf: { xs: "flex-start", xl: "center" },
+                            border: 1,
+                            borderColor: "divider",
+                            borderRadius: 2,
+                            backgroundColor: "background.paper",
+                            width: 32,
+                            height: 32,
+                            transition: "transform 180ms ease, background-color 120ms ease",
+                            transform: showMore ? "rotate(180deg)" : "none",
+                            "&:hover": { backgroundColor: "action.hover" },
+                        }}
+                    >
+                        <ExpandMoreIcon fontSize="small" />
+                    </IconButton>
+                </Tooltip>
+            </Box>
+
+            {/* Extra fields */}
+            <Collapse in={showMore} timeout="auto" unmountOnExit>
+                <Box
+                    sx={{
+                        display: "grid",
+                        gridTemplateColumns: {
+                            xs: "repeat(2, minmax(0, 1fr))",
+                            sm: "repeat(2, minmax(0, 1fr))",
+                            lg: "repeat(4, minmax(0, 1fr))",
+                        },
+                        gap: 1,
+                        mt: 1,
+                        pt: 1,
+                        borderTop: 1,
+                        borderColor: "divider",
+                    }}
+                >
+                   
+
+                    <TextField
+                        label="Transit Number"
+                        size="small"
+                        fullWidth
+                        value={filters.transit_number}
+                        onChange={(e) => handleChange("transit_number", e.target.value)}
+                        sx={fieldSx}
+                    />
+
+                    <TextField
+                        select
+                        label="Status"
+                        size="small"
+                        fullWidth
+                        value={filters.status}
+                        onChange={(e) => handleChange("status", e.target.value)}
+                        sx={fieldSx}
+                    >
+                        <MenuItem value="">All</MenuItem>
+                        <MenuItem value="Status 1">Status 1</MenuItem>
+                        <MenuItem value="Status 2">Status 2</MenuItem>
+                        <MenuItem value="Status 3">Status 3</MenuItem>
+                    </TextField>
                 </Box>
             </Collapse>
         </Box>

@@ -2,7 +2,12 @@ import { useState } from "react";
 import {
     Alert,
     Box,
+    Button,
     Chip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     IconButton,
     Paper,
     Snackbar,
@@ -12,7 +17,9 @@ import {
 } from "@mui/material";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { alpha } from "@mui/material/styles";
 import type { HubLocations, HubFilters } from "./types/hubLocations.types.ts";
 import HubListFilter from "./components/Filter";
 import HubIndexHeader from "./components/Header";
@@ -30,6 +37,7 @@ export default function HubLocationsIndex() {
     const [hubLocations, setHubLocations] = useState<HubLocations[]>(demoData);
     const [filters, setFilters] = useState<HubFilters>({});
     const [hubLocationToEdit, setHubLocationToEdit] = useState<HubLocations  | null>(null);
+    const [hubLocationToDelete, setHubLocationToDelete] = useState<HubLocations | null>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [notification, setNotification] = useState<{
         message: string;
@@ -98,11 +106,10 @@ export default function HubLocationsIndex() {
         }
     };
 
-    const deleteHub = (hub: HubLocations) => {
-        if (!window.confirm(`Delete "${hub.name}"?`)) {
-            return;
-        }
-        setHubLocations((current) => current.filter((item) => item.id !== hub.id));
+    const deleteHub = () => {
+        if (!hubLocationToDelete) return;
+        setHubLocations((current) => current.filter((item) => item.id !== hubLocationToDelete.id));
+        setHubLocationToDelete(null);
     };
 
     return (
@@ -199,7 +206,7 @@ export default function HubLocationsIndex() {
                                                 size="small"
                                                 color="error"
                                                 aria-label={`Delete ${hub.name}`}
-                                                onClick={() => deleteHub(hub)}
+                                                onClick={() => setHubLocationToDelete(hub)}
                                             >
                                                 <DeleteIcon fontSize="small" />
                                             </IconButton>
@@ -244,6 +251,59 @@ export default function HubLocationsIndex() {
                 onClose={closeDialog}
                 onSubmit={saveHub}
             />
+
+            <Dialog
+                open={hubLocationToDelete !== null}
+                onClose={() => setHubLocationToDelete(null)}
+                aria-labelledby="delete-hub-location-title"
+                aria-describedby="delete-hub-location-description"
+                fullWidth
+                maxWidth="xs"
+                slotProps={{ paper: { sx: { borderRadius: 3, p: 1, boxShadow: (theme) => theme.shadows[10] } } }}
+            >
+                <DialogTitle
+                    id="delete-hub-location-title"
+                    component="div"
+                    sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, pt: 3, pb: 1 }}
+                >
+                    <Box
+                        sx={(theme) => ({
+                            width: 64,
+                            height: 64,
+                            borderRadius: "50%",
+                            display: "grid",
+                            placeItems: "center",
+                            bgcolor: alpha(theme.palette.error.main, 0.12),
+                            color: "error.main",
+                            boxShadow: `0 0 0 8px ${alpha(theme.palette.error.main, 0.06)}`,
+                        })}
+                    >
+                        <DeleteOutlinedIcon sx={{ fontSize: 32 }} />
+                    </Box>
+                    <Typography variant="h6" component="h2" fontWeight={700}>Delete hub location?</Typography>
+                </DialogTitle>
+                <DialogContent sx={{ textAlign: "center", pb: 1 }}>
+                    <Typography id="delete-hub-location-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                        Are you sure you want to delete{" "}
+                        {hubLocationToDelete?.name ? (
+                            <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                                “{hubLocationToDelete.name}”
+                            </Box>
+                        ) : (
+                            "this hub location"
+                        )}
+                        ? This action cannot be undone.
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pt: 2, pb: 3, gap: 1.5 }}>
+                    <Button onClick={() => setHubLocationToDelete(null)} variant="outlined" color="inherit" fullWidth sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, borderColor: "divider" }}>
+                        Cancel
+                    </Button>
+                    <Button onClick={deleteHub} color="error" variant="contained" fullWidth autoFocus disableElevation sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2 }}>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
             
         </Stack>
     );

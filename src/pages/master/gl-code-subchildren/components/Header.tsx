@@ -14,15 +14,17 @@ export default function GLCodeSubChildrenIndexHeader({ onCreate }: GLCodeSubChil
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                py: 1,
-                px: 1,
+                flexWrap: { xs: "wrap", sm: "nowrap" },
+                gap: { xs: 1, sm: 2 },
+                py: { xs: 0.5, sm: 1 },
+                px: { xs: 0, sm: 1 },
             }}
         >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 2 }, minWidth: 0 }}>
                 <Box
                     sx={(theme) => ({
-                        width: 48,
-                        height: 48,
+                        width: { xs: 36, sm: 48 },
+                        height: { xs: 36, sm: 48 },
                         borderRadius: 2,
                         background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
                         display: "flex",
@@ -32,12 +34,12 @@ export default function GLCodeSubChildrenIndexHeader({ onCreate }: GLCodeSubChil
                     })}
                 >
                     <AccountTreeIcon
-                        sx={{ fontSize: 26 }}
+                        sx={{ fontSize: { xs: 20, sm: 26 } }}
                     />
                 </Box>
                 <Typography
                     variant="h5"
-                    sx={{ fontWeight: 700, color: "text.primary" }}
+                    sx={{ fontWeight: 700, color: "text.primary", fontSize: { xs: "1.1rem", sm: "1.5rem" }, whiteSpace: "nowrap" }}
                 >
                     GL Code Subchildren
                 </Typography>
@@ -48,10 +50,15 @@ export default function GLCodeSubChildrenIndexHeader({ onCreate }: GLCodeSubChil
                 color="primary"
                 startIcon={<Add />}
                 onClick={onCreate}
+                size="small"
                 sx={{
                     borderRadius: 2,
-                    px: 3,
-                    py: 1,
+                    px: { xs: 1, sm: 2.5 },
+                    py: { xs: 0.5, sm: 1 },
+                    minWidth: 0,
+                    whiteSpace: "nowrap",
+                    fontSize: { xs: "0.7rem", sm: "0.875rem" },
+                    "& .MuiButton-startIcon": { mr: { xs: 0.5, sm: 1 } },
                 }}
             >
                 Add Subchildren

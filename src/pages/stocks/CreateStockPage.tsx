@@ -1,4 +1,5 @@
-import { Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, IconButton, MenuItem, Paper, Radio, RadioGroup, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextareaAutosize, TextField, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, IconButton, MenuItem, Paper, Radio, RadioGroup, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextareaAutosize, TextField, Tooltip, Typography, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import DangerousOutlinedIcon from '@mui/icons-material/DangerousOutlined';
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
@@ -27,7 +28,6 @@ const VisuallyHiddenInput = styled("input")({
 
 const SECTION_HEADER_SX = {
     display: "flex",
-    // flex: 1,
     alignItems: "center",
     color: "primary",
     borderBottom: "2px solid",
@@ -47,7 +47,6 @@ function SectionHeader({ title, icon, required = false }: { title: string, icon?
                 {title}
                 {required && <Box component="span" sx={{ color: "error.main" }}> *</Box>}
             </Typography>
-            
         </Box>
     );
 }
@@ -101,6 +100,9 @@ const chargesColumns = [
 ];
 
 function CreateStockPage({ onChange }: any) {
+    const theme = useTheme();
+    // Below 900px (md) tables are replaced with stacked cards
+    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
     const [cargoRows, setCargoRows] = useState([cargoDetailsEmptyRow()]);
     const [chargeRows, setChargeRows] = useState([chargesEmptyRow()]);
@@ -193,7 +195,8 @@ function CreateStockPage({ onChange }: any) {
                                 border: '1px solid',
                                 borderColor: 'success.light',
                                 bgcolor: 'rgba(46,125,50,0.06)',
-                                maxWidth: 180,
+                                maxWidth: '100%',
+                                minWidth: 0,
                             }}
                         >
                             <InsertDriveFileIcon sx={{ fontSize: 13, color: 'success.main', flexShrink: 0 }} />
@@ -205,6 +208,7 @@ function CreateStockPage({ onChange }: any) {
                                     whiteSpace: 'nowrap',
                                     color: 'success.main',
                                     fontWeight: 500,
+                                    maxWidth: { xs: 160, sm: 180 },
                                 }}
                             >
                                 {file.name}
@@ -223,45 +227,168 @@ function CreateStockPage({ onChange }: any) {
         </Box>
     );
 
+    /* ---------- Shared cargo field renderer (table cell + mobile card) ---------- */
+    const renderCargoField = (row: any, col: any, withLabel = false) => {
+        const label = withLabel ? `${col.label}${col.required ? " *" : ""}` : undefined;
+
+        if (col.type === "select") {
+            if (withLabel) {
+                return (
+                    <TextField
+                        select size="small" fullWidth label={label}
+                        value={row[col.key]}
+                        onChange={(e) => handleFieldChangeCargo(row.id, col.key, e.target.value)}
+                        InputLabelProps={{ shrink: true }}
+                        SelectProps={{ displayEmpty: true }}
+                    >
+                        <MenuItem value=""><em>Select</em></MenuItem>
+                        {packageTypes.map((opt) => (
+                            <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
+                        ))}
+                    </TextField>
+                );
+            }
+            return (
+                <Select
+                    size="small" fullWidth displayEmpty
+                    value={row[col.key]}
+                    onChange={(e) => handleFieldChangeCargo(row.id, col.key, e.target.value)}
+                >
+                    <MenuItem value=""><em>Select</em></MenuItem>
+                    {packageTypes.map((opt) => (
+                        <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
+                    ))}
+                </Select>
+            );
+        }
+
+        const isReadOnly = readOnlyFields.includes(col.key);
+        return (
+            <TextField
+                size="small" fullWidth
+                label={label}
+                value={row[col.key]}
+                disabled={isReadOnly}
+                sx={isReadOnly ? { "& .MuiOutlinedInput-root": { bgcolor: "grey.200" } } : undefined}
+                onChange={(e) => handleFieldChangeCargo(row.id, col.key, e.target.value)}
+            />
+        );
+    };
+
+    /* ---------- Mobile cards ---------- */
+    const renderCargoCard = (row: any, index: number) => (
+        <Paper key={row.id} variant="outlined" sx={{ p: 1.5 }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1.5 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Cargo #{index + 1}</Typography>
+                <IconButton color="error" size="small" onClick={() => handleRemoveCargo(row.id)} aria-label="Remove cargo detail">
+                    <DeleteIcon fontSize="small" />
+                </IconButton>
+            </Box>
+            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.5 }}>
+                {columns.filter((c) => c.type !== "checkbox").map((col) => (
+                    <Box
+                        key={col.key}
+                        sx={{ gridColumn: col.type === "select" ? "span 2" : "span 1", minWidth: 0 }}
+                    >
+                        {renderCargoField(row, col, true)}
+                    </Box>
+                ))}
+            </Box>
+            <Box sx={{ display: "flex", flexWrap: "wrap", columnGap: 2, mt: 1 }}>
+                {columns.filter((c) => c.type === "checkbox").map((col) => (
+                    <FormControlLabel
+                        key={col.key}
+                        control={
+                            <Checkbox
+                                size="small"
+                                checked={!!row[col.key]}
+                                onChange={(e) => handleFieldChangeCargo(row.id, col.key, e.target.checked)}
+                            />
+                        }
+                        label={
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                                {col.icon}
+                                <Typography variant="body2">{col.label}</Typography>
+                            </Box>
+                        }
+                    />
+                ))}
+            </Box>
+        </Paper>
+    );
+
+    const renderChargeCard = (row: any, index: number) => (
+        <Paper key={row.id} variant="outlined" sx={{ p: 1.5 }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1.5 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Charge #{index + 1}</Typography>
+                <IconButton color="error" size="small" onClick={() => handleRemoveCharge(row.id)} aria-label="Remove charge">
+                    <DeleteIcon fontSize="small" />
+                </IconButton>
+            </Box>
+            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.5 }}>
+                {chargesColumns.map((col) => (
+                    <Box
+                        key={col.key}
+                        sx={{ gridColumn: col.key === "description" ? "span 2" : "span 1", minWidth: 0 }}
+                    >
+                        <TextField
+                            size="small" fullWidth
+                            label={col.label}
+                            required={pickupCharges === "yes"}
+                            value={row[col.key]}
+                            onChange={(e) => handleFieldChangeCharge(row.id, col.key, e.target.value)}
+                        />
+                    </Box>
+                ))}
+            </Box>
+        </Paper>
+    );
+
     return (
-        <Stack>
+        <Stack sx={{ width: "100%", minWidth: 0 }}>
+            {/* Page header */}
             <Box
                 sx={{
-                    display: "flex", flexDirection: "row", flexWrap: "wrap", gap: 1,
-                    justifyContent: "space-between", alignItems: "center", mt: 1, mb: 2,
+                    display: "flex", flexDirection: "row", flexWrap: "wrap",
+                    justifyContent: "space-between", alignItems: "center",
+                    gap: 1.5, mb: 2,
                 }}
             >
-                <Typography variant="h5" sx={{ fontWeight: 600 }}>Create Stock</Typography>
-                <Box sx={{ display: "flex", gap: 2 }}>
-                    <Button variant="outlined" color="error">
+                <Typography variant="h5" sx={{ fontWeight: 600,}}>
+                    Create Stock
+                </Typography>
+                <Box sx={{ display: "flex", gap: { xs: 1, sm: 2 }, width: { xs: "100%", sm: "auto" } }}>
+                    <Button variant="outlined" color="error" sx={{ flex: { xs: 1, sm: "none" } }}>
                         Cancel
                     </Button>
-                    <Button variant="contained" color="primary">
+                    <Button variant="contained" color="primary" sx={{ flex: { xs: 1, sm: "none" } }}>
                         Save
-                        </Button>
+                    </Button>
                 </Box>
             </Box>
 
+            {/* minmax(0, …) lets grid columns shrink so wide content can't push the page sideways */}
             <Box
                 sx={{
                     display: "grid",
-                    gridTemplateColumns: { xs: "1fr", md: "1fr 2fr" },
-                    gap: 0.5,
+                    gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) minmax(0, 2fr)" },
+                    gap: { xs: 1.5, md: 0.5 },
+                    width: "100%",
                 }}
             >
-                {/* Column 1: Stock entry details (1fr) */}
-                <Box component={Paper} elevation={3} sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1.5 }}>
+                {/* Column 1: Stock entry details */}
+                <Box component={Paper} elevation={3} sx={{ p: { xs: 1.5, sm: 2 }, display: "flex", flexDirection: "column", gap: 1.5, minWidth: 0 }}>
                     <Box sx={{ mb: 1 }}>
                         <SectionHeader
                             title="Stock Details"
                             icon={<Inventory2OutlinedIcon sx={{ fontSize: 26 }} />}
                         />
                     </Box>
-                    <Box sx={{ display: "flex",flexDirection: "column" , gap: 1.5 }}>
-                        <Box> 
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                        <Box>
                             <TextField size="small" label="Station" fullWidth required />
                         </Box>
-                        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.5 }}>
+                        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1 }}>
                             <TextField size="small" label="Vessel" fullWidth required />
                             <TextField size="small" label="Client" fullWidth required disabled />
                             <TextField size="small" label="Supplier" fullWidth required />
@@ -270,77 +397,71 @@ function CreateStockPage({ onChange }: any) {
                             <TextField size="small" label="Entry Date" fullWidth required disabled />
                             <TextField size="small" label="Country of Origin" fullWidth required />
                             <TextField size="small" label="Cargo Status" fullWidth required />
-                            <TextField size="small" label="Cargo Description" fullWidth  />
-                            <TextField size="small" label="HS Code" fullWidth required  />
+                            <TextField size="small" label="Cargo Description" fullWidth />
+                            <TextField size="small" label="HS Code" fullWidth required />
                             <TextField size="small" label="Currency" fullWidth required />
-                            <TextField size="small" label="Cargo Value" fullWidth  />
+                            <TextField size="small" label="Cargo Value" fullWidth />
                             <TextField size="small" label="Mode of Arrival" fullWidth required />
                             <TextField size="small" label="EU Reference" fullWidth required />
                             <TextField size="small" label="Transit ID No" fullWidth required />
-                            <TextField
-                                size="small"
-                                label="Storage Type"
-                                fullWidth
-                            />
+                            <TextField size="small" label="Storage Type" fullWidth />
                         </Box>
                     </Box>
                 </Box>
 
-                {/* Column 2: Mode of arrival / uploads (2fr) */}
-                <Box component={Paper} elevation={3} sx={{ p: 1.5, display: "flex", flexDirection: "column", gap: 0.2, maxHeight: 495
-                    , overflowY: "auto" }}>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            // justifyContent: "space-between",
-                            // mb: 1
-                        }}
-                    >
+                {/* Column 2: Attachments & charges */}
+                <Box
+                    component={Paper}
+                    elevation={3}
+                    sx={{
+                        p: { xs: 1, sm: 1.5 },
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 0.2,
+                        minWidth: 0,
+                        // Only cap the height on desktop; on mobile let the page scroll naturally
+                        maxHeight: { xs: "none", md: 495 },
+                        overflowY: { xs: "visible", md: "auto" },
+                    }}
+                >
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
                         <SectionHeader
                             title="Attachments & Charges"
                             icon={<Inventory2OutlinedIcon sx={{ fontSize: 26 }} />}
                         />
-                        
                     </Box>
+
                     <Box
                         sx={{
-                            display: "grid",
-                            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", lg: "repeat(6, 1fr)" },
-                            gap: 1.5
-                        }}>
-
-                    </Box>
-                    <Box sx={{ display: "flex", justifyContent: "left", mt:0.5, }}>
-                        <FormControl sx={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 1 }}>
+                            display: "flex",
+                            flexDirection: { xs: "column", sm: "row" },
+                            alignItems: { xs: "flex-start", sm: "center" },
+                            flexWrap: "wrap",
+                            columnGap: 2,
+                            mt: 0.5,
+                        }}
+                    >
+                        <FormControl sx={{ display: "flex", flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 1 }}>
                             <FormLabel>Pickup Charges</FormLabel>
                             <RadioGroup
                                 row
                                 value={pickupCharges}
                                 onChange={(event) => setPickupCharges(event.target.value)}
                                 name="charges"
-                                sx={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 1, ml: 2 }}
+                                sx={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 1, ml: { xs: 0, sm: 2 } }}
                             >
                                 <FormControlLabel value="yes" control={<Radio />} label="Yes" />
                                 <FormControlLabel value="no" control={<Radio />} label="No" />
                             </RadioGroup>
                         </FormControl>
-                        
-                        <Box
-                            sx={{
-                                display: "flex",
-                                alignItems: "center"
-                            }}>
-                            <Checkbox />
-                            Fumigation
-                        </Box>
-                    </Box>
-                    <Box
 
+                        <FormControlLabel control={<Checkbox />} label="Fumigation" />
+                    </Box>
+
+                    <Box
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragLeave}
                         onDrop={handleDrop}
-
                         sx={{
                             display: 'flex',
                             flexDirection: 'column',
@@ -353,8 +474,8 @@ function CreateStockPage({ onChange }: any) {
                             transition: 'all 0.15s ease',
                         }}
                     >
-                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 1, p: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: 'repeat(2, minmax(0, 1fr))' }, gap: 1.5 }}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 1, p: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1, minWidth: 0 }}>
                                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Documents</Typography>
                                 <Button
                                     component="label"
@@ -380,7 +501,7 @@ function CreateStockPage({ onChange }: any) {
                                     <Typography variant="caption" color="text.secondary">No documents uploaded</Typography>
                                 )}
                             </Box>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 1, p: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 1, p: 1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1, minWidth: 0 }}>
                                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Images</Typography>
                                 <Button
                                     component="label"
@@ -408,50 +529,42 @@ function CreateStockPage({ onChange }: any) {
                             </Box>
                         </Box>
 
-                        <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 1 }}>
-                            {isDragging && (
+                        {isDragging && (
+                            <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 1 }}>
                                 <Typography variant="caption" color="primary">
-                                    Drop files to upload    
+                                    Drop files to upload
                                 </Typography>
-                            )}
-                        </Box>
+                            </Box>
+                        )}
                     </Box>
-                    <Box
-                        sx={{
-                            mt: 0.5,
-                            flexGrow: 1,
-                            display: "flex",
-                            flexDirection: "column"
-                        }}
-                    >
+
+                    <Box sx={{ mt: 0.5, display: "flex", flexDirection: "column" }}>
                         <TextareaAutosize
-                            minRows={4}
+                            minRows={3}
                             placeholder="Comments / Remarks"
                             style={{
                                 width: "100%",
-                                // flexGrow: 1,
+                                boxSizing: "border-box",
                                 padding: "10px",
                                 borderColor: "#ccc",
                                 borderRadius: "10px",
                                 fontFamily: "inherit",
-                                resize: "vertical"
+                                resize: "vertical",
                             }}
-                            
                         />
                     </Box>
 
-
-                    {/* Full-width row: Charges */}
+                    {/* Charges */}
                     <Box
                         component={Paper}
                         elevation={3}
                         sx={{
-                            p: 2,
+                            p: 1,
+                            mt: 0.5,
                             display: "flex",
                             flexDirection: "column",
-                           
-                            gridColumn: { xs: "span 1", md: "span 1" },
                             border: "1px solid #000000",
+                            minWidth: 0,
                         }}
                     >
                         <Box
@@ -459,9 +572,9 @@ function CreateStockPage({ onChange }: any) {
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "space-between",
+                                flexWrap: "wrap",
+                                gap: 1,
                                 mb: 1,
-                                // borderBottom: "2px solid",
-                                // borderColor: "divider",
                             }}
                         >
                             <SectionHeader
@@ -473,41 +586,156 @@ function CreateStockPage({ onChange }: any) {
                                 Add Charges
                             </Button>
                         </Box>
-                        <TableContainer component={Paper} elevation={3} variant="outlined">
-                            <Table size="small">
+
+                        {isMobile ? (
+                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                                {chargeRows.length === 0 ? (
+                                    <Typography align="center" color="text.secondary" sx={{ py: 3 }}>No records</Typography>
+                                ) : (
+                                    chargeRows.map((row, i) => renderChargeCard(row, i))
+                                )}
+                            </Box>
+                        ) : (
+                            <TableContainer component={Paper} elevation={3} variant="outlined" sx={{ overflowX: "auto" }}>
+                                <Table size="small" sx={{ minWidth: 650 }}>
+                                    <TableHead>
+                                        <TableRow>
+                                            {chargesColumns.map((col) => (
+                                                <TableCell key={col.key} sx={{ fontWeight: 600, whiteSpace: "nowrap", textAlign: "center", px: 1 }}>
+                                                    {col.label}
+                                                </TableCell>
+                                            ))}
+                                            <TableCell />
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        <TableRow sx={{ height: 16, "& td": { border: 0 } }}>
+                                            <TableCell colSpan={chargesColumns.length + 1} sx={{ p: 0 }} />
+                                        </TableRow>
+                                        {chargeRows.length === 0 ? (
+                                            <TableRow>
+                                                <TableCell colSpan={chargesColumns.length + 1} align="center" sx={{ py: 3, color: "text.secondary" }}>No records</TableCell>
+                                            </TableRow>
+                                        ) : (
+                                            chargeRows.map((row) => (
+                                                <TableRow key={row.id}>
+                                                    {chargesColumns.map((col) => (
+                                                        <TableCell key={col.key} sx={{ minWidth: 100, px: 1, py: 0.5, textAlign: "center" }}>
+                                                            <TextField
+                                                                size="small" fullWidth
+                                                                required={pickupCharges === "yes"}
+                                                                value={(row as any)[col.key]}
+                                                                onChange={(e) => handleFieldChangeCharge(row.id, col.key, e.target.value)}
+                                                            />
+                                                        </TableCell>
+                                                    ))}
+                                                    <TableCell sx={{ position: 'sticky', right: 0, bgcolor: 'background.paper', zIndex: 1, p: 1, textAlign: 'center' }}>
+                                                        <IconButton color="error" size="small" onClick={() => handleRemoveCharge(row.id)}>
+                                                            <DeleteIcon fontSize="small" />
+                                                        </IconButton>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        )}
+                    </Box>
+                </Box>
+
+                {/* Full-width row: Cargo Details */}
+                <Box
+                    component={Paper}
+                    elevation={3}
+                    sx={{
+                        p: { xs: 1.5, sm: 2 },
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 1,
+                        minWidth: 0,
+                        gridColumn: { xs: "span 1", md: "span 2" },
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            flexWrap: "wrap",
+                            gap: 1,
+                        }}
+                    >
+                        <SectionHeader
+                            title="Cargo Details"
+                            icon={<Box component="img" src={CargoSvg} alt="Cargo" sx={{ width: 48, height: 30 }} />}
+                        />
+                        <Button size="small" startIcon={<AddIcon />} variant="outlined" onClick={handleAddCargo}>
+                            Add Cargo Detail
+                        </Button>
+                    </Box>
+
+                    {isMobile ? (
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                            {cargoRows.length === 0 ? (
+                                <Typography align="center" color="text.secondary" sx={{ py: 3 }}>No records</Typography>
+                            ) : (
+                                cargoRows.map((row, i) => renderCargoCard(row, i))
+                            )}
+                        </Box>
+                    ) : (
+                        <TableContainer component={Paper} variant="outlined" sx={{ overflowX: "auto" }}>
+                            <Table size="small" sx={{ minWidth: 1100 }}>
                                 <TableHead>
                                     <TableRow>
-                                        {chargesColumns.map((col) => (
-                                            <TableCell key={col.key} sx={{ fontWeight: 600, whiteSpace: "nowrap", textAlign: "center", px: 1 }}>
-                                                {col.label}
+                                        {columns.map((col) => (
+                                            <TableCell
+                                                key={col.key}
+                                                sx={{
+                                                    fontWeight: 600,
+                                                    whiteSpace: "nowrap",
+                                                    px: 1,
+                                                    textAlign: "center",
+                                                }}
+                                            >
+                                                {col.icon ? (
+                                                    <Tooltip title={col.label} arrow>
+                                                        <Box sx={{ display: 'inline-flex', alignItems: 'center' }}>{col.icon}</Box>
+                                                    </Tooltip>
+                                                ) : (
+                                                    <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                        {col.label}
+                                                    </Box>
+                                                )}
+                                                {col.required && <Box component="span" sx={{ color: "error.main" }}> *</Box>}
                                             </TableCell>
                                         ))}
                                         <TableCell />
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    <TableRow sx={{ height: 16, "& td": { border: 0 } }}>
-                                        <TableCell colSpan={chargesColumns.length + 1} sx={{ p: 0 }} />
-                                    </TableRow>
-                                    {chargeRows.length === 0 ? (
+                                    {cargoRows.length === 0 ? (
                                         <TableRow>
-                                            <TableCell colSpan={chargesColumns.length + 1} align="center" sx={{ py: 3, color: "text.secondary" }}>No records</TableCell>
+                                            <TableCell colSpan={columns.length + 1} align="center" sx={{ py: 3, color: "text.secondary" }}>No records</TableCell>
                                         </TableRow>
                                     ) : (
-                                        chargeRows.map((row) => (
+                                        cargoRows.map((row) => (
                                             <TableRow key={row.id}>
-                                                {chargesColumns.map((col) => (
-                                                    <TableCell key={col.key} sx={{ minWidth: 100, px: 1, py: 0.5, textAlign: "center" }}>
-                                                        <TextField
-                                                            size="small" fullWidth
-                                                            required={pickupCharges === "yes"}
-                                                            value={(row as any)[col.key]}
-                                                            onChange={(e) => handleFieldChangeCharge(row.id, col.key, e.target.value)}
-                                                        />
+                                                {columns.map((col) => (
+                                                    <TableCell key={col.key} sx={{ minWidth: col.type === "checkbox" ? 30 : 60, px: 1, py: 0.5, textAlign: col.type === "checkbox" ? "center" : "left" }}>
+                                                        {col.type === "checkbox" ? (
+                                                            <Checkbox
+                                                                size="small"
+                                                                checked={!!(row as any)[col.key]}
+                                                                onChange={(e) => handleFieldChangeCargo(row.id, col.key, e.target.checked)}
+                                                            />
+                                                        ) : (
+                                                            renderCargoField(row, col)
+                                                        )}
                                                     </TableCell>
                                                 ))}
                                                 <TableCell sx={{ position: 'sticky', right: 0, bgcolor: 'background.paper', zIndex: 1, p: 1, textAlign: 'center' }}>
-                                                    <IconButton color="error" size="small" onClick={() => handleRemoveCharge(row.id)}>
+                                                    <IconButton color="error" size="small" onClick={() => handleRemoveCargo(row.id)}>
                                                         <DeleteIcon fontSize="small" />
                                                     </IconButton>
                                                 </TableCell>
@@ -517,130 +745,8 @@ function CreateStockPage({ onChange }: any) {
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                    </Box>
+                    )}
                 </Box>
-
-
-
-                {/* Full-width row: Cargo Details */}
-                <Box
-                    component={Paper}
-                    elevation={3}
-                    sx={{
-                        p: 2,   
-                        display: "flex",
-                        flexDirection:"column", gap: 1,
-                        // maxHeight: 250,
-                        // overflowY: "auto",
-                        gridColumn: { xs: "span 1", md: "span 2" },
-
-                        
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            
-                        }}
-                    >
-                        <SectionHeader
-                            title="Cargo Details"
-                            icon={<Box component="img" src={CargoSvg} alt="Cargo" sx={{ width: 48, height: 36,  }} />}
-                        />
-                        <Button size="small" startIcon={<AddIcon />} variant="outlined" onClick={handleAddCargo}>
-                            Add Cargo Detail
-                        </Button>
-                    </Box>
-                    <TableContainer
-                        component={Paper}
-                        variant="outlined"
-                        
-                    >
-                        <Table size="small">
-                            <TableHead>
-                                <TableRow>
-                                    {columns.map((col) => (
-                                        <TableCell
-                                            key={col.key}
-                                            sx={{
-                                                fontWeight: 600,
-                                                whiteSpace: "nowrap",
-                                                px: 1,
-                                                textAlign: "center"
-                                            }}
-                                        >
-                                            {col.icon ? (
-                                                <Tooltip title={col.label} arrow>
-                                                    <Box sx={{ display: 'inline-flex', alignItems: 'center' }}>{col.icon}</Box>
-                                                </Tooltip>
-                                            ) : (
-                                                <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    {col.label}
-                                                </Box>
-                                            )}
-                                            {col.required && <Box component="span" sx={{ color: "error.main" }}> *</Box>}
-                                        </TableCell>
-                                    ))}
-                                    <TableCell />
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                <TableRow sx={{ height: 16, "& td": { border: 0 } }}>
-                                    <TableCell colSpan={columns.length + 1} sx={{ p: 0 }} />
-                                </TableRow>
-                                {cargoRows.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={columns.length + 1} align="center" sx={{ py: 3, color: "text.secondary" }}>No records</TableCell>
-                                    </TableRow>
-                                ) : (
-                                    cargoRows.map((row) => (
-                                        <TableRow key={row.id}>
-                                            {columns.map((col) => (
-                                                <TableCell key={col.key} sx={{ minWidth: col.type === "checkbox" ? 30 : 60, px: 1, py: 0.5, textAlign: col.type === "checkbox" ? "center" : "left" }}>
-                                                    {col.type === "checkbox" ? (
-                                                        <Checkbox
-                                                            size="small"
-                                                            checked={!!(row as any)[col.key]}
-                                                            onChange={(e) => handleFieldChangeCargo(row.id, col.key, e.target.checked)}
-                                                        />
-                                                    ) : col.type === "select" ? (
-                                                        <Select
-                                                            size="small" fullWidth displayEmpty
-                                                            value={(row as any)[col.key]}
-                                                            onChange={(e) => handleFieldChangeCargo(row.id, col.key, e.target.value)}
-                                                        >
-                                                            <MenuItem value=""><em>Select</em></MenuItem>
-                                                            {packageTypes.map((opt) => (
-                                                                <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
-                                                            ))}
-                                                        </Select>
-                                                    ) : (
-                                                        <TextField
-                                                            size="small" fullWidth
-                                                            value={(row as any)[col.key]}
-                                                            disabled={readOnlyFields.includes(col.key)}
-                                                            sx={readOnlyFields.includes(col.key) ? { "& .MuiOutlinedInput-root": { bgcolor: "grey.200" } } : undefined}
-                                                            onChange={(e) => handleFieldChangeCargo(row.id, col.key, e.target.value)}
-                                                        />
-                                                    )}
-                                                </TableCell>
-                                            ))}
-                                            <TableCell sx={{ position: 'sticky', right: 0, bgcolor: 'background.paper', zIndex: 1, p: 1, textAlign: 'center' }}>
-                                                <IconButton color="error" size="small" onClick={() => handleRemoveCargo(row.id)}>
-                                                    <DeleteIcon fontSize="small" />
-                                                </IconButton>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Box>
-
-
             </Box>
         </Stack>
     );

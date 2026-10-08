@@ -1,12 +1,13 @@
 import {
     Badge, Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent,
-    IconButton, Paper, Popover, Table, TableBody, TableCell,
+    DialogTitle, IconButton, Paper, Popover, Table, TableBody, TableCell,
     TableContainer, TableHead, TablePagination, TableRow, Tooltip, Typography,
 } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { useState, type ChangeEvent, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
@@ -19,7 +20,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import { useLocation, useNavigate } from "react-router-dom";
 
-type FileItem = { name: string; url: string };
+export type FileItem = { name: string; url: string };
 
 const demoImages: FileItem[] = [
     { name: "cargo-front.jpg", url: "https://picsum.photos/id/1011/800/600" },
@@ -50,6 +51,374 @@ const demoData = [
         transit_no: "Transit 1", arrival_date: "2023-08-20", stock_status: "Completed",
         docs: [{ name: "bill-of-lading.pdf", url: "/files/bol.pdf" }] as FileItem[],
         images: [] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
+    },
+    {
+        id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
+        existing_manifest: "Manifest 3", client: "Client 3", po_no: "PO789",
+        supplier: "Supplier 3", pkgs: 20, weight: 200, cbm: 2.0, value: 2000,
+        transit_no: "Transit 1", arrival_date: "2023-08-25", stock_status: "In Progress",
+        docs: [] as FileItem[],
+        images: [{ name: "container.jpg", url: "https://picsum.photos/id/1018/800/600" }] as FileItem[],
     },
     {
         id: 3, station: "Station 3", stock_id: "STK-0003", vessel: "Vessel 3",
@@ -93,7 +462,7 @@ const splitValues = (v?: string | null) =>
 
 
 // Icon with count badge; click opens a list with per-file and "Download all" actions
-function FileCell({ files, type }: { files: FileItem[]; type: "doc" | "image" }) {
+export function FileCell({ files, type }: { files: FileItem[]; type: "doc" | "image" }) {
     const [anchor, setAnchor] = useState<HTMLElement | null>(null);
     const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
 
@@ -268,7 +637,8 @@ const columns: Column[] = [
 const CHECKBOX_COL_WIDTH = 44;
 const ACTIONS_COL_WIDTH = 210;
 const MIN_COL_WIDTH = 60;
-const ROW_HEIGHT = 40;
+// MUI controls and action buttons set a practical minimum of about 40px per row.
+const ROW_HEIGHT = 34;
 const HEADER_HEIGHT = 42;
 const TOTAL_COLS = columns.length + 2; //* + checkbox + actions
 
@@ -285,11 +655,12 @@ export default function StockFollowupTable({ filters }: StockFollowupTableProps)
         const updatedStock = (location.state as { updatedStock?: Row } | null)?.updatedStock;
         return updatedStock ? demoData.map((row) => row.id === updatedStock.id ? updatedStock : row) : demoData;
     });
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [rowsPerPage, setRowsPerPage] = useState(15);
     const [pages, setPages] = useState(0);
     const [selected, setSelected] = useState<number[]>([]);
     const [widths, setWidths] = useState<Record<string, number>>(defaultWidths);
     const [approveTarget, setApproveTarget] = useState<Row | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<Row | null>(null);
 
     // Drag the divider in the header to resize a column. Double-click it to reset that column.
     const startResize = (key: string, e: ReactMouseEvent) => {
@@ -375,14 +746,22 @@ export default function StockFollowupTable({ filters }: StockFollowupTableProps)
 
     const handleExport = () => alert(`Exporting ${selected.length} items (Placeholder)`);
 
-    const handleApprove = (row: Row) => setApproveTarget(row);
-    const handleCloseApprove = () => setApproveTarget(null);
-
     const handleChangePage = (_: unknown, newPage: number) => setPages(newPage);
 
     const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPages(0);
+    };
+
+    const handleApprove = (row: Row) => setApproveTarget(row);
+    const handleCloseApprove = () => setApproveTarget(null);
+    const handleConfirmDelete = () => {
+        if (!deleteTarget) return;
+        const remainingRows = rows.filter((row) => row !== deleteTarget);
+        setRows(remainingRows);
+        setSelected((prev) => prev.filter((id) => id !== deleteTarget.id));
+        setPages((page) => Math.min(page, Math.max(0, Math.ceil((filteredData.length - 1) / rowsPerPage) - 1)));
+        setDeleteTarget(null);
     };
 
     return (
@@ -403,9 +782,9 @@ export default function StockFollowupTable({ filters }: StockFollowupTableProps)
                 </Box>
             )}
 
-            <Paper elevation={2} sx={{ mt: 2, borderRadius: "8px 8px 16px 16px", border: "1px solid", borderColor: "divider", overflow: "hidden" }}>
+            <Paper elevation={2} sx={{  borderRadius: "8px 8px 16px 16px", border: "1px solid", borderColor: "divider", overflow: "hidden" }}>
                 {/* maxHeight is what makes the sticky header work – adjust 260px to your layout */}
-                <TableContainer sx={{ maxHeight: "calc(100vh - 260px)", overflow: "auto" }}>
+                <TableContainer sx={{ maxHeight: HEADER_HEIGHT + ROW_HEIGHT * 15, overflow: "auto" }}>
                     <Table
                         size="small"
                         stickyHeader
@@ -597,7 +976,9 @@ export default function StockFollowupTable({ filters }: StockFollowupTableProps)
                                                             ? () => navigate(`/stocks/view/${row.id}`, { state: { stock: row } })
                                                             : title === "Edit"
                                                                 ? () => navigate(`/stocks/edit/${row.id}`, { state: { stock: row } })
-                                                                : undefined}
+                                                                : title === "Delete"
+                                                                    ? () => setDeleteTarget(row)
+                                                                    : undefined}
                                                         sx={{ p: 0.4 }}
                                                     >
                                                         <Icon sx={{ fontSize: "0.95rem" }} />
@@ -621,7 +1002,6 @@ export default function StockFollowupTable({ filters }: StockFollowupTableProps)
                     </Table>
                 </TableContainer>
 
-                {/* Outside the scroll container so it never scrolls sideways */}
                 <TablePagination
                     component="div"
                     count={filteredData.length}
@@ -629,16 +1009,17 @@ export default function StockFollowupTable({ filters }: StockFollowupTableProps)
                     rowsPerPage={rowsPerPage}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
-                    rowsPerPageOptions={[10, 15, 25, 50, 100]}
+                    rowsPerPageOptions={[15, 30, 50, 100]}
                     sx={{ borderTop: "1px solid", borderColor: "divider" }}
                 />
+
             </Paper>
             <Dialog
                 open={approveTarget !== null}
                 onClose={handleCloseApprove}
                 aria-labelledby="approve-stock-dialog-title"
                 aria-describedby="approve-stock-dialog-description"
-                slotProps={{ paper: { sx: { width: 400, maxWidth: "calc(100% - 32px)", borderRadius: 3 } } }}
+                slotProps={{ paper: { sx: { width: 400, maxWidth: "calc(100% - 32px)", borderRadius: 3,mb: 20 } } }}
             >
                 <DialogContent sx={{ textAlign: "center", pt: 3.5, pb: 1 }}>
                     <Box
@@ -683,6 +1064,58 @@ export default function StockFollowupTable({ filters }: StockFollowupTableProps)
                         sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, ml: "0 !important" }}
                     >
                         Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                open={deleteTarget !== null}
+                onClose={() => setDeleteTarget(null)}
+                aria-labelledby="delete-stock-title"
+                aria-describedby="delete-stock-description"
+                fullWidth
+                maxWidth="xs"
+                slotProps={{ paper: { sx: { borderRadius: 3, p: 1, boxShadow: (theme) => theme.shadows[10] } } }}
+            >
+                <DialogTitle
+                    id="delete-stock-title"
+                    component="div"
+                    sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, pt: 3, pb: 1 }}
+                >
+                    <Box
+                        sx={(theme) => ({
+                            width: 64,
+                            height: 64,
+                            borderRadius: "50%",
+                            display: "grid",
+                            placeItems: "center",
+                            bgcolor: alpha(theme.palette.error.main, 0.12),
+                            color: "error.main",
+                            boxShadow: `0 0 0 8px ${alpha(theme.palette.error.main, 0.06)}`,
+                        })}
+                    >
+                        <DeleteOutlinedIcon sx={{ fontSize: 32 }} />
+                    </Box>
+                    <Typography variant="h6" component="h2" fontWeight={700}>Delete stock?</Typography>
+                </DialogTitle>
+                <DialogContent sx={{ textAlign: "center", pb: 1 }}>
+                    <Typography id="delete-stock-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                        Are you sure you want to delete{" "}
+                        {deleteTarget?.stock_id ? (
+                            <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                                {deleteTarget.stock_id}
+                            </Box>
+                        ) : (
+                            "this stock record"
+                        )}
+                        ? This action cannot be undone.
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pt: 2, pb: 3, gap: 1.5 }}>
+                    <Button onClick={() => setDeleteTarget(null)} variant="outlined" color="inherit" fullWidth sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, borderColor: "divider" }}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleConfirmDelete} color="error" variant="contained" fullWidth autoFocus disableElevation sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2 }}>
+                        Delete
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -1,8 +1,10 @@
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
-import { Checkbox, Button, Box, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from "@mui/material";
+import { Checkbox, Button, Box, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import type { AirportCodes } from "../types/airportCodes.types";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { useState } from "react";
 
 
@@ -28,10 +30,7 @@ export default function AirportCodesIndexTable({ onEdit }: AirportCodesIndexTabl
     const [rows, setRows] = useState<AirportCodes[]>(demoData);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-
-    const handleDelete = (id: number) => {
-        setRows((prev) => prev.filter((row) => row.id !== id));
-    }
+    const [deleteTarget, setDeleteTarget] = useState<AirportCodes | null>(null);
 
     const handleChangePage = (_: unknown, newPage: number) => {
         setPage(newPage);
@@ -65,6 +64,14 @@ export default function AirportCodesIndexTable({ onEdit }: AirportCodesIndexTabl
         alert(`Exporting ${selected.length} items (Placeholder)`);
     };
 
+    const handleConfirmDelete = () => {
+        if (!deleteTarget) return;
+        setRows((prev) => prev.filter((row) => row.id !== deleteTarget.id));
+        setSelected((prev) => prev.filter((id) => id !== deleteTarget.id));
+        if (paginated.length === 1 && page > 0) setPage((current) => current - 1);
+        setDeleteTarget(null);
+    };
+
     return (
         <Box>
             {selected.length > 0 && (
@@ -73,8 +80,8 @@ export default function AirportCodesIndexTable({ onEdit }: AirportCodesIndexTabl
                     <Button variant="contained" size="small" color="primary" startIcon={<FileDownloadOutlinedIcon />} onClick={handleExport} sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, px: 2.5 }}>Export</Button>
                 </Box>
             )}
-            <TableContainer component={Paper} elevation={3} sx={{ borderRadius: "8px 8px 16px 16px", border: "1px solid", borderColor: "divider", overflow: "hidden" }}>
-                <Table size="small">
+            <TableContainer component={Paper} elevation={3} sx={{ borderRadius: "8px 8px 16px 16px", border: "1px solid", borderColor: "divider", overflowX: "auto", overflowY: "hidden" }}>
+                <Table size="small" sx={{ minWidth: { xs: 680, sm: "100%" } }}>
                     <TableHead>
                         <TableRow>
                             <TableCell padding="checkbox" sx={{ pl: 1.5 }}><Checkbox size="small" color="primary" indeterminate={someOnPageSelected} checked={allOnPageSelected} onChange={handleSelectAll} /></TableCell>
@@ -105,7 +112,7 @@ export default function AirportCodesIndexTable({ onEdit }: AirportCodesIndexTabl
                                         <TableCell sx={{ textAlign: "right" }}>
                                             <Box sx={{ display: "flex", gap: 0.25, justifyContent: "flex-end" }}>
                                                 <IconButton size="small" color="primary" aria-label="edit" onClick={() => onEdit(airportCode)}><EditIcon fontSize="small" /></IconButton>
-                                                <IconButton size="small" color="error" aria-label="delete" onClick={() => handleDelete(airportCode.id)}><DeleteIcon fontSize="small" /></IconButton>
+                                                <IconButton size="small" color="error" aria-label="delete" onClick={() => setDeleteTarget(airportCode)}><DeleteIcon fontSize="small" /></IconButton>
                                             </Box>
                                         </TableCell>
                                     </TableRow>
@@ -114,8 +121,60 @@ export default function AirportCodesIndexTable({ onEdit }: AirportCodesIndexTabl
                         )}
                     </TableBody>
                 </Table>
-                <TablePagination component="div" count={rows.length} page={page} onPageChange={handleChangePage} rowsPerPage={rowsPerPage} onRowsPerPageChange={handleChangeRowsPerPage} rowsPerPageOptions={[5, 10, 15, 25, 50, 100]} sx={{ borderTop: "1px solid", borderColor: "divider" }} />
+                <TablePagination component="div" count={rows.length} page={page} onPageChange={handleChangePage} rowsPerPage={rowsPerPage} onRowsPerPageChange={handleChangeRowsPerPage} rowsPerPageOptions={[5, 10, 15, 25, 50, 100]} sx={{ borderTop: "1px solid", borderColor: "divider", "& .MuiTablePagination-toolbar": { px: { xs: 1, sm: 2 }, flexWrap: { xs: "wrap", sm: "nowrap" }, justifyContent: { xs: "center", sm: "flex-end" } }, "& .MuiTablePagination-selectLabel": { display: { xs: "none", sm: "block" } } }} />
             </TableContainer>
+
+            <Dialog
+                open={deleteTarget !== null}
+                onClose={() => setDeleteTarget(null)}
+                aria-labelledby="delete-airport-title"
+                aria-describedby="delete-airport-description"
+                fullWidth
+                maxWidth="xs"
+                slotProps={{
+                    paper: {
+                        sx: {
+                            borderRadius: 3,
+                            p: 1,
+                            boxShadow: (theme) => theme.shadows[10],
+                        },
+                    },
+                }}
+            >
+                <DialogTitle
+                    id="delete-airport-title"
+                    component="div"
+                    sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, pt: 3, pb: 1 }}
+                >
+                    <Box sx={(theme) => ({ width: 64, height: 64, borderRadius: "50%", display: "grid", placeItems: "center", bgcolor: alpha(theme.palette.error.main, 0.12), color: "error.main", boxShadow: `0 0 0 8px ${alpha(theme.palette.error.main, 0.06)}` })}>
+                        <DeleteOutlinedIcon sx={{ fontSize: 32 }} />
+                    </Box>
+                    <Typography variant="h6" component="h2" fontWeight={700}>
+                        Delete airport code?
+                    </Typography>
+                </DialogTitle>
+
+                <DialogContent sx={{ textAlign: "center", pb: 1 }}>
+                    <Typography id="delete-airport-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                        Are you sure you want to delete{" "}
+                        {deleteTarget?.airport_code ? (
+                            <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                                “{deleteTarget.airport_code}”
+                            </Box>
+                        ) : "this airport code"}?
+                        {" "}This action cannot be undone.
+                    </Typography>
+                </DialogContent>
+
+                <DialogActions sx={{ px: 3, pt: 2, pb: 3, gap: 1.5 }}>
+                    <Button onClick={() => setDeleteTarget(null)} variant="outlined" color="inherit" fullWidth sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, borderColor: "divider" }}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleConfirmDelete} color="error" variant="contained" fullWidth autoFocus disableElevation sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2 }}>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

@@ -1,6 +1,6 @@
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import {
-    Checkbox, Button, Box,
+    Checkbox, Button, Box, Dialog, DialogActions, DialogContent, DialogTitle,
     IconButton,
     Paper,
     Table,
@@ -15,8 +15,10 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { useState } from "react";
 import type { TariffMaster } from "../types/trariffMaster.types";
+import { alpha } from "@mui/material/styles";
 
 const headCellSx = {
     whiteSpace: "nowrap" as const,
@@ -47,6 +49,7 @@ interface TariffMasterIndexTableProps {
 
 export default function TariffMasterIndexTable({ rows, onEdit, onDelete }: TariffMasterIndexTableProps) {
     const [page, setPage] = useState(0);
+    const [deleteTarget, setDeleteTarget] = useState<TariffMaster | null>(null);
 
     const [selected, setSelected] = useState<number[]>([]);
 
@@ -82,6 +85,14 @@ export default function TariffMasterIndexTable({ rows, onEdit, onDelete }: Tarif
         setPage(0);
     };
 
+    const handleConfirmDelete = () => {
+        if (!deleteTarget) return;
+        onDelete(deleteTarget);
+        setSelected((prev) => prev.filter((id) => id !== deleteTarget.id));
+        if (paginated.length === 1 && page > 0) setPage((current) => current - 1);
+        setDeleteTarget(null);
+    };
+
     return (
         <Box>
             {selected.length > 0 && (
@@ -100,11 +111,12 @@ export default function TariffMasterIndexTable({ rows, onEdit, onDelete }: Tarif
                     borderRadius: "8px 8px 16px 16px",
                     border: "1px solid",
                     borderColor: "divider",
-                    overflow: "hidden",
+                    overflowX: "auto",
+                    overflowY: "hidden",
                     mt: 2,
                 }}
             >
-                <Table size="small">
+                <Table size="small" sx={{ minWidth: { xs: 520, sm: "100%" } }}>
                     <TableHead>
                         <TableRow>
                             <TableCell padding="checkbox" sx={{ pl: 1.5 }}>
@@ -158,7 +170,7 @@ export default function TariffMasterIndexTable({ rows, onEdit, onDelete }: Tarif
                                                     <IconButton
                                                         size="small"
                                                         color="error"
-                                                        onClick={() => onDelete(tariff)}
+                                                        onClick={() => setDeleteTarget(tariff)}
                                                     >
                                                         <DeleteIcon fontSize="small" />
                                                     </IconButton>
@@ -183,9 +195,112 @@ export default function TariffMasterIndexTable({ rows, onEdit, onDelete }: Tarif
                     sx={{
                         borderTop: "1px solid",
                         borderColor: "divider",
+                        "& .MuiTablePagination-toolbar": {
+                            px: { xs: 1, sm: 2 },
+                            flexWrap: { xs: "wrap", sm: "nowrap" },
+                            justifyContent: { xs: "center", sm: "flex-end" },
+                        },
+                        "& .MuiTablePagination-selectLabel": {
+                            display: { xs: "none", sm: "block" },
+                        },
                     }}
                 />
             </TableContainer>
+            <Dialog
+                open={deleteTarget !== null}
+                onClose={() => setDeleteTarget(null)}
+                aria-labelledby="delete-tariff-title"
+                aria-describedby="delete-tariff-description"
+                fullWidth
+                maxWidth="xs"
+                slotProps={{
+                    paper: {
+                        sx: {
+                            borderRadius: 3,
+                            p: 1,
+                            boxShadow: (theme) => theme.shadows[10],
+                        },
+                    },
+                }}
+            >
+                <DialogTitle
+                    id="delete-tariff-title"
+                    component="div"
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: 2,
+                        pt: 3,
+                        pb: 1,
+                    }}
+                >
+                    <Box
+                        sx={(theme) => ({
+                            width: 64,
+                            height: 64,
+                            borderRadius: "50%",
+                            display: "grid",
+                            placeItems: "center",
+                            bgcolor: alpha(theme.palette.error.main, 0.12),
+                            color: "error.main",
+                            boxShadow: `0 0 0 8px ${alpha(theme.palette.error.main, 0.06)}`,
+                        })}
+                    >
+                        <DeleteOutlinedIcon sx={{ fontSize: 32 }} />
+                    </Box>
+                    <Typography variant="h6" component="h2" fontWeight={700}>
+                        Delete tariff?
+                    </Typography>
+                </DialogTitle>
+
+                <DialogContent sx={{ textAlign: "center", pb: 1 }}>
+                    <Typography
+                        id="delete-tariff-description"
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ lineHeight: 1.6 }}
+                    >
+                        Are you sure you want to delete{" "}
+                        {deleteTarget?.name ? (
+                            <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                                “{deleteTarget.name}”
+                            </Box>
+                        ) : (
+                            "this tariff"
+                        )}
+                        ? This action cannot be undone.
+                    </Typography>
+                </DialogContent>
+
+                <DialogActions sx={{ px: 3, pt: 2, pb: 3, gap: 1.5 }}>
+                    <Button
+                        onClick={() => setDeleteTarget(null)}
+                        variant="outlined"
+                        color="inherit"
+                        fullWidth
+                        sx={{
+                            textTransform: "none",
+                            fontWeight: 600,
+                            borderRadius: 2,
+                            borderColor: "divider",
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleConfirmDelete}
+                        color="error"
+                        variant="contained"
+                        fullWidth
+                        autoFocus
+                        disableElevation
+                        sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2 }}
+                    >
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

@@ -7,15 +7,15 @@ export default function StockFollowupHeader() {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                py: 1,
-                px: 1,
+                py: 0,
+                px: 0,
             }}
         >
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                
                 <Typography
                     variant="h5"
-                    sx={{ fontWeight: 700, color: "text.primary" }}
+                    sx={{ fontWeight: 700, color: "text.primary", lineHeight: 1.2 }}
                 >
                     Stock Followup
                 </Typography>
