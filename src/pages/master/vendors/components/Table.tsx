@@ -339,6 +339,7 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                         sx: {
                             borderRadius: 3,
                             p: 1,
+                            mb:50,
                             boxShadow: (theme) => theme.shadows[10],
                         },
                     },
@@ -384,7 +385,7 @@ export default function VendorsListTable({ filters, onEdit }: VendorsIndexTableP
                     >
                         Are you sure you want to delete{" "}
                         {deleteTarget?.vendorName ? (
-                            <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                            <Box component="span" sx={{ fontWeight: 600, color: "error.main" }}>
                                 “{deleteTarget.vendorName}”
                             </Box>
                         ) : (

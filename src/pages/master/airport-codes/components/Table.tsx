@@ -136,6 +136,7 @@ export default function AirportCodesIndexTable({ onEdit }: AirportCodesIndexTabl
                         sx: {
                             borderRadius: 3,
                             p: 1,
+                            mb:50,
                             boxShadow: (theme) => theme.shadows[10],
                         },
                     },
@@ -154,11 +155,11 @@ export default function AirportCodesIndexTable({ onEdit }: AirportCodesIndexTabl
                     </Typography>
                 </DialogTitle>
 
-                <DialogContent sx={{ textAlign: "center", pb: 1 }}>
+                <DialogContent sx={{ textAlign: "center", pb: 1, }}>
                     <Typography id="delete-airport-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
                         Are you sure you want to delete{" "}
                         {deleteTarget?.airport_code ? (
-                            <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                            <Box component="span" sx={{ fontWeight: 600, color: "error.main" }}>
                                 “{deleteTarget.airport_code}”
                             </Box>
                         ) : "this airport code"}?

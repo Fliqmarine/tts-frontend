@@ -218,6 +218,7 @@ export default function TariffMasterIndexTable({ rows, onEdit, onDelete }: Tarif
                         sx: {
                             borderRadius: 3,
                             p: 1,
+                            mb:50,
                             boxShadow: (theme) => theme.shadows[10],
                         },
                     },
@@ -263,7 +264,7 @@ export default function TariffMasterIndexTable({ rows, onEdit, onDelete }: Tarif
                     >
                         Are you sure you want to delete{" "}
                         {deleteTarget?.name ? (
-                            <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                            <Box component="span" sx={{ fontWeight: 600, color: "error.main" }}>
                                 “{deleteTarget.name}”
                             </Box>
                         ) : (

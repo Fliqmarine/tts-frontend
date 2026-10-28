@@ -11,7 +11,7 @@ import { createTheme, alpha, type PaletteMode } from "@mui/material/styles";
  *  Usage:
  *    Wrap the app in <ColorModeProvider> (ColorModeContext.tsx), which calls
  *    getTtsTheme(mode) and renders ThemeProvider + CssBaseline for you.
- * #3dfe8a
+ * #3dfe8a #FF6B6F
  * ───────────────────────────────────────────────────────────── */
 
 /* ── Per-mode design tokens ── */
@@ -25,7 +25,7 @@ const tokens = {
             success: { main: "#3DD598" },
             info: { main: "#2F80ED" },
             background: { default: "#f5f6fe", paper: "#FFFFFF" },
-            text: { main:"#3D5AFE",primary: "#1A1F36", secondary: "#6B7280" },
+            text: { main:"#3D5AFE",primary: "#1A1F36", secondary: "#6B7280", white:"#" },
             divider: "#c2ccfd",
         },
         accent: "#3D5AFE", // icons, hover tint, scrollbar hover
@@ -105,6 +105,100 @@ const tokens = {
         buttonShadowHover: "0 3px 10px rgba(0,0,0,0.5)",
     },
 } as const;
+
+
+
+/* ── Per-mode design tokens — Coral & Gold ── */
+// const tokens = {
+//     light: {
+//         palette: {
+//             primary: { main: "#F26B4F", light: "#FF9478", dark: "#D14E33", contrastText: "#FFFFFF" },
+//             secondary: { main: "#F5B83D", light: "#FFD073", dark: "#C98F12", contrastText: "#2B1A17" },
+//             error: { main: "#C62828" },
+//             warning: { main: "#FFB020" },
+//             success: { main: "#2FBF8F" },
+//             info: { main: "#2F80ED" },
+//             background: { default: "#f3fcff", paper: "#ffffff" },
+//             text: { main: "#F26B4F", primary: "#2B1A17", secondary: "#7A6862", white: "#FFFFFF" },
+//             divider: "#F8D5CB",
+//         },
+//         accent: "#F26B4F", // icons, hover tint, scrollbar hover
+//         appBar: "#FFFFFF",
+//         appBarBorder: "#F5E5DF",
+//         appBarShadow: "0 1px 3px rgba(43,26,23,0.06)",
+//         sidebarBg: "linear-gradient(180deg, #FF8A65 0%, #F26B4F 55%, #D14E33 100%)",
+//         sidebarText: "#FFFFFF",
+//         sidebarTextMuted: "rgba(255,255,255,0.8)",
+//         sidebarActiveBg: "#FFFFFF",
+//         sidebarActiveText: "#D14E33",
+//         sidebarHoverBg: "rgba(255,255,255,0.14)",
+//         tableHeadBg: "#FFF0EA",
+//         tableHeadText: "#7A6862",
+//         tableHeadBorder: "#F8B9A8",
+//         tableRowLine: "rgba(54, 26, 26, 0.1)",
+//         inputBg: "#FFFFFF",
+//         inputBorder: "#CDBFBA",
+//         inputBorderHover: "#F6B5A3",
+//         inputBorderFocus: "#F26B4F",
+//         surfaceBorder: "#F7E6E0",
+//         surfaceShadow: "0 1px 4px rgba(43,26,23,0.06)",
+//         cardShadow: "0 6px 18px rgba(242,107,79,0.12)",
+//         menuBg: "#FFFFFF",
+//         menuBorder: "rgba(43,26,23,0.08)",
+//         menuShadow: "0 10px 28px rgba(43,26,23,0.12)",
+//         tooltipBg: "#2B1A17",
+//         scrollTrack: "#FFEBE4",
+//         scrollThumb: "#F5C6B8",
+//         scrollThumbHover: "#F26B4F",
+//         switchOff: "#D3CAC7",
+//         buttonShadow: "0 2px 8px rgba(242,107,79,0.28)",
+//         buttonShadowHover: "0 4px 14px rgba(242,107,79,0.5)",
+//     },
+//     dark: {
+//         palette: {
+//             primary: { main: "#FF8266", light: "#FFA58E", dark: "#F26B4F", contrastText: "#FFFFFF" },
+//             secondary: { main: "#F5B83D", light: "#FFD073", dark: "#D99A1C", contrastText: "#2B1A17" },
+//             error: { main: "#FF6B6F" },
+//             warning: { main: "#FFC24B" },
+//             success: { main: "#4FE3B0" },
+//             info: { main: "#6EA8FF" },
+//             background: { default: "#1D1214", paper: "#281A1C" },
+//             text: { primary: "#FBEFEC", secondary: "#C4A9A7" },
+//             divider: "#3D2A2C",
+//         },
+//         accent: "#FF8F74",
+//         appBar: "#281A1C",
+//         appBarBorder: "#3D2A2C",
+//         appBarShadow: "0 2px 10px rgba(0,0,0,0.4)",
+//         sidebarBg: "linear-gradient(180deg, #4A1F1B 0%, #2F1517 55%, #1D1214 100%)",
+//         sidebarText: "#FBEFEC",
+//         sidebarTextMuted: "rgba(251,239,236,0.65)",
+//         sidebarActiveBg: "#F26B4F",
+//         sidebarActiveText: "#FFFFFF",
+//         sidebarHoverBg: "rgba(255,255,255,0.08)",
+//         tableHeadBg: "#322023",
+//         tableHeadText: "#EBD3CF",
+//         tableHeadBorder: "#4A3235",
+//         tableRowLine: "rgba(251,239,236,0.07)",
+//         inputBg: "#281A1C",
+//         inputBorder: "#4A3235",
+//         inputBorderHover: "#755256",
+//         inputBorderFocus: "#FF8266",
+//         surfaceBorder: "#3D2A2C",
+//         surfaceShadow: "0 1px 4px rgba(0,0,0,0.35)",
+//         cardShadow: "0 6px 18px rgba(0,0,0,0.4)",
+//         menuBg: "#281A1C",
+//         menuBorder: "rgba(255,143,116,0.2)",
+//         menuShadow: "0 10px 28px rgba(0,0,0,0.5)",
+//         tooltipBg: "#322023",
+//         scrollTrack: "#211517",
+//         scrollThumb: "#583B3E",
+//         scrollThumbHover: "#FF8266",
+//         switchOff: "#6E5558",
+//         buttonShadow: "0 2px 6px rgba(0,0,0,0.4)",
+//         buttonShadowHover: "0 3px 10px rgba(0,0,0,0.5)",
+//     },
+// } as const;
 
 /* ── Theme factory ── */
 export const getTtsTheme = (mode: PaletteMode) => {

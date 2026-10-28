@@ -152,7 +152,7 @@ export default function CargoIndexTable({ onEdit }: CargoIndexTableProps) {
                 aria-describedby="delete-cargo-description"
                 fullWidth
                 maxWidth="xs"
-                slotProps={{ paper: { sx: { borderRadius: 3, p: 1, boxShadow: (theme) => theme.shadows[10] } } }}
+                slotProps={{ paper: { sx: { borderRadius: 3, p: 1,mb:50, boxShadow: (theme) => theme.shadows[10] } } }}
             >
                 <DialogTitle id="delete-cargo-title" component="div" sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, pt: 3, pb: 1 }}>
                     <Box sx={(theme) => ({ width: 64, height: 64, borderRadius: "50%", display: "grid", placeItems: "center", bgcolor: alpha(theme.palette.error.main, 0.12), color: "error.main", boxShadow: `0 0 0 8px ${alpha(theme.palette.error.main, 0.06)}` })}>
@@ -164,7 +164,7 @@ export default function CargoIndexTable({ onEdit }: CargoIndexTableProps) {
                 <DialogContent sx={{ textAlign: "center", pb: 1 }}>
                     <Typography id="delete-cargo-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
                         Are you sure you want to delete{" "}
-                        {deleteTarget?.cargo_name ? <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>“{deleteTarget.cargo_name}”</Box> : "this cargo"}?
+                        {deleteTarget?.cargo_name ? <Box component="span" sx={{ fontWeight: 600, color: "error.main" }}>“{deleteTarget.cargo_name}”</Box> : "this cargo"}?
                         {" "}This action cannot be undone.
                     </Typography>
                 </DialogContent>

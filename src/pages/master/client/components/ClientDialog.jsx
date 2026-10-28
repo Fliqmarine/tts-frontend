@@ -193,7 +193,7 @@ export default function ClientDialog({ open, onClose, onSaved, client = null }) 
 			scroll="paper"
 			sx={{
 				"& .MuiDialog-paper": {
-					height: { xs: "calc(100dvh - 16px)", sm: "62vh" },
+					height: { xs: "calc(100dvh - 16px)", sm: "70vh" },
 					maxHeight: "calc(100% - 32px)",
 					width: { xs: "calc(100% - 16px)", sm: "calc(100% - 64px)" },
 					m: { xs: 1, sm: 4 },

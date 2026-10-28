@@ -3,23 +3,7 @@ import { Box, Collapse, IconButton, MenuItem, TextField, Tooltip, Typography } f
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
-
-export interface Filters {
-    search: string;
-    client: string;
-    vessel: string;
-    station: string;
-    supplier: string;
-    po_number: string;
-    transit_number: string;
-    status: string;
-    key_account_manager: string;
-}
-
-interface FollowupFilterProps {
-    filters: Filters;
-    onChange: (filters: Filters) => void;
-}
+import type { StockFollowupFilterProps, StockFollowupFilters } from "../types/Stocks.types";
 
 const fieldSx = {
     "& .MuiOutlinedInput-root": {
@@ -28,10 +12,10 @@ const fieldSx = {
     },
 };
 
-export default function Filter({ filters, onChange }: FollowupFilterProps) {
+export default function Filter({ filters, onChange }: StockFollowupFilterProps) {
     const [showMore, setShowMore] = useState(false);
 
-    const handleChange = (field: keyof Filters, value: string) => {
+    const handleChange = (field: keyof StockFollowupFilters, value: string) => {
         onChange({ ...filters, [field]: value });
     };
 
@@ -127,8 +111,8 @@ export default function Filter({ filters, onChange }: FollowupFilterProps) {
                     label="PO Number"
                     size="small"
                     fullWidth
-                    value={filters.po_number}
-                    onChange={(e) => handleChange("po_number", e.target.value)}
+                    value={filters.po_no}
+                    onChange={(e) => handleChange("po_no", e.target.value)}
                     sx={fieldSx}
                 >
                     <MenuItem value="">All</MenuItem>
@@ -227,8 +211,8 @@ export default function Filter({ filters, onChange }: FollowupFilterProps) {
                         label="Transit Number"
                         size="small"
                         fullWidth
-                        value={filters.transit_number}
-                        onChange={(e) => handleChange("transit_number", e.target.value)}
+                        value={filters.transit_no}
+                        onChange={(e) => handleChange("transit_no", e.target.value)}
                         sx={fieldSx}
                     />
 

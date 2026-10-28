@@ -259,7 +259,7 @@ export default function HubLocationsIndex() {
                 aria-describedby="delete-hub-location-description"
                 fullWidth
                 maxWidth="xs"
-                slotProps={{ paper: { sx: { borderRadius: 3, p: 1, boxShadow: (theme) => theme.shadows[10] } } }}
+                slotProps={{ paper: { sx: { borderRadius: 3, p: 1,mb:50, boxShadow: (theme) => theme.shadows[10] } } }}
             >
                 <DialogTitle
                     id="delete-hub-location-title"
@@ -283,7 +283,7 @@ export default function HubLocationsIndex() {
                     <Typography variant="h6" component="h2" fontWeight={700}>Delete hub location?</Typography>
                 </DialogTitle>
                 <DialogContent sx={{ textAlign: "center", pb: 1 }}>
-                    <Typography id="delete-hub-location-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                    <Typography id="delete-hub-location-description" variant="body2" color="error.main" sx={{ lineHeight: 1.6 }}>
                         Are you sure you want to delete{" "}
                         {hubLocationToDelete?.name ? (
                             <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>

@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type ReactNode } from "react";
+import { useState, type ChangeEvent } from "react";
 import {
     Box, Button, Checkbox, FormControlLabel, IconButton, MenuItem, Paper, Stack, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow, TextField, Tooltip, Typography,
@@ -11,12 +11,9 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import CloseIcon from "@mui/icons-material/Close";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import CargoSvg from "../../assets/Cargo_svg.svg";
-import type { StockFollowupRow } from "./components/StockFollowupTable";
+import type { Stock, StockEditableFilesProps, StockEditLocationState as EditLocationState, StockSectionHeaderProps, StockTextFieldDefinition } from "./types/Stocks.types";
 
-type EditLocationState = { stock?: StockFollowupRow };
-type StockFile = StockFollowupRow["docs"][number];
-
-function SectionHeader({ title, icon }: { title: string; icon: ReactNode }) {
+function SectionHeader({ title, icon }: StockSectionHeaderProps) {
     return (
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, pb: 0.75, borderBottom: "2px solid", borderColor: "divider" }}>
             <Box sx={{ display: "flex", color: "#000", "& svg": { fontSize: 26, color: "#000" } }}>{icon}</Box>
@@ -25,7 +22,7 @@ function SectionHeader({ title, icon }: { title: string; icon: ReactNode }) {
     );
 }
 
-function FileList({ title, files, onRemove }: { title: string; files: StockFile[]; onRemove: (index: number) => void }) {
+function FileList({ title, files, onRemove }: StockEditableFilesProps) {
     return (
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "stretch", gap: 1, p: 1.5, border: "1px solid", borderColor: "divider", borderRadius: 1 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{title}</Typography>
@@ -53,10 +50,10 @@ export default function StockEditPage() {
     const { id } = useParams();
     const location = useLocation();
     const initialStock = (location.state as EditLocationState | null)?.stock;
-    const [stock, setStock] = useState<StockFollowupRow | null>(initialStock ?? null);
+    const [stock, setStock] = useState<Stock | null>(initialStock ?? null);
 
-    const updateText = (key: keyof StockFollowupRow, value: string) => {
-        setStock((current) => current ? { ...current, [key]: value } as StockFollowupRow : current);
+    const updateText = (key: keyof Stock, value: string) => {
+        setStock((current) => current ? { ...current, [key]: value } as Stock : current);
     };
     const updateNumber = (key: "pkgs" | "weight" | "cbm" | "value", value: string) => {
         setStock((current) => current ? { ...current, [key]: value === "" ? 0 : Number(value) } : current);
@@ -79,7 +76,7 @@ export default function StockEditPage() {
         navigate("/stocks/follow-up", { state: { updatedStock: stock } });
     };
 
-    const textFields: { label: string; key: keyof StockFollowupRow }[] = [
+    const textFields: StockTextFieldDefinition[] = [
         { label: "Stock ID", key: "stock_id" },
         { label: "Station", key: "station" },
         { label: "Vessel", key: "vessel" },

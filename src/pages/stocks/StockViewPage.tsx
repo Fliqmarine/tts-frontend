@@ -1,21 +1,22 @@
 import {
-    Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup,
+    Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup,
     Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import type { ReactNode } from "react";
+import { useState } from "react";
+import { alpha } from "@mui/material/styles";
 import CargoSvg from "../../assets/Cargo_svg.svg";
-import type { StockFollowupRow } from "./components/StockFollowupTable";
-
-type StockViewLocationState = { stock?: StockFollowupRow };
+import type { StockReadOnlyFieldProps, StockReadOnlyFilesProps, StockSectionHeaderProps, StockViewLocationState } from "./types/Stocks.types";
 
 const inputSx = { "& .MuiInputBase-input.Mui-disabled": { WebkitTextFillColor: "text.primary" } };
 
-function SectionHeader({ title, icon }: { title: string; icon: ReactNode }) {
+function SectionHeader({ title, icon }: StockSectionHeaderProps) {
     return (
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, pb: 0.75, borderBottom: "2px solid", borderColor: "divider" }}>
             <Box sx={{ display: "flex", color: "#000", "& svg": { fontSize: 26, color: "#000" } }}>{icon}</Box>
@@ -25,11 +26,11 @@ function SectionHeader({ title, icon }: { title: string; icon: ReactNode }) {
     );
 }
 
-function ReadOnlyField({ label, value = "" }: { label: string; value?: string | number }) {
+function ReadOnlyField({ label, value = "" }: StockReadOnlyFieldProps) {
     return <TextField size="small" label={label} value={value} fullWidth disabled sx={inputSx} />;
 }
 
-function ReadOnlyFiles({ title, files }: { title: string; files: StockFollowupRow["docs"] }) {
+function ReadOnlyFiles({ title, files }: StockReadOnlyFilesProps) {
     return (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1, p: 1.5, border: "1px solid", borderColor: "divider", borderRadius: 1 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{title}</Typography>
@@ -56,6 +57,12 @@ export default function StockViewPage() {
     const { id } = useParams();
     const location = useLocation();
     const stock = (location.state as StockViewLocationState | null)?.stock;
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+    const handleConfirmDelete = () => {
+        if (!id) return;
+        navigate("/stocks/stock-list", { replace: true, state: { deletedStockId: id } });
+    };
 
     return (
         <Stack spacing={1.5}>
@@ -68,7 +75,26 @@ export default function StockViewPage() {
                         </Typography>
                     )}
                 </Box>
-                <Button variant="outlined" color="primary" startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)}>Back</Button>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        startIcon={<EditIcon />}
+                        onClick={() => navigate(`/stocks/edit/${id}`, { state: { stock } })}
+                        disabled={!stock}
+                    >
+                        Edit
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        color="error"
+                        startIcon={<DeleteIcon />}
+                        onClick={() => setDeleteDialogOpen(true)}
+                        disabled={!stock || !id}
+                    >
+                        Delete
+                    </Button>
+                </Box>
             </Box>
 
             {!stock ? (
@@ -183,6 +209,69 @@ export default function StockViewPage() {
                     </Paper>
                 </Box>
             )}
+            <Dialog
+                open={deleteDialogOpen}
+                onClose={() => setDeleteDialogOpen(false)}
+                aria-labelledby="delete-stock-title"
+                aria-describedby="delete-stock-description"
+                fullWidth
+                maxWidth="xs"
+                slotProps={{ paper: { sx: { borderRadius: 3, p: 1,mb:50, boxShadow: (theme) => theme.shadows[10] } } }}
+            >
+                <DialogTitle
+                    id="delete-stock-title"
+                    component="div"
+                    sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, pt: 3, pb: 1, }}
+                >
+                    <Box
+                        sx={(theme) => ({
+                            width: 64,
+                            height: 64,
+                            borderRadius: "50%",
+                            display: "grid",
+                            placeItems: "center",
+                            bgcolor: alpha(theme.palette.error.main, 0.12),
+                            color: "error.main",
+                            boxShadow: `0 0 0 8px ${alpha(theme.palette.error.main, 0.06)}`,
+                        })}
+                    >
+                        <DeleteOutlinedIcon sx={{ fontSize: 32 }} />
+                    </Box>
+                    <Typography variant="h6" component="h2" fontWeight={700}>Delete stock?</Typography>
+                </DialogTitle>
+                <DialogContent sx={{ textAlign: "center", pb: 1, }}>
+                    <Typography id="delete-stock-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                        Are you sure you want to delete{" "}
+                        <Box component="span" sx={{ fontWeight: 600, color: "error.main" }}>
+                            {stock?.stock_id ?? id}
+                        </Box>
+                        ? This action cannot be undone.
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pt: 2, pb: 3, gap: 1.5 }}>
+                    <Button
+                        onClick={() => setDeleteDialogOpen(false)}
+                        variant="outlined"
+                        color="inherit"
+                        fullWidth
+                        sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, borderColor: "divider" }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleConfirmDelete}
+                        color="error"
+                        variant="contained"
+                        fullWidth
+                        autoFocus
+                        disableElevation
+                        disabled={!id}
+                        sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2 }}
+                    >
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Stack>
     );
 }

@@ -13,6 +13,13 @@ import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { styled } from "@mui/material/styles";
+import type { StockCargoColumn, 
+              StockCargoRow, 
+              StockChargeColumn, 
+              StockChargeRow, 
+              StockCreatePageProps, 
+              StockSectionHeaderProps 
+            } from "./types/Stocks.types";
 
 const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -35,7 +42,7 @@ const SECTION_HEADER_SX = {
     pb: 0.75,
 } as const;
 
-function SectionHeader({ title, icon, required = false }: { title: string, icon?: React.ReactNode, required?: boolean }) {
+function SectionHeader({ title, icon, required = false }: StockSectionHeaderProps) {
     return (
         <Box sx={SECTION_HEADER_SX}>
             {icon && (
@@ -61,7 +68,7 @@ const packageTypes = [
     { value: "bundle_pipes", label: "Bundle Pipes" },
 ];
 
-const cargoDetailsEmptyRow = () => ({
+const cargoDetailsEmptyRow = (): StockCargoRow => ({
     id: crypto.randomUUID(),
     length: "", width: "", height: "", pieces: "", weight: "",
     dg: false, repackingRequired: false, medicine: false, packageType: "",
@@ -70,7 +77,7 @@ const cargoDetailsEmptyRow = () => ({
 
 const readOnlyFields = ["cbm", "cwtAir", "cwtCourier"];
 
-const columns = [
+const columns: StockCargoColumn[] = [
     { key: "length", label: "Length", required: true, type: "text" },
     { key: "width", label: "Width", required: true, type: "text" },
     { key: "height", label: "Height", required: true, type: "text" },
@@ -86,12 +93,12 @@ const columns = [
     { key: "whl", label: "WHL", type: "text" },
 ];
 
-const chargesEmptyRow = () => ({
+const chargesEmptyRow = (): StockChargeRow => ({
     id: crypto.randomUUID(),
     description: "", agent: "", invoiceNo: "", currency: "", charges: "",
 });
 
-const chargesColumns = [
+const chargesColumns: StockChargeColumn[] = [
     { key: "description", label: "Description", type: "text" },
     { key: "agent", label: "Agent", type: "text" },
     { key: "invoiceNo", label: "Invoice No", type: "text" },
@@ -99,9 +106,22 @@ const chargesColumns = [
     { key: "charges", label: "Charges", type: "text" },
 ];
 
-function CreateStockPage({ onChange }: any) {
+//* For Date Fields
+const hidePlaceholderSx = (hasValue: boolean) => ({
+  '& input[type="date"]::-webkit-datetime-edit': {
+    color: hasValue ? 'inherit' : 'transparent',
+    WebkitTextFillColor: hasValue ? 'inherit' : 'transparent',
+  },
+  '& input[type="date"]:focus::-webkit-datetime-edit': {
+    color: 'inherit',
+    WebkitTextFillColor: 'inherit',
+  },
+});
+
+
+function CreateStockPage({ onChange }: StockCreatePageProps) {
     const theme = useTheme();
-    // Below 900px (md) tables are replaced with stacked cards
+    //* Below 900px (md) tables are replaced with stacked cards
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
     const [cargoRows, setCargoRows] = useState([cargoDetailsEmptyRow()]);
@@ -143,7 +163,7 @@ function CreateStockPage({ onChange }: any) {
         onChange?.({ cargo: next });
     };
 
-    const handleFieldChangeCargo = (id: string, key: string, value: any) => {
+    const handleFieldChangeCargo = (id: string, key: keyof StockCargoRow, value: StockCargoRow[keyof StockCargoRow]) => {
         const next = cargoRows.map((r) => (r.id === id ? { ...r, [key]: value } : r));
         setCargoRows(next);
         onChange?.({ cargo: next });
@@ -161,7 +181,7 @@ function CreateStockPage({ onChange }: any) {
         onChange?.({ charges: next });
     };
 
-    const handleFieldChangeCharge = (id: string, key: string, value: any) => {
+    const handleFieldChangeCharge = (id: string, key: keyof StockChargeRow, value: string) => {
         const next = chargeRows.map((r) => (r.id === id ? { ...r, [key]: value } : r));
         setChargeRows(next);
         onChange?.({ charges: next });
@@ -171,6 +191,11 @@ function CreateStockPage({ onChange }: any) {
     const hasImages = uploadedFiles.some(f => f.type.startsWith('image/'));
     const documentFiles = uploadedFiles.filter(f => !f.type.startsWith('image/'));
     const imageFiles = uploadedFiles.filter(f => f.type.startsWith('image/'));
+
+
+
+    const [arrivalDate, setArrivalDate] = useState('');
+    const [entryDate, setEntryDate] = useState('');
 
     const renderUploadedFiles = (files: File[]) => files.length > 0 && (
         <Box sx={{
@@ -228,7 +253,7 @@ function CreateStockPage({ onChange }: any) {
     );
 
     /* ---------- Shared cargo field renderer (table cell + mobile card) ---------- */
-    const renderCargoField = (row: any, col: any, withLabel = false) => {
+    const renderCargoField = (row: StockCargoRow, col: StockCargoColumn, withLabel = false) => {
         const label = withLabel ? `${col.label}${col.required ? " *" : ""}` : undefined;
 
         if (col.type === "select") {
@@ -267,7 +292,7 @@ function CreateStockPage({ onChange }: any) {
             <TextField
                 size="small" fullWidth
                 label={label}
-                value={row[col.key]}
+                value={String(row[col.key])}
                 disabled={isReadOnly}
                 sx={isReadOnly ? { "& .MuiOutlinedInput-root": { bgcolor: "grey.200" } } : undefined}
                 onChange={(e) => handleFieldChangeCargo(row.id, col.key, e.target.value)}
@@ -276,7 +301,7 @@ function CreateStockPage({ onChange }: any) {
     };
 
     /* ---------- Mobile cards ---------- */
-    const renderCargoCard = (row: any, index: number) => (
+    const renderCargoCard = (row: StockCargoRow, index: number) => (
         <Paper key={row.id} variant="outlined" sx={{ p: 1.5 }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1.5 }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Cargo #{index + 1}</Typography>
@@ -317,7 +342,7 @@ function CreateStockPage({ onChange }: any) {
         </Paper>
     );
 
-    const renderChargeCard = (row: any, index: number) => (
+    const renderChargeCard = (row: StockChargeRow, index: number) => (
         <Paper key={row.id} variant="outlined" sx={{ p: 1.5 }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1.5 }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Charge #{index + 1}</Typography>
@@ -393,8 +418,12 @@ function CreateStockPage({ onChange }: any) {
                             <TextField size="small" label="Client" fullWidth required disabled />
                             <TextField size="small" label="Supplier" fullWidth required />
                             <TextField size="small" label="PO Number" fullWidth required />
-                            <TextField size="small" label="Arrival Date" fullWidth required />
-                            <TextField size="small" label="Entry Date" fullWidth required disabled />
+                            <TextField size="small" label="Arrival Date" fullWidth required  type="date" value={arrivalDate}
+                                onChange={(e) => setArrivalDate(e.target.value)}
+                                sx={hidePlaceholderSx(!!arrivalDate)}/>
+                            <TextField size="small" label="Entry Date" fullWidth required disabled type="date" value={entryDate}
+                                onChange={(e) => setEntryDate(e.target.value)}
+                                sx={hidePlaceholderSx(!!entryDate)}/>
                             <TextField size="small" label="Country of Origin" fullWidth required />
                             <TextField size="small" label="Cargo Status" fullWidth required />
                             <TextField size="small" label="Cargo Description" fullWidth />
@@ -624,7 +653,7 @@ function CreateStockPage({ onChange }: any) {
                                                             <TextField
                                                                 size="small" fullWidth
                                                                 required={pickupCharges === "yes"}
-                                                                value={(row as any)[col.key]}
+                                                                value={row[col.key]}
                                                                 onChange={(e) => handleFieldChangeCharge(row.id, col.key, e.target.value)}
                                                             />
                                                         </TableCell>
@@ -726,7 +755,7 @@ function CreateStockPage({ onChange }: any) {
                                                         {col.type === "checkbox" ? (
                                                             <Checkbox
                                                                 size="small"
-                                                                checked={!!(row as any)[col.key]}
+                                                                checked={row[col.key] as boolean}
                                                                 onChange={(e) => handleFieldChangeCargo(row.id, col.key, e.target.checked)}
                                                             />
                                                         ) : (

@@ -249,7 +249,8 @@ export default function ClientIndexTable({ clients = [], onDelete, onEdit, onVie
 				aria-describedby="delete-client-description"
 				fullWidth
 				maxWidth="xs"
-				slotProps={{ paper: { sx: { borderRadius: 3, p: 1, boxShadow: (theme) => theme.shadows[10] } } }}
+				slotProps={{ paper: { sx: { borderRadius: 3, p: 1,mb:50,
+					 boxShadow: (theme) => theme.shadows[10] } } }}
 			>
 				<DialogTitle
 					id="delete-client-title"
@@ -276,7 +277,7 @@ export default function ClientIndexTable({ clients = [], onDelete, onEdit, onVie
 					<Typography id="delete-client-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
 						Are you sure you want to delete{" "}
 						{deleteTarget?.companyName ? (
-							<Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+							<Box component="span" sx={{ fontWeight: 600, color: "error.main" }}>
 								“{deleteTarget.companyName}”
 							</Box>
 						) : (

@@ -321,6 +321,7 @@ export default function BanksIndexTable({ filters, onEdit }: BanksIndexTableProp
                         sx: {
                             borderRadius: 3,
                             p: 1,
+                            mb:50,
                             boxShadow: (theme) => theme.shadows[10],
                         },
                     },
@@ -357,7 +358,7 @@ export default function BanksIndexTable({ filters, onEdit }: BanksIndexTableProp
                     </Typography>
                 </DialogTitle>
 
-                <DialogContent sx={{ textAlign: "center", pb: 1 }}>
+                <DialogContent sx={{ textAlign: "center", pb: 1, }}>
                     <Typography
                         id="delete-bank-description"
                         variant="body2"
@@ -366,7 +367,7 @@ export default function BanksIndexTable({ filters, onEdit }: BanksIndexTableProp
                     >
                         Are you sure you want to delete{" "}
                         {deleteTarget?.bank ? (
-                            <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                            <Box component="span" sx={{ fontWeight: 600, color: "error.main" }}>
                                 “{deleteTarget.bank}”
                             </Box>
                         ) : (

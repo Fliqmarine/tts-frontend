@@ -4,7 +4,7 @@ import {
     TableContainer, TableHead, TablePagination, TableRow, Tooltip, Typography,
 } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { useState, type ChangeEvent, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
+import { useState, type ChangeEvent, type MouseEvent as ReactMouseEvent } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
@@ -13,14 +13,12 @@ import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { alpha } from "@mui/material/styles";
-import type { Filters } from "./StockFollowupFilter";
+import type { StockColumn, Stock as Row, StockFollowupTableProps, StockStatusColor, FileItem, StockFileCellProps, StockFileProgress } from "../types/Stocks.types";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import { useLocation, useNavigate } from "react-router-dom";
-
-export type FileItem = { name: string; url: string };
 
 const demoImages: FileItem[] = [
     { name: "cargo-front.jpg", url: "https://picsum.photos/id/1011/800/600" },
@@ -430,9 +428,6 @@ const demoData = [
     },
 ];
 
-export type StockFollowupRow = (typeof demoData)[number];
-type Row = StockFollowupRow;
-
 const openFile = (file: FileItem) => window.open(file.url, "_blank", "noopener,noreferrer");
 
 const downloadFile = async (file: FileItem) => {
@@ -462,9 +457,9 @@ const splitValues = (v?: string | null) =>
 
 
 // Icon with count badge; click opens a list with per-file and "Download all" actions
-export function FileCell({ files, type }: { files: FileItem[]; type: "doc" | "image" }) {
+export function FileCell({ files, type }: StockFileCellProps) {
     const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-    const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
+    const [progress, setProgress] = useState<StockFileProgress | null>(null);
 
     if (!files.length) {
         return <Typography variant="body2" color="text.disabled" sx={{ fontSize: "inherit" }}>—</Typography>;
@@ -581,23 +576,11 @@ export function FileCell({ files, type }: { files: FileItem[]; type: "doc" | "im
     );
 }
 
-type StatusColor = "success" | "warning" | "info";
-
-const statusColor = (status: string): StatusColor =>
+const statusColor = (status: string): StockStatusColor =>
     status === "Completed" ? "success" : status === "Pending" ? "warning" : "info";
 
 // ---------- Column definitions (one place for label, default width, alignment, content) ----------
-type Column = {
-    key: string;
-    label: string;
-    width: number;                       // default width in px (user can drag to change)
-    align?: "left" | "right" | "center";
-    bold?: boolean;
-    text?: (row: Row) => string;         // plain text cell -> truncated with "..." + full text on hover
-    node?: (row: Row) => ReactNode;      // custom cell (chip, icons)
-};
-
-const columns: Column[] = [
+const columns: StockColumn[] = [
     { key: "station", label: "Station", width: 120, bold: true, text: (r) => r.station },
     { key: "stock_id", label: "Stock ID", width: 130, text: (r) => r.stock_id },
     { key: "stock_status", label: "Status", width: 110,
@@ -643,10 +626,6 @@ const HEADER_HEIGHT = 42;
 const TOTAL_COLS = columns.length + 2; //* + checkbox + actions
 
 const defaultWidths = Object.fromEntries(columns.map((c) => [c.key, c.width])) as Record<string, number>;
-
-interface StockFollowupTableProps {
-    filters?: Filters;
-}
 
 export default function StockFollowupTable({ filters }: StockFollowupTableProps) {
     const navigate = useNavigate();
@@ -712,8 +691,8 @@ export default function StockFollowupTable({ filters }: StockFollowupTableProps)
             hasValue(row.station, filters?.station) &&
             hasValue(row.vessel, filters?.vessel) &&
             hasValue(row.supplier, filters?.supplier) &&
-            hasValue(row.po_no, filters?.po_number) &&
-            hasValue(row.transit_no, filters?.transit_number) &&
+            hasValue(row.po_no, filters?.po_no) &&
+            hasValue(row.transit_no, filters?.transit_no) &&
             (!filters?.status || row.stock_status === filters.status)
         );
     });
@@ -1074,7 +1053,7 @@ export default function StockFollowupTable({ filters }: StockFollowupTableProps)
                 aria-describedby="delete-stock-description"
                 fullWidth
                 maxWidth="xs"
-                slotProps={{ paper: { sx: { borderRadius: 3, p: 1, boxShadow: (theme) => theme.shadows[10] } } }}
+                slotProps={{ paper: { sx: { borderRadius: 3, p: 1,mb:50, boxShadow: (theme) => theme.shadows[10] } } }}
             >
                 <DialogTitle
                     id="delete-stock-title"
@@ -1101,7 +1080,7 @@ export default function StockFollowupTable({ filters }: StockFollowupTableProps)
                     <Typography id="delete-stock-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
                         Are you sure you want to delete{" "}
                         {deleteTarget?.stock_id ? (
-                            <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                            <Box component="span" sx={{ fontWeight: 600, color: "error.main" }}>
                                 {deleteTarget.stock_id}
                             </Box>
                         ) : (

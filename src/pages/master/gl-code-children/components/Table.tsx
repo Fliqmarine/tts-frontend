@@ -150,7 +150,7 @@ export default function GLCodeChildrenIndexTable({ onEdit }: GLCodeChildrenIndex
                 aria-describedby="delete-gl-child-description"
                 fullWidth
                 maxWidth="xs"
-                slotProps={{ paper: { sx: { borderRadius: 3, p: 1, boxShadow: (theme) => theme.shadows[10] } } }}
+                slotProps={{ paper: { sx: { borderRadius: 3, p: 1,mb:50, boxShadow: (theme) => theme.shadows[10] } } }}
             >
                 <DialogTitle
                     id="delete-gl-child-title"
@@ -177,7 +177,7 @@ export default function GLCodeChildrenIndexTable({ onEdit }: GLCodeChildrenIndex
                     <Typography id="delete-gl-child-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
                         Are you sure you want to delete{" "}
                         {deleteTarget?.name ? (
-                            <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                            <Box component="span" sx={{ fontWeight: 600, color: "error.main" }}>
                                 “{deleteTarget.name}”
                             </Box>
                         ) : (

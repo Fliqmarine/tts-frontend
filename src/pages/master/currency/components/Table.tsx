@@ -207,7 +207,7 @@ export default function CurrencyIndexTable({ onEdit }: CurrencyIndexTableProps) 
                 aria-describedby="delete-currency-description"
                 fullWidth
                 maxWidth="xs"
-                slotProps={{ paper: { sx: { borderRadius: 3, p: 1, boxShadow: (theme) => theme.shadows[10] } } }}
+                slotProps={{ paper: { sx: { borderRadius: 3, p: 1,mb:50, boxShadow: (theme) => theme.shadows[10] } } }}
             >
                 <DialogTitle id="delete-currency-title" component="div" sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, pt: 3, pb: 1 }}>
                     <Box sx={(theme) => ({ width: 64, height: 64, borderRadius: "50%", display: "grid", placeItems: "center", bgcolor: alpha(theme.palette.error.main, 0.12), color: "error.main", boxShadow: `0 0 0 8px ${alpha(theme.palette.error.main, 0.06)}` })}>
@@ -219,7 +219,7 @@ export default function CurrencyIndexTable({ onEdit }: CurrencyIndexTableProps) 
                 <DialogContent sx={{ textAlign: "center", pb: 1 }}>
                     <Typography id="delete-currency-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
                         Are you sure you want to delete{" "}
-                        {deleteTarget?.currency ? <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>“{deleteTarget.currency}”</Box> : "this currency"}?
+                        {deleteTarget?.currency ? <Box component="span" sx={{ fontWeight: 600, color: "error.main" }}>“{deleteTarget.currency}”</Box> : "this currency"}?
                         {" "}This action cannot be undone.
                     </Typography>
                 </DialogContent>

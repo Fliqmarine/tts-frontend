@@ -325,9 +325,7 @@ export default function UserTable({ onEdit, onDelete, filters }: UserTableProps)
                                                     color="error"
                                                     onClick={() => onDelete(user)}
                                                 >
-                                                    <DeleteIcon
-                                                        sx={{ fontSize: "1rem" }}
-                                                    />
+                                                    <DeleteIcon fontSize="small" />
                                                 </IconButton>
                                             </Tooltip>
 

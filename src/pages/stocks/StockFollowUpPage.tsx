@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { Box } from "@mui/material";
 import StockFollowupHeader from "./components/StockFollowupHeader";
-import StockFollowupFilter, { type Filters } from "./components/StockFollowupFilter";
+import StockFollowupFilter from "./components/StockFollowupFilter";
 import StockFollowupTable from "./components/StockFollowupTable";
+import type { StockFollowupFilters } from "./types/Stocks.types";
 
 function StockFollowUpPage() {
-    const [filters, setFilters] = useState<Filters>({
+    const [filters, setFilters] = useState<StockFollowupFilters>({
         search: "",
         client: "",
         vessel: "",
         station: "",
         supplier: "",
-        po_number: "",
-        transit_number: "",
+        po_no: "",
+        transit_no: "",
         status: "",
         key_account_manager: "",
     });

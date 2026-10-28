@@ -92,7 +92,7 @@ export const navigationMenus: NavigationMenu[] = [
         children: [
             {
                 label: "Manifested",
-                path: "/manifest/manifest-list",
+                path: "/manifest/manifest-index",
                 icon: <ChecklistRtlIcon fontSize="small" />,
             },
             {
@@ -106,6 +106,11 @@ export const navigationMenus: NavigationMenu[] = [
     {
         label: "Jobs",
         children: [
+            {
+                label: "Pre Alert-All Stages",
+                path: "/jobs/pre-alert-all-stages",
+                icon: <NotificationsActiveIcon fontSize="small" />,
+            },
             {
                 label: "Pre Alert-Stage 1",
                 path: "/jobs/pre-alert-stage-1",
