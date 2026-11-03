@@ -5,8 +5,7 @@ import { Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, Dial
 import { alpha } from "@mui/material/styles";
 import { useMemo, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import type { PreAlertDetails } from "../types/preAlert.types";
-import type { PreAlertStage3Filters } from "./PreAlertStage3Filter";
+import type { PreAlertDetails, PreAlertStage3Filters } from "../types/preAlert.types";
 import { FileCell } from "../../stocks/components/StockFollowupTable";
 import type { FileItem } from "../../stocks/types/Stocks.types";
 import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
@@ -345,7 +344,7 @@ export default function PreAlertStage3Table({ filters, rows: suppliedRows }: Pre
 
                 <TableCell align="center" sx={{ position: "sticky", right: 0, bgcolor: "background.paper", zIndex: 1,boxShadow: "-6px 0 8px -6px rgba(0,0,0,0.25)" }}>
                   <Box sx={{ display: "flex", justifyContent: "center", gap: 0.25 }}>
-                    <Tooltip title="Stock charges"><IconButton size="small" color="info" aria-label={`View stock charges for ${row.manifestNumber}`} onClick={() => setPickupChargesTarget(row)} sx={{ p: 0.4 }}><PaidOutlinedIcon sx={{ fontSize: 17 }} /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="Stock charges"><IconButton size="small" color="info" aria-label={`View stock charges for ${row.manifestNumber}`} onClick={() => setPickupChargesTarget(row)} sx={{ p: 0.4 }}><PaidOutlinedIcon sx={{ fontSize: 17 }} /></IconButton></Tooltip>
                     <Button
                       variant="contained"
                       size="small"
@@ -401,13 +400,13 @@ export default function PreAlertStage3Table({ filters, rows: suppliedRows }: Pre
                       
                       
                       >Club Manifest</Button>
-                    <Tooltip title="Email"><IconButton size="small" color="success" aria-label="Email Pre-Alert" onClick={() => mailRow(row)}><MailOutlineIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="Cancel Pre-Alert">
+                    <Tooltip disableInteractive title="Email"><IconButton size="small" color="success" aria-label="Email Pre-Alert" onClick={() => mailRow(row)}><MailOutlineIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="Cancel Pre-Alert">
                       <IconButton size="small" color="error" aria-label="Cancel Pre-Alert" onClick={() => setCancelTarget(row)}>
                         <CancelIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    {row.mailSent === "Yes" && <Tooltip title="Move to Stage 4"><IconButton size="small" color="success" aria-label="Move to Pre-Alert Stage 4" onClick={() => navigate(`/jobs/pre-alert-stage-3-to-4/${encodeURIComponent(row.id)}`, { state: { preAlert: row } })}><SendIcon fontSize="small" /></IconButton></Tooltip>}
+                    {row.mailSent === "Yes" && <Tooltip disableInteractive title="Move to Stage 4"><IconButton size="small" color="success" aria-label="Move to Pre-Alert Stage 4" onClick={() => navigate(`/jobs/pre-alert-stage-3-to-4/${encodeURIComponent(row.id)}`, { state: { preAlert: row } })}><SendIcon fontSize="small" /></IconButton></Tooltip>}
                   </Box>
                 </TableCell>
               </TableRow>

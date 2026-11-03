@@ -37,7 +37,7 @@ function ReadOnlyFiles({ title, files }: StockReadOnlyFilesProps) {
             {files.length ? (
                 <Box sx={{ display: "flex", flexWrap: "wrap", alignContent: "flex-start", gap: 0.5 }}>
                     {files.map((file, index) => (
-                        <Tooltip key={`${file.url}-${index}`} title={file.name}>
+                        <Tooltip disableInteractive key={`${file.url}-${index}`} title={file.name}>
                             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, px: 1, py: 0.5, borderRadius: 1, border: "1px solid", borderColor: "success.light", bgcolor: "rgba(46,125,50,0.06)", maxWidth: 180 }}>
                                 <InsertDriveFileIcon sx={{ fontSize: 14, color: "success.main", flexShrink: 0 }} />
                                 <Typography variant="caption" sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "success.main", fontWeight: 500 }}>

@@ -484,7 +484,7 @@ export function FileCell({ files, type }: StockFileCellProps) {
 
     return (
         <>
-            <Tooltip title={label} arrow>
+            <Tooltip disableInteractive title={label} arrow>
                 <IconButton size="small" color={color} aria-label={label} onClick={(e) => setAnchor(e.currentTarget)} sx={{ p: 0.5 }}>
                     <Badge
                         badgeContent={files.length}
@@ -535,10 +535,10 @@ export function FileCell({ files, type }: StockFileCellProps) {
                             <Box key={`${file.url}-${i}`} sx={{ display: "flex", alignItems: "center", gap: 1, px: 2, py: 0.75, "&:hover": { bgcolor: "action.hover" } }}>
                                 <PictureAsPdfIcon color="error" fontSize="small" />
                                 <Typography variant="body2" noWrap sx={{ flex: 1 }} title={file.name}>{file.name}</Typography>
-                                <Tooltip title="Open" arrow>
+                                <Tooltip disableInteractive title="Open" arrow>
                                     <IconButton size="small" onClick={() => openFile(file)}><OpenInNewIcon sx={{ fontSize: 16 }} /></IconButton>
                                 </Tooltip>
-                                <Tooltip title="Download" arrow>
+                                <Tooltip disableInteractive title="Download" arrow>
                                     <IconButton size="small" onClick={() => downloadFile(file)}><FileDownloadOutlinedIcon sx={{ fontSize: 16 }} /></IconButton>
                                 </Tooltip>
                             </Box>
@@ -558,7 +558,7 @@ export function FileCell({ files, type }: StockFileCellProps) {
                             >
                                 <Box component="img" src={file.url} alt={file.name} loading="lazy" sx={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                                 {/* Always visible so single download is easy */}
-                                <Tooltip title="Download" arrow>
+                                <Tooltip disableInteractive title="Download" arrow>
                                     <IconButton
                                         size="small"
                                         onClick={(e) => { e.stopPropagation(); downloadFile(file); }}
@@ -946,7 +946,7 @@ export default function StockFollowupTable({ filters }: StockFollowupTableProps)
                                                 { title: "Edit", color: "primary", Icon: EditIcon },
                                                 { title: "Delete", color: "error", Icon: DeleteIcon },
                                             ].map(({ title, color, Icon }) => (
-                                                <Tooltip key={title} title={title} arrow>
+                                                <Tooltip disableInteractive key={title} title={title} arrow>
                                                     <IconButton
                                                         size="small"
                                                         color={color as "info" | "secondary" | "primary" | "error"}

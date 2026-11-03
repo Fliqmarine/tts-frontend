@@ -175,7 +175,7 @@ export default function ClientViewDialog({ client, onClose, onEdit }) {
 					)}
 					{client?.stationCode && <Chip  color="primary" label={client.stationCode} />}
                     {client && (
-                        <Tooltip title="Copy client details">
+                        <Tooltip disableInteractive title="Copy client details">
                             <IconButton
                                 aria-label="Copy client details"
 								size="small"

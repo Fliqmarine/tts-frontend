@@ -104,7 +104,7 @@ export default function StockIndexFilter({ filters, onChange }: StockIndexFilter
                     sx={fieldSx}
                 />
                 {selectField("status", "Status", ["Pending", "In Progress", "Completed"])}
-                <Tooltip title={showMore ? "Hide more filters" : "Show more filters"}>
+                <Tooltip disableInteractive title={showMore ? "Hide more filters" : "Show more filters"}>
                         <IconButton
                         aria-label={showMore ? "Hide more filters" : "Show more filters"}
                         onClick={() => setShowMore((open) => !open)}

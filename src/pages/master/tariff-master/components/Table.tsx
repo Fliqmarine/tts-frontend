@@ -156,7 +156,7 @@ export default function TariffMasterIndexTable({ rows, onEdit, onDelete }: Tarif
 
                                         <TableCell align="right">
                                             <Box sx={{ display: "flex", gap: 0.25, justifyContent: "flex-end" }}>
-                                                <Tooltip title="Edit" arrow>
+                                                <Tooltip disableInteractive title="Edit" arrow>
                                                     <IconButton
                                                         size="small"
                                                         color="primary"
@@ -166,7 +166,7 @@ export default function TariffMasterIndexTable({ rows, onEdit, onDelete }: Tarif
                                                     </IconButton>
                                                 </Tooltip>
 
-                                                <Tooltip title="Delete" arrow>
+                                                <Tooltip disableInteractive title="Delete" arrow>
                                                     <IconButton
                                                         size="small"
                                                         color="error"

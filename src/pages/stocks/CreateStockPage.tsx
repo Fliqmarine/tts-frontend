@@ -208,7 +208,7 @@ function CreateStockPage({ onChange }: StockCreatePageProps) {
                 const fileIndex = uploadedFiles.indexOf(file);
 
                 return (
-                    <Tooltip key={`${file.name}-${fileIndex}`} title={file.name}>
+                    <Tooltip disableInteractive key={`${file.name}-${fileIndex}`} title={file.name}>
                         <Box
                             sx={{
                                 display: 'flex',
@@ -728,7 +728,7 @@ function CreateStockPage({ onChange }: StockCreatePageProps) {
                                                 }}
                                             >
                                                 {col.icon ? (
-                                                    <Tooltip title={col.label} arrow>
+                                                    <Tooltip disableInteractive title={col.label} arrow>
                                                         <Box sx={{ display: 'inline-flex', alignItems: 'center' }}>{col.icon}</Box>
                                                     </Tooltip>
                                                 ) : (

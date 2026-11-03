@@ -208,7 +208,7 @@ export default function PreAlertCreatePage() {
             {uploadedDocs.length > 0 ? (
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                 {uploadedDocs.map((file, index) => (
-                  <Tooltip key={`${file.name}-${index}`} title={file.name}>
+                  <Tooltip disableInteractive key={`${file.name}-${index}`} title={file.name}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, px: 1, py: 0.25, borderRadius: 1, border: "1px solid", borderColor: "success.light", bgcolor: "rgba(46,125,50,0.06)", maxWidth: "100%", minWidth: 0 }}>
                       <InsertDriveFileIcon sx={{ fontSize: 13, color: "success.main", flexShrink: 0 }} />
                       <Typography variant="caption" sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "success.main", fontWeight: 500, maxWidth: { xs: 160, sm: 180 } }}>{file.name}</Typography>

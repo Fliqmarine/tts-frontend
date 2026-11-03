@@ -29,7 +29,7 @@ function FileList({ title, files, onRemove }: StockEditableFilesProps) {
             {files.length ? (
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                     {files.map((file, index) => (
-                        <Tooltip key={`${file.url}-${index}`} title={file.name}>
+                        <Tooltip disableInteractive key={`${file.url}-${index}`} title={file.name}>
                             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, pl: 1, pr: 0.25, py: 0.25, borderRadius: 1, border: "1px solid", borderColor: "success.light", bgcolor: "rgba(46,125,50,0.06)", maxWidth: 220 }}>
                                 <InsertDriveFileIcon sx={{ fontSize: 14, color: "success.main", flexShrink: 0 }} />
                                 <Typography variant="caption" sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "success.main", fontWeight: 500 }}>{file.name}</Typography>

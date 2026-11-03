@@ -1,8 +1,9 @@
 import { Box } from "@mui/material";
 import { useState } from "react";
-import PreAlertStage3Filter, { type PreAlertStage3Filters } from "./components/PreAlertStage3Filter";
+import PreAlertStage3Filter from "./components/PreAlertStage3Filter";
 import PreAlertStage3Header from "./components/PreAlertStage3Header";
 import PreAlertStage3Table from "./components/PreAlertStage3Table";
+import type { PreAlertStage3Filters } from "./types/preAlert.types";
 
 const initialFilters: PreAlertStage3Filters = {
   search: "",

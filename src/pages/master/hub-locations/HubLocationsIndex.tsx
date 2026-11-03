@@ -181,7 +181,7 @@ export default function HubLocationsIndex() {
                                         spacing={0}
                                         sx={{ "& .MuiIconButton-root": { p: 0.5 } }}
                                     >
-                                        <Tooltip title="Copy hub details">
+                                        <Tooltip disableInteractive title="Copy hub details">
                                             <IconButton
                                                 size="small"
                                                 color="info"
@@ -191,7 +191,7 @@ export default function HubLocationsIndex() {
                                                 <ContentCopyOutlinedIcon fontSize="small" />
                                             </IconButton>
                                         </Tooltip>
-                                        <Tooltip title="Edit hub location">
+                                        <Tooltip disableInteractive title="Edit hub location">
                                             <IconButton
                                                 size="small"
                                                 color="primary"
@@ -201,7 +201,7 @@ export default function HubLocationsIndex() {
                                                 <EditOutlinedIcon fontSize="small" />
                                             </IconButton>
                                         </Tooltip>
-                                        <Tooltip title="Delete hub location">
+                                        <Tooltip disableInteractive title="Delete hub location">
                                             <IconButton
                                                 size="small"
                                                 color="error"

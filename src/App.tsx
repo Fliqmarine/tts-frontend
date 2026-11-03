@@ -41,12 +41,18 @@ import PreAlertStage3 from "./pages/jobs/PreAlertStage3";
 import PreAlertStage3To4ConfirmationPage from "./pages/jobs/PreAlertStage3To4ConfirmationPage";
 import PreAlertStage4 from "./pages/jobs/PreAlertStage4";
 import PreAlertAllStage from "./pages/jobs/PreAlertAllStage";
+import EditVendorDetails from "./pages/jobs/EditVendorDetailsPage";
+
 import MainInvoiceCreate from "./pages/invoices/MainInvoiceCreate";
 import ExtraInvoiceCreate from "./pages/invoices/ExtraInvoiceCreate";
 import ExtraInvoiceEdit from "./pages/invoices/ExtraInvoiceEdit";
 import ExtraInvoiceView from "./pages/invoices/ExtraInvoiceView";
 import MainInvoiceEdit from "./pages/invoices/MainInvoiceEdit";
 import MainInvoiceView from "./pages/invoices/MainInvoiceView";
+import CreditNoteCreate from "./pages/invoices/CreditNoteCreate";
+import CreditNoteView from "./pages/invoices/CreditNoteView";
+import SaleInvoiceIndexPage from "./pages/finance/SaleInvoiceIndexPage";
+import ClientReceiptPage from "./pages/finance/ClientReceipt";
 
 
 
@@ -108,6 +114,7 @@ function App() {
                   <Route path="/jobs/pre-alert-stage-3" element={<PreAlertStage3 />} />
                   <Route path="/jobs/pre-alert-stage-3-to-4/:id" element={<PreAlertStage3To4ConfirmationPage />} />
                   <Route path="/jobs/pre-alert-stage-4" element={<PreAlertStage4 />} />
+                  <Route path="/jobs/edit-vendor-details/:id" element={<EditVendorDetails />} />
                   <Route path="/jobs/pre-alert-all-stages" element={<PreAlertAllStage />} />
                   
                   <Route path="/invoices/main-invoice-create" element={<MainInvoiceCreate />} />
@@ -116,6 +123,10 @@ function App() {
                   <Route path="/invoices/extra-invoice-create" element={<ExtraInvoiceCreate />} />
                   <Route path="/invoices/extra-invoice-edit" element={<ExtraInvoiceEdit />} />
                   <Route path="/invoices/extra-invoice-view" element={<ExtraInvoiceView />} />
+                  <Route path="/invoices/credit-note-create" element={<CreditNoteCreate />} />
+                  <Route path="/invoices/credit-note-view" element={<CreditNoteView />} />
+                  <Route path="/finance/sale-invoice" element={<SaleInvoiceIndexPage />} />
+                  <Route path="/finance/client-receipt" element={<ClientReceiptPage />} />
 
                 </Route>
             </Routes>

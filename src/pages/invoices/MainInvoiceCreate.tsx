@@ -19,7 +19,7 @@ import type {
   SubInvoiceRow,
   VendorCostRow,
   VendorInvoiceSummary,
-} from "./types/mainInvoice.types";
+} from "./types/invoices.types";
 import { saveMainInvoice, type SavedMainInvoice } from "./mainInvoiceStorage";
 
 type MainInvoiceLocationState = {
@@ -68,8 +68,31 @@ const autoGrid = (min: number) =>
   ({
     display: "grid",
     gridTemplateColumns: `repeat(auto-fill, minmax(${min}px, 1fr))`,
-    gap: 1.5,
+    gap: 0.5,
   }) as const;
+
+/** Shipment details: one row, 4 wide fields + 7 compact fields */
+const shipmentRowSx = {
+  display: "grid",
+  gridTemplateColumns: [
+    "minmax(130px, 1fr)", // Shipment Ref
+    "minmax(130px, 1fr)", // Client Ref
+    "minmax(130px, 1fr)", // Services
+    "minmax(130px, 1fr)", // Transport Doc Ref
+    "100px",              // Origin
+    "100px",              // Destination
+    "125px",              // ETA
+    "125px",              // ETD
+    "140px",              // Job Completion Date
+    "80px",               // Packages
+    "90px",               // Total Weight
+  ].join(" "),
+  pt: 1.25,
+  gap: 0.5,        // was 1.5, so the fields sit closer together
+  alignItems: "center",
+  overflowX: "auto", // scrolls on narrow screens instead of wrapping
+} as const;
+
 
 /* ------------------------------------------------------------------ */
 /* Small building blocks                                               */
@@ -253,6 +276,8 @@ const subTotals = (s: SubInvoiceRow) => {
   const cost = s.vendorCosts.reduce((sum, c) => sum + toNum(c.finalAmountAed), 0);
   return { price, cost, profit: price - cost };
 };
+
+
 
 /* ------------------------------------------------------------------ */
 /* Page                                                                */
@@ -444,7 +469,7 @@ export default function MainInvoiceCreate({ mode = "create" }: MainInvoicePagePr
     const set = (key: keyof VendorCostRow) => (e: React.ChangeEvent<HTMLInputElement>) =>
       handleCostChange(sub.id, cost.id, key, e.target.value);
     return (
-      <Box sx={autoGrid(170)}>
+      <Box sx={autoGrid(180)}>
         <TextField size="small" fullWidth label="Vendor Name" value={cost.vendorName} disabled sx={readOnlySx} />
         <TextField size="small" fullWidth label="Vendor Invoice" value={cost.vendorInvoice} disabled sx={readOnlySx} />
         <TextField size="small" fullWidth label="Purchase Amount" value={cost.purchaseAmount} onChange={set("purchaseAmount")} sx={numericSx} />
@@ -493,7 +518,7 @@ export default function MainInvoiceCreate({ mode = "create" }: MainInvoicePagePr
         sx={{
           borderRadius: 1,
           borderTop: "4px solid",
-          borderColor: "primary.main",
+          borderColor: index % 2 === 0 ? "primary.main" : "warning.main",
           overflow: "hidden",
           minWidth: 0,
         }}
@@ -521,7 +546,7 @@ export default function MainInvoiceCreate({ mode = "create" }: MainInvoicePagePr
             <Stat label="Price (AED)" value={fmt(st.price)} />
             <Stat label="Cost (AED)" value={fmt(st.cost)} />
             <Stat label="Profit (AED)" value={fmt(st.profit)} tone={st.profit < 0 ? "error" : "success"} />
-            <Tooltip title={subInvoices.length === 1 ? "At least one sub invoice is required" : "Remove sub invoice"}>
+            <Tooltip disableInteractive title={subInvoices.length === 1 ? "At least one sub invoice is required" : "Remove sub invoice"}>
               <span>
                 <IconButton
                   color="error" size="small"
@@ -538,7 +563,7 @@ export default function MainInvoiceCreate({ mode = "create" }: MainInvoicePagePr
 
         <Box sx={{ p: { xs: 1.5, sm: 2 }, display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
           {/* Manifest + vessels */}
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "repeat(2, minmax(0, 1fr))" }, gap: 1, alignItems: "start" }}>
+          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(180px, 220px) minmax(180px, 450px)" }, gap: 1, alignItems: "start" }}>
             <Autocomplete
               sx={{ minWidth: 0 }}
               size="small"
@@ -563,25 +588,26 @@ export default function MainInvoiceCreate({ mode = "create" }: MainInvoicePagePr
             />
           </Box>
 
-          {/* Shipment details – fields wrap by available width instead of a fixed 10 columns */}
-            <Box sx={autoGrid(180)}>
-              <TextField size="small" fullWidth label="Shipment Ref" value={sub.shipmentRef} disabled sx={readOnlySx} />
-              <TextField size="small" fullWidth label="Client Ref" value={sub.clientRef} onChange={(e) => updateSub(sub.id, { clientRef: e.target.value })} />
-              <TextField size="small" fullWidth label="Services" value={sub.services} disabled sx={readOnlySx} />
-              <TextField size="small" fullWidth label="Transport Doc Ref" value={sub.transportDocRef} onChange={(e) => updateSub(sub.id, { transportDocRef: e.target.value })} />
-              <TextField size="small" fullWidth label="Origin" value={sub.origin} disabled sx={readOnlySx} />
-              <TextField size="small" fullWidth label="Destination" value={sub.destination} disabled sx={readOnlySx} />
-              <TextField size="small" fullWidth label="ETA" type="date" value={sub.eta} disabled sx={readOnlySx} slotProps={{ inputLabel: { shrink: true } }} />
-              <TextField size="small" fullWidth label="ETD" type="date" value={sub.etd} disabled sx={readOnlySx} slotProps={{ inputLabel: { shrink: true } }} />
-              <TextField
-                size="small" fullWidth label="Job Completion Date" type="date"
-                value={sub.jobCompletionDate}
-                onChange={(e) => updateSub(sub.id, { jobCompletionDate: e.target.value })}
-                slotProps={{ inputLabel: { shrink: true } }}
-              />
-              <TextField size="small" fullWidth required label="Packages" value={sub.packages} onChange={(e) => updateSub(sub.id, { packages: e.target.value })} sx={numericSx} />
-              <TextField size="small" fullWidth required label="Total Weight" value={sub.totalWeight} onChange={(e) => updateSub(sub.id, { totalWeight: e.target.value })} sx={numericSx} />
-            </Box>
+          {/* Shipment details */}
+          <Box sx={shipmentRowSx}>
+            <TextField size="small" fullWidth label="Shipment Ref" value={sub.shipmentRef} disabled sx={readOnlySx} />
+            <TextField size="small" fullWidth label="Client Ref" value={sub.clientRef} onChange={(e) => updateSub(sub.id, { clientRef: e.target.value })} />
+            <TextField size="small" fullWidth label="Services" value={sub.services} disabled sx={readOnlySx} />
+            <TextField size="small" fullWidth label="Transport Doc Ref" value={sub.transportDocRef} onChange={(e) => updateSub(sub.id, { transportDocRef: e.target.value })} />
+
+            <TextField size="small" fullWidth label="Origin" value={sub.origin} disabled sx={readOnlySx} />
+            <TextField size="small" fullWidth label="Destination" value={sub.destination} disabled sx={readOnlySx} />
+            <TextField size="small" fullWidth label="ETA" type="date" value={sub.eta} disabled sx={readOnlySx} slotProps={{ inputLabel: { shrink: true } }} />
+            <TextField size="small" fullWidth label="ETD" type="date" value={sub.etd} disabled sx={readOnlySx} slotProps={{ inputLabel: { shrink: true } }} />
+            <TextField
+              size="small" fullWidth label="Job Completion Date" type="date"
+              value={sub.jobCompletionDate}
+              onChange={(e) => updateSub(sub.id, { jobCompletionDate: e.target.value })}
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
+            <TextField size="small" fullWidth required label="Packages" value={sub.packages} onChange={(e) => updateSub(sub.id, { packages: e.target.value })} sx={numericSx} slotProps={{ inputLabel: { shrink: true } }} />
+            <TextField size="small" fullWidth required label="Total Weight" value={sub.totalWeight} onChange={(e) => updateSub(sub.id, { totalWeight: e.target.value })} sx={numericSx} slotProps={{ inputLabel: { shrink: true } }} />
+          </Box>
 
           {/* Vendor cost */}
           <Panel title="Vendor Cost">
@@ -674,6 +700,7 @@ export default function MainInvoiceCreate({ mode = "create" }: MainInvoicePagePr
       const savedInvoice: SavedMainInvoice = {
         invoiceId: invoiceToEdit?.invoiceId ?? crypto.randomUUID(),
         invoiceNo: invoiceToEdit?.invoiceNo ?? `INV-${Date.now()}`,
+        preAlert,
         form,
         status,
         subInvoices,
@@ -758,11 +785,16 @@ export default function MainInvoiceCreate({ mode = "create" }: MainInvoicePagePr
             onChange={(e) => setField("recipient", e.target.value)}
           />
           <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", sm: "repeat(3, minmax(0, 1fr))" }, gap: 1, alignContent: "start" }}>
+            
             <TextField
               size="small" fullWidth required type="date" label="Invoice Date"
               value={form.invoiceDate}
               onChange={(e) => setField("invoiceDate", e.target.value)}
-              slotProps={{ inputLabel: { shrink: true } }}
+              // slotProps={{ inputLabel: { shrink: true } }}
+              sx={{
+                "& input[type=date]": form.invoiceDate ? undefined : { color: "transparent" },
+                "& input[type=date]:focus": { color: "inherit" },
+              }}
             />
             <TextField
               select size="small" fullWidth label="Payment Terms"
@@ -778,7 +810,11 @@ export default function MainInvoiceCreate({ mode = "create" }: MainInvoicePagePr
               size="small" fullWidth required type="date" label="Due Date"
               value={form.dueDate}
               onChange={(e) => setField("dueDate", e.target.value)}
-              slotProps={{ inputLabel: { shrink: true } }}
+              // slotProps={{ inputLabel: { shrink: true } }}
+              sx={{
+                "& input[type=date]": form.invoiceDate ? undefined : { color: "transparent" },
+                "& input[type=date]:focus": { color: "inherit" },
+              }}
             />
             <TextField
               select size="small" fullWidth required label="Invoice Currency"
@@ -788,19 +824,19 @@ export default function MainInvoiceCreate({ mode = "create" }: MainInvoicePagePr
               {currencyOptions.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
             </TextField>
             <TextField
-              select size="small" fullWidth label="Proforma Invoice"
-              value={form.proformaInvoice}
-              onChange={(e) => setField("proformaInvoice", e.target.value)}
-              slotProps={{ inputLabel: { shrink: true } }}
-              SelectProps={{ displayEmpty: true }}
-            >
-              {proformaOptions.map((o) => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
-            </TextField>
-            <TextField
               size="small" fullWidth label="Client PO Number"
               value={form.clientPoNumber}
               onChange={(e) => setField("clientPoNumber", e.target.value)}
             />
+            <TextField
+              select size="small" fullWidth label="Proforma Invoice"
+              value={form.proformaInvoice}
+              onChange={(e) => setField("proformaInvoice", e.target.value)}
+              // slotProps={{ inputLabel: { shrink: true } }}
+              // SelectProps={{ displayEmpty: true }}
+            >
+              {proformaOptions.map((o) => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
+            </TextField>
           </Box>
           <TextField
             size="small" fullWidth multiline minRows={3} maxRows={3} label="Notes"

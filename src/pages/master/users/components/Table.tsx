@@ -307,7 +307,7 @@ export default function UserTable({ onEdit, onDelete, filters }: UserTableProps)
                                                 justifyContent: "flex-end",
                                             }}
                                         >
-                                            <Tooltip title="Edit" arrow>
+                                            <Tooltip disableInteractive title="Edit" arrow>
                                                 <IconButton
                                                     size="small"
                                                     color="primary"
@@ -319,7 +319,7 @@ export default function UserTable({ onEdit, onDelete, filters }: UserTableProps)
                                                 </IconButton>
                                             </Tooltip>
 
-                                            <Tooltip title="Delete" arrow>
+                                            <Tooltip disableInteractive title="Delete" arrow>
                                                 <IconButton
                                                     size="small"
                                                     color="error"
@@ -329,7 +329,7 @@ export default function UserTable({ onEdit, onDelete, filters }: UserTableProps)
                                                 </IconButton>
                                             </Tooltip>
 
-                                            <Tooltip title="More" arrow>
+                                            <Tooltip disableInteractive title="More" arrow>
                                                 <IconButton
                                                     size="small"
                                                 >

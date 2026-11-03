@@ -328,7 +328,7 @@ export default function StockIndexTable({ filters }: StockIndexTableProps) {
                                         const color = statusColor(row.stock_status);
                                         return <TableCell key={column.key}><Chip size="small" label={row.stock_status} color={color} variant="outlined" sx={(theme) => ({ height: 20, fontSize: "0.65rem", fontWeight: 600, bgcolor: alpha(theme.palette[color].main, 0.08) })} /></TableCell>;
                                     }
-                                    if (column.key === "pickup") return <TableCell key={column.key} align="center"><Tooltip title={row.pickup ? "Pickup required" : "No pickup"}><span>{row.pickup ? <CheckCircleOutlinedIcon fontSize="small" color="success" /> : <HighlightOffIcon fontSize="small" color="error" />}</span></Tooltip></TableCell>;
+                                    if (column.key === "pickup") return <TableCell key={column.key} align="center"><Tooltip disableInteractive title={row.pickup ? "Pickup required" : "No pickup"}><span>{row.pickup ? <CheckCircleOutlinedIcon fontSize="small" color="success" /> : <HighlightOffIcon fontSize="small" color="error" />}</span></Tooltip></TableCell>;
                                     if (column.key === "docs") return <TableCell key={column.key} align="center"><FileCell files={row.docs} type="doc" /></TableCell>;
                                     if (column.key === "images") return <TableCell key={column.key} align="center"><FileCell files={row.images} type="image" /></TableCell>;
                                     let value: string | number = row[column.key] as string | number;

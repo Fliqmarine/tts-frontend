@@ -7,8 +7,7 @@ import { Box, Button, Checkbox, Chip, IconButton, Paper, Table, TableBody, Table
 import { alpha } from "@mui/material/styles";
 import { useMemo, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import type { PreAlertDetails } from "../types/preAlert.types";
-import type { PreAlertAllStageFilters } from "./PreAlertAllStageFilter";
+import type { PreAlertAllStageFilters, PreAlertDetails } from "../types/preAlert.types";
 import { FileCell } from "../../stocks/components/StockFollowupTable";
 import type { FileItem } from "../../stocks/types/Stocks.types";
 
@@ -43,7 +42,7 @@ type PreAlertTableRow = PreAlertDetails & {
 };
 
 type PreAlertAllStageTableProps = {
-  filters?: PreAlertALlStageFilters;
+  filters?: PreAlertAllStageFilters;
   rows?: PreAlertTableRow[];
 };
 
@@ -92,6 +91,7 @@ export default function PreAlertAllStageTable({ filters, rows: suppliedRows }: P
   const visibleRows = useMemo(() => {
     const query = filters?.search.trim().toLowerCase() ?? "";
     return rows.filter((row) => {
+      // Identify Stage 1 records in the all-stage view.
       if ((row.stage ?? 1) !== 1) return false;
       if (filters?.client && row.client !== filters.client) return false;
       if (filters?.vessel && row.vessel !== filters.vessel) return false;
@@ -292,12 +292,12 @@ export default function PreAlertAllStageTable({ filters, rows: suppliedRows }: P
                 <TableCell>{show(row.distance)}</TableCell>
                 <TableCell align="center" sx={{ position: "sticky", right: 0, bgcolor: "background.paper", zIndex: 1,boxShadow: "-6px 0 8px -6px rgba(0,0,0,0.25)" }}>
                   <Box sx={{ display: "flex", justifyContent: "center", gap: 0.25 }}>
-                    <Tooltip title="Copy"><IconButton size="small" color="warning" aria-label="Copy Pre-Alert" onClick={() => void copyRow(row)}><FileCopyIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="View"><IconButton size="small" color="primary" aria-label="View Pre-Alert" onClick={() => navigate(`/jobs/pre-alert-view/${encodeURIComponent(row.id)}`, { state: { preAlert: row } })}><VisibilityIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="Edit"><IconButton size="small" color="primary" aria-label="Edit Pre-Alert" onClick={() => navigate(`/jobs/pre-alert-edit/${encodeURIComponent(row.id)}`, { state: { preAlert: row } })}><EditIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="Cancel Pre-Alert"><IconButton size="small" color="error" aria-label="Cancel Pre-Alert" onClick={() => cancelPreAlert(row)}><CancelIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="Email"><IconButton size="small" color="success" aria-label="Email Pre-Alert" onClick={() => mailRow(row)}><MailOutlineIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="Move to Pre-Alert Stage 2"><IconButton size="small" color="success" aria-label="Move to Pre-Alert Stage 2" onClick={() => moveToStage2(row)}><CheckCircleOutlineIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="Copy"><IconButton size="small" color="warning" aria-label="Copy Pre-Alert" onClick={() => void copyRow(row)}><FileCopyIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="View"><IconButton size="small" color="primary" aria-label="View Pre-Alert" onClick={() => navigate(`/jobs/pre-alert-view/${encodeURIComponent(row.id)}`, { state: { preAlert: row } })}><VisibilityIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="Edit"><IconButton size="small" color="primary" aria-label="Edit Pre-Alert" onClick={() => navigate(`/jobs/pre-alert-edit/${encodeURIComponent(row.id)}`, { state: { preAlert: row } })}><EditIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="Cancel Pre-Alert"><IconButton size="small" color="error" aria-label="Cancel Pre-Alert" onClick={() => cancelPreAlert(row)}><CancelIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="Email"><IconButton size="small" color="success" aria-label="Email Pre-Alert" onClick={() => mailRow(row)}><MailOutlineIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="Move to Pre-Alert Stage 2"><IconButton size="small" color="success" aria-label="Move to Pre-Alert Stage 2" onClick={() => moveToStage2(row)}><CheckCircleOutlineIcon fontSize="small" /></IconButton></Tooltip>
                   </Box>
                 </TableCell>
               </TableRow>

@@ -174,7 +174,7 @@ export default function HubViewDialog({ hub, onClose, onEdit }) {
 					)}
 					{hub?.stationCode && <Chip  color="primary" label={hub.stationCode} />}
                     {hub && (
-                        <Tooltip title="Copy hub details">
+                        <Tooltip disableInteractive title="Copy hub details">
                             <IconButton
                                 aria-label="Copy hub details"
 								size="small"

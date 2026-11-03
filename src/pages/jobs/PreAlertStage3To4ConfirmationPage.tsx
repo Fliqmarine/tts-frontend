@@ -10,8 +10,13 @@ import { Alert, Box, Button, IconButton, MenuItem, Paper, Stack, Table, TableBod
 import { styled } from "@mui/material/styles";
 import { useMemo, useState, type FormEvent } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import type { PreAlertDetails } from "./types/preAlert.types";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import {
+  createEmptyVendorInvoice,
+  VendorInvoiceSchema,
+  type VendorDocumentKey,
+  type VendorInvoice,
+  type VendorPreAlertRow,
+} from "./types/vendor.types";
 
 const STAGE3_STORAGE_KEY = "tts-demo-pre-alert-stage-3";
 const STAGE4_STORAGE_KEY = "tts-demo-pre-alert-stage-4";
@@ -61,28 +66,9 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-type PreAlertRow = PreAlertDetails & { mailSent?: "Yes" | "No"; [key: string]: unknown };
-type VendorInvoice = {
-  id: string;
-  vendorName: string;
-  manifestNo: string;
-  invoiceNo: string;
-  invoiceDate: string;
-  overdueDate: string;
-  purchaseAmount: string;
-  currency: string;
-  vatPercent: string;
-  vatAmount: string;
-  finalAmountAed: string;
-  invoiceFiles: File[];
-};
-type DocumentKey = "proofOfDelivery" | "clientPo" | "emailConfirmation";
-
-const emptyInvoice = (manifestNo: string): VendorInvoice => ({ id: crypto.randomUUID(), vendorName: "", manifestNo, invoiceNo: "", invoiceDate: "", overdueDate: "", purchaseAmount: "", currency: "AED", vatPercent: "", vatAmount: "", finalAmountAed: "", invoiceFiles: [] });
-
 function SelectedFile({ file, onRemove }: { file: File; onRemove: () => void }) {
   return (
-    <Tooltip title={file.name}>
+    <Tooltip disableInteractive title={file.name}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, px: 1, py: 0.25, borderRadius: 1, border: "1px solid", borderColor: "success.light", bgcolor: "rgba(46,125,50,0.06)", maxWidth: "100%", minWidth: 0 }}>
         <InsertDriveFileIcon sx={{ fontSize: 13, color: "success.main", flexShrink: 0 }} />
         <Typography variant="caption" sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "success.main", fontWeight: 500, maxWidth: { xs: 160, sm: 180 } }}>{file.name}</Typography>
@@ -97,7 +83,7 @@ function InvoiceUploadCell({ files, onAdd, onClear, onRemove }: { files: File[];
   return (
     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "stretch", gap: 0.5, minWidth: 0 }}>
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0.25 }}>
-        <Tooltip title="Upload invoice files">
+        <Tooltip disableInteractive title="Upload invoice files">
           <Button
             component="label"
             size="small"
@@ -124,7 +110,7 @@ function InvoiceUploadCell({ files, onAdd, onClear, onRemove }: { files: File[];
       </Box>
       {files.map((file, index) => (
         <Box key={`${file.name}-${index}`} sx={{ display: "flex", alignItems: "center", gap: 0.25, minWidth: 0 }}>
-          <Tooltip title={file.name}>
+          <Tooltip disableInteractive title={file.name}>
             <Typography variant="caption" sx={{ display: "block", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "success.main", lineHeight: 1.3 }}>
               {file.name}
             </Typography>
@@ -142,31 +128,38 @@ export default function PreAlertStage3To4ConfirmationPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
-  const locationRow = (location.state as { preAlert?: PreAlertRow } | null)?.preAlert;
+  const locationRow = (location.state as { preAlert?: VendorPreAlertRow } | null)?.preAlert;
   const storedRows = useMemo(() => {
     try {
       const parsed: unknown = JSON.parse(localStorage.getItem(STAGE3_STORAGE_KEY) ?? "[]");
-      return Array.isArray(parsed) ? parsed as PreAlertRow[] : [];
+      return Array.isArray(parsed) ? parsed as VendorPreAlertRow[] : [];
     } catch { return []; }
   }, []);
   const preAlert = locationRow ?? storedRows.find((row) => row.id === id);
-  const [documents, setDocuments] = useState<Record<DocumentKey, File[]>>({ proofOfDelivery: [], clientPo: [], emailConfirmation: [] });
-  const [invoices, setInvoices] = useState<VendorInvoice[]>(() => preAlert ? [emptyInvoice(preAlert.manifestNumber)] : []);
+  const [documents, setDocuments] = useState<Record<VendorDocumentKey, File[]>>({ proofOfDelivery: [], clientPo: [], emailConfirmation: [] });
+  const [invoices, setInvoices] = useState<VendorInvoice[]>(() => preAlert ? [createEmptyVendorInvoice(preAlert.manifestNumber)] : []);
   const [error, setError] = useState("");
   const manifestOptions = useMemo(() => [...new Set([...(preAlert ? [preAlert.manifestNumber] : []), ...storedRows.map((row) => row.manifestNumber)])], [preAlert, storedRows]);
 
   const updateInvoice = <K extends Exclude<keyof VendorInvoice, "id">,>(invoiceId: string, field: K, value: VendorInvoice[K]) => {
     setInvoices((current) => current.map((invoice) => invoice.id === invoiceId ? { ...invoice, [field]: value } : invoice));
   };
-  const addInvoice = () => setInvoices((current) => [...current, emptyInvoice(preAlert?.manifestNumber ?? "")]);
+  const addInvoice = () => setInvoices((current) => [...current, createEmptyVendorInvoice(preAlert?.manifestNumber ?? "")]);
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!preAlert) return;
     const documentsComplete = Object.values(documents).every((files) => files.length > 0);
-    const invoicesComplete = invoices.length > 0 && invoices.every((invoice) => invoice.vendorName && invoice.manifestNo && invoice.invoiceNo && invoice.invoiceDate && invoice.overdueDate && invoice.purchaseAmount && invoice.currency && invoice.vatPercent !== "" && invoice.vatAmount !== "" && invoice.finalAmountAed && invoice.invoiceFiles.length > 0);
+    const invoiceResults = invoices.map((invoice) => VendorInvoiceSchema.safeParse(invoice));
+    const invalidInvoice = invoiceResults.find((result) => !result.success);
+    if (invalidInvoice && !invalidInvoice.success) {
+      console.error("Vendor invoice details are invalid.", invalidInvoice.error);
+    }
+    const invoicesComplete = invoices.length > 0 && !invalidInvoice && invoices.every((invoice) => invoice.vendorName && invoice.manifestNo && invoice.invoiceNo && invoice.invoiceDate && invoice.overdueDate && invoice.purchaseAmount && invoice.currency && invoice.vatPercent !== "" && invoice.vatAmount !== "" && invoice.finalAmountAed && invoice.invoiceFiles.length > 0);
     if (!documentsComplete || !invoicesComplete) {
-      setError("Upload all three required documents and complete every vendor invoice row.");
+      setError(invalidInvoice
+        ? "Vendor invoice details are invalid. Review every row and try again."
+        : "Upload all three required documents and complete every vendor invoice row.");
       return;
     }
 
@@ -177,11 +170,11 @@ export default function PreAlertStage3To4ConfirmationPage() {
       vendorInvoices: invoices.map(({ invoiceFiles, ...invoice }) => ({ ...invoice, invoiceFileNames: invoiceFiles.map((file) => file.name) })),
     };
     const latestStage3 = (() => {
-      try { const parsed: unknown = JSON.parse(localStorage.getItem(STAGE3_STORAGE_KEY) ?? "[]"); return Array.isArray(parsed) ? parsed as PreAlertRow[] : []; }
+      try { const parsed: unknown = JSON.parse(localStorage.getItem(STAGE3_STORAGE_KEY) ?? "[]"); return Array.isArray(parsed) ? parsed as VendorPreAlertRow[] : []; }
       catch { return []; }
     })();
     const latestStage4 = (() => {
-      try { const parsed: unknown = JSON.parse(localStorage.getItem(STAGE4_STORAGE_KEY) ?? "[]"); return Array.isArray(parsed) ? parsed as PreAlertRow[] : []; }
+      try { const parsed: unknown = JSON.parse(localStorage.getItem(STAGE4_STORAGE_KEY) ?? "[]"); return Array.isArray(parsed) ? parsed as VendorPreAlertRow[] : []; }
       catch { return []; }
     })();
     localStorage.setItem(STAGE3_STORAGE_KEY, JSON.stringify(latestStage3.filter((row) => row.id !== preAlert.id)));
@@ -193,7 +186,7 @@ export default function PreAlertStage3To4ConfirmationPage() {
     return <Stack spacing={2}><Alert severity="warning">Pre-Alert details are unavailable. Open this page from the Stage 3 table.</Alert><Button startIcon={<ArrowBackIcon />} onClick={() => navigate("/jobs/pre-alert-stage-3")}>Back to Stage 3</Button></Stack>;
   }
 
-  const documentFields: { key: DocumentKey; label: string }[] = [
+  const documentFields: { key: VendorDocumentKey; label: string }[] = [
     { key: "proofOfDelivery", label: "Proof of Delivery" },
     { key: "clientPo", label: "Client PO" },
     { key: "emailConfirmation", label: "Email Confirmation" },

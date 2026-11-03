@@ -6,8 +6,7 @@ import { Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, Dial
 import { alpha } from "@mui/material/styles";
 import { useMemo, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import type { PreAlertDetails } from "../types/preAlert.types";
-import type { PreAlertStage4Filters } from "./PreAlertStage4Filter";
+import type { PreAlertDetails, PreAlertStage4Filters } from "../types/preAlert.types";
 import { FileCell } from "../../stocks/components/StockFollowupTable";
 import type { FileItem } from "../../stocks/types/Stocks.types";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
@@ -390,31 +389,31 @@ export default function PreAlertStage4Table({ filters, rows: suppliedRows }: Pre
                 <TableCell align="center" sx={{ position: "sticky", right: 0, bgcolor: "background.paper", zIndex: 1,boxShadow: "-6px 0 8px -6px rgba(0,0,0,0.25)" }}>
                   <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 0.15, "& .MuiButton-root": { minWidth: 0, px: 0.75, fontSize: 11 } }}>
                     
-                    <Tooltip title="Send Email" disableInteractive>
+                    <Tooltip disableInteractive title="Send Email" disableInteractive>
                       <IconButton size="small" color="success" aria-label="Email Pre-Alert" onClick={() => mailRow(row)}>
                         <MailOutlineIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
                     
-                    <Tooltip title="Move Back To Stage 3" disableInteractive>
+                    <Tooltip disableInteractive title="Move Back To Stage 3" disableInteractive>
                       <IconButton size="small" color="error" aria-label="Move Back To Stage 3" onClick={() => setCancelTarget(row)}>
                         <CancelIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
                      
-                    <Tooltip  title="Combined Docs" disableInteractive>
+                    <Tooltip  disableInteractive title="Combined Docs" disableInteractive>
                       <IconButton size="small" color="success">
                       <FileDownloadOutlinedIcon />
                     </IconButton>
                     </Tooltip>
 
-                    <Tooltip title="View Invoice" disableInteractive>
+                    <Tooltip disableInteractive title="View Invoice" disableInteractive>
                       <IconButton size="small" color="success" aria-label="View Invoice" onClick={() => openInvoiceList(row, "main")}>
                         <VisibilityOutlinedIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
 
-                    <Tooltip title="View Extra Invoice" disableInteractive>
+                    <Tooltip disableInteractive title="View Extra Invoice" disableInteractive>
                       <IconButton size="small" color="error" aria-label="View Extra Invoice" onClick={() => openInvoiceList(row, "extra")}>
                         <VisibilityOutlinedIcon fontSize="small" />
                       </IconButton>
@@ -445,7 +444,10 @@ export default function PreAlertStage4Table({ filters, rows: suppliedRows }: Pre
                       boxShadow: "0 2px 6px rgba(61,90,254,0.30)",
                       transition: "transform .15s ease, box-shadow .2s ease",
                       "&:hover": { backgroundImage: "linear-gradient(135deg, #4C6EF5 0%, #334DE6 55%, #2538BD 100%)", boxShadow: "0 4px 12px rgba(61,90,254,0.40)", transform: "translateY(-1px)" },
-                      }}>Edit Vendor Details
+                      }}
+                      onClick={() => navigate(`/jobs/edit-vendor-details/${row.id}`, { state: { preAlert: row } })}
+                    >
+                      Edit Vendor Details
                     </Button>
 
                     <Button
@@ -519,12 +521,12 @@ export default function PreAlertStage4Table({ filters, rows: suppliedRows }: Pre
                   <TableCell>{invoice.form.invoiceCurrency}</TableCell>
                   <TableCell>
                     <Box sx={{ display: "flex", gap: 0.5 }}>
-                      <Tooltip title="Download invoice" disableInteractive>
+                      <Tooltip disableInteractive title="Download invoice" disableInteractive>
                         <IconButton size="small" aria-label={`Download ${invoice.invoiceNo}`} onClick={() => downloadInvoice(invoice)}>
                           <DownloadIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Edit invoice" disableInteractive>
+                      <Tooltip disableInteractive title="Edit invoice" disableInteractive>
                         <IconButton
                           size="small"
                           aria-label={`Edit ${invoice.invoiceNo}`}
@@ -539,7 +541,7 @@ export default function PreAlertStage4Table({ filters, rows: suppliedRows }: Pre
                         </IconButton>
                       </Tooltip>
                       
-                      <Tooltip title="View invoice details" disableInteractive>
+                      <Tooltip disableInteractive title="View invoice details" disableInteractive>
                         <IconButton
                           size="small"
                           color="primary"
@@ -625,6 +627,8 @@ export default function PreAlertStage4Table({ filters, rows: suppliedRows }: Pre
       </DialogActions>
     </Dialog>
     {/* End of Move Back to Stage 3  dialog */}
+
+
 
     
     </>

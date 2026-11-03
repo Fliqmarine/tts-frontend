@@ -327,7 +327,7 @@ export default function VesselListTable({ filters, vessels, setVessels, onEdit }
                                                     <EditIcon sx={{ fontSize: "1rem" }} />
                                                 </IconButton>
 
-                                                <Tooltip title="Delete" arrow>
+                                                <Tooltip disableInteractive title="Delete" arrow>
                                                     <IconButton
                                                         size="small"
                                                         color="error"

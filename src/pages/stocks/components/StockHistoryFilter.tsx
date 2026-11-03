@@ -158,7 +158,7 @@ export default function StockHistoryFilter({ filters, onChange }: StockHistoryFi
                     sx={fieldSx}
                 />
 
-                <Tooltip title={showMore ? "Hide more filters" : "Show more filters"}>
+                <Tooltip disableInteractive title={showMore ? "Hide more filters" : "Show more filters"}>
                     <IconButton
                         aria-label={showMore ? "Hide more filters" : "Show more filters"}
                         onClick={() => setShowMore((open) => !open)}

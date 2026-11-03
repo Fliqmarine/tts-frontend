@@ -3,44 +3,8 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
 import { Box, Collapse, IconButton, InputAdornment, MenuItem, TextField, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
+import type { PreAlertStage4FilterProps, PreAlertStage4Filters, PreAlertStage4SelectFilterKey } from "../types/preAlert.types";
 
-export type PreAlertStage4Filters = {
-  search: string;
-  client: string;
-  vessel: string;
-  hub: string;
-  status: string;
-  vesselPo: string;
-  keyAccountManager: string;
-  consignee: string;
-  destinationPort: string;
-  stage: string;
-  manifestNo: string;
-  awbNumber: string;
-  fromDate: string;
-  toDate: string;
-};
-
-export type PreAlertStage4SelectFilterKey =
-  | "client"
-  | "vessel"
-  | "hub"
-  | "status"
-  | "vesselPo"
-  | "keyAccountManager"
-  | "consignee"
-  | "destinationPort"
-  | "stage";
-
-type Props = {
-  filters: PreAlertStage4Filters;
-  onChange: (filters: PreAlertStage4Filters) => void;
-  /** Dropdowns that are always visible. All other dropdowns go under "Show more". */
-  primaryFields?: PreAlertStage4SelectFilterKey[];
-  options?: Partial<Record<PreAlertStage4SelectFilterKey, string[]>>;
-};
-
-// ---------- 1. ALL DROPDOWNS (key + label) ----------
 const selectFields: { key: PreAlertStage4SelectFilterKey; label: string }[] = [
   { key: "client", label: "Client" },
   { key: "vessel", label: "Vessel" },
@@ -53,7 +17,6 @@ const selectFields: { key: PreAlertStage4SelectFilterKey; label: string }[] = [
   { key: "stage", label: "Stage" },
 ];
 
-// ---------- 2. DROPDOWNS ALWAYS VISIBLE (change this list to show more/less) ----------
 const defaultPrimaryFields: PreAlertStage4SelectFilterKey[] = [
   "client",
   "vessel",
@@ -63,7 +26,6 @@ const defaultPrimaryFields: PreAlertStage4SelectFilterKey[] = [
   "keyAccountManager",
 ];
 
-// ---------- 3. EXTRA INPUTS (always under "Show more") ----------
 const extraInputs: { key: keyof PreAlertStage4Filters; label: string; type?: "date" }[] = [
   { key: "manifestNo", label: "Manifest No" },
   { key: "awbNumber", label: "AWB Number" },
@@ -71,7 +33,6 @@ const extraInputs: { key: keyof PreAlertStage4Filters; label: string; type?: "da
   { key: "toDate", label: "To Date", type: "date" },
 ];
 
-// ---------- Default dropdown values (used when no `options` prop is passed) ----------
 const defaultOptions: Record<PreAlertStage4SelectFilterKey, string[]> = {
   client: ["Client 1", "Client 2", "Client 3"],
   vessel: ["Vessel 1", "Vessel 2", "Vessel 3"],
@@ -93,12 +54,10 @@ export default function PreAlertStage4Filter({
   onChange,
   options,
   primaryFields = defaultPrimaryFields,
-}: Props) {
+}: PreAlertStage4FilterProps) {
   const [showMore, setShowMore] = useState(false);
-
-  // Split dropdowns into "main" and "extra"
-  const mainSelects = selectFields.filter((f) => primaryFields.includes(f.key));
-  const extraSelects = selectFields.filter((f) => !primaryFields.includes(f.key));
+  const mainSelects = selectFields.filter(({ key }) => primaryFields.includes(key));
+  const extraSelects = selectFields.filter(({ key }) => !primaryFields.includes(key));
 
   const handleChange = (field: keyof PreAlertStage4Filters, value: string) => {
     onChange({ ...filters, [field]: value });
@@ -111,7 +70,7 @@ export default function PreAlertStage4Filter({
       label={label}
       size="small"
       value={filters[key]}
-      onChange={(e) => handleChange(key, e.target.value)}
+      onChange={(event) => handleChange(key, event.target.value)}
       sx={{ ...fieldSx, minWidth: 140, flex: 1 }}
     >
       <MenuItem value="">All</MenuItem>
@@ -125,7 +84,6 @@ export default function PreAlertStage4Filter({
 
   return (
     <Box sx={{ py: 2, backgroundColor: "background.default" }}>
-      {/* ---------- MAIN ROW: always visible ---------- */}
       <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 1 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <FilterListIcon sx={{ color: "text.secondary", fontSize: 20 }} />
@@ -138,7 +96,7 @@ export default function PreAlertStage4Filter({
           placeholder="Search..."
           size="small"
           value={filters.search}
-          onChange={(e) => handleChange("search", e.target.value)}
+          onChange={(event) => handleChange("search", event.target.value)}
           sx={{ ...fieldSx, minWidth: 200, flex: 1.5 }}
           slotProps={{
             input: {
@@ -153,7 +111,7 @@ export default function PreAlertStage4Filter({
 
         {mainSelects.map(renderSelect)}
 
-        <Tooltip title={showMore ? "Hide more filters" : "Show more filters"}>
+        <Tooltip disableInteractive title={showMore ? "Hide more filters" : "Show more filters"}>
           <IconButton
             aria-label={showMore ? "Hide more filters" : "Show more filters"}
             onClick={() => setShowMore((open) => !open)}
@@ -171,7 +129,6 @@ export default function PreAlertStage4Filter({
         </Tooltip>
       </Box>
 
-      {/* ---------- EXTRA ROW: shown after clicking the arrow ---------- */}
       <Collapse in={showMore} timeout="auto" unmountOnExit>
         <Box
           sx={{
@@ -185,7 +142,6 @@ export default function PreAlertStage4Filter({
           }}
         >
           {extraSelects.map(renderSelect)}
-
           {extraInputs.map(({ key, label, type }) => (
             <TextField
               key={key}
@@ -193,7 +149,7 @@ export default function PreAlertStage4Filter({
               type={type}
               size="small"
               value={filters[key]}
-              onChange={(e) => handleChange(key, e.target.value)}
+              onChange={(event) => handleChange(key, event.target.value)}
               slotProps={type === "date" ? { inputLabel: { shrink: true } } : undefined}
               sx={fieldSx}
             />

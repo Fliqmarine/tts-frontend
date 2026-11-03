@@ -2,7 +2,8 @@ import type {
   InvoiceStatus,
   MainInvoiceForm,
   SubInvoiceRow,
-} from "./types/mainInvoice.types";
+} from "./types/invoices.types";
+import type { PreAlertDetails } from "../jobs/types/preAlert.types";
 
 const MAIN_INVOICES_STORAGE_KEY = "tts-demo-main-invoices";
 const EXTRA_INVOICES_STORAGE_KEY = "tts-demo-extra-invoices";
@@ -10,8 +11,15 @@ const EXTRA_INVOICES_STORAGE_KEY = "tts-demo-extra-invoices";
 export type SavedMainInvoice = {
   invoiceId: string;
   invoiceNo: string;
+  preAlert?: PreAlertDetails;
   form: MainInvoiceForm;
   status: InvoiceStatus;
+  arApproved?: boolean;
+  apApproved?: boolean;
+  arApprovalDecision?: "approve" | "hold";
+  arHoldReasons?: string[];
+  arOtherReason?: string;
+  specialCommission?: number;
   subInvoices: SubInvoiceRow[];
   amount: number;
   totalCost: number;
@@ -21,6 +29,11 @@ export type SavedMainInvoice = {
 };
 
 type StoredMainInvoices = Record<string, SavedMainInvoice[]>;
+
+export type SavedInvoiceWithPreAlertId = {
+  preAlertId: string;
+  invoice: SavedMainInvoice;
+};
 
 function readStoredInvoices(storageKey: string): StoredMainInvoices {
   const stored = localStorage.getItem(storageKey);
@@ -44,6 +57,12 @@ function getInvoices(storageKey: string, preAlertId: string): SavedMainInvoice[]
   return Array.isArray(invoices) ? invoices : [];
 }
 
+function getAllInvoices(storageKey: string): SavedInvoiceWithPreAlertId[] {
+  return Object.entries(readStoredInvoices(storageKey)).flatMap(([preAlertId, invoices]) =>
+    Array.isArray(invoices) ? invoices.map((invoice) => ({ preAlertId, invoice })) : [],
+  );
+}
+
 function saveInvoice(storageKey: string, preAlertId: string, invoice: SavedMainInvoice): void {
   const storedInvoices = readStoredInvoices(storageKey);
   const invoices = storedInvoices[preAlertId] ?? [];
@@ -65,3 +84,5 @@ export const saveMainInvoice = (preAlertId: string, invoice: SavedMainInvoice) =
 export const getExtraInvoices = (preAlertId: string) => getInvoices(EXTRA_INVOICES_STORAGE_KEY, preAlertId);
 export const saveExtraInvoice = (preAlertId: string, invoice: SavedMainInvoice) =>
   saveInvoice(EXTRA_INVOICES_STORAGE_KEY, preAlertId, invoice);
+export const getAllMainInvoices = () => getAllInvoices(MAIN_INVOICES_STORAGE_KEY);
+export const getAllExtraInvoices = () => getAllInvoices(EXTRA_INVOICES_STORAGE_KEY);

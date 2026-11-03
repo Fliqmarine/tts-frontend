@@ -258,7 +258,7 @@ function TopBar() {
                     {/* Right side */}
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexShrink: 0 }}>
                         {/* Desktop toggle – on mobile the switch lives in the drawer */}
-                        <Tooltip title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}>
+                        <Tooltip disableInteractive title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}>
                             <IconButton
                                 color="inherit"
                                 size="small"

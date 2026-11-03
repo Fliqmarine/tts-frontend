@@ -171,16 +171,16 @@ export default function ContactsIndexTable({ onDelete, filters }: ContactsIndexT
                                     </TableCell>
                                     <TableCell align="right">
                                         <Box sx={{ display: "flex", gap: 0.25, justifyContent: "flex-end" }}>
-                                            <Tooltip title="View" arrow>
+                                            <Tooltip disableInteractive title="View" arrow>
                                                 <IconButton size="small" color="primary" onClick={() => navigate(`/master/contact-list/contact-view/${contact.id}`)}><VisibilityIcon sx={{ fontSize: "1rem" }} /></IconButton>
                                             </Tooltip>
-                                            <Tooltip title="Edit" arrow>
+                                            <Tooltip disableInteractive title="Edit" arrow>
                                                 <IconButton size="small" color="primary" onClick={() => navigate(`/master/contact-list/contact-edit/${contact.id}`)}><EditIcon sx={{ fontSize: "1rem" }} /></IconButton>
                                             </Tooltip>
-                                            <Tooltip title="Delete" arrow>
+                                            <Tooltip disableInteractive title="Delete" arrow>
                                                 <IconButton size="small" color="error" onClick={() => setDeleteTarget(contact)}><DeleteIcon sx={{ fontSize: "1rem" }} /></IconButton>
                                             </Tooltip>
-                                            <Tooltip title="More" arrow>
+                                            <Tooltip disableInteractive title="More" arrow>
                                                 <IconButton size="small" color="default"><MoreVertIcon sx={{ fontSize: "1rem" }} /></IconButton>
                                             </Tooltip>
                                         </Box>

@@ -6,8 +6,7 @@ import { Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, Dial
 import { alpha } from "@mui/material/styles";
 import { useMemo, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import type { PreAlertDetails } from "../types/preAlert.types";
-import type { PreAlertStage2Filters } from "./PreAlertStage2Filter";
+import type { PreAlertDetails, PreAlertStage2Filters } from "../types/preAlert.types";
 import { FileCell } from "../../stocks/components/StockFollowupTable";
 import type { FileItem } from "../../stocks/types/Stocks.types";
 import SendIcon from '@mui/icons-material/Send';
@@ -351,16 +350,16 @@ export default function PreAlertStage2Table({ filters, rows: suppliedRows }: Pre
                 <TableCell align="center" 
                   sx={{ position: "sticky", right: 0,bgcolor: "background.paper", zIndex: 1,boxShadow: "-6px 0 8px -6px rgba(0,0,0,0.25)" }}>
                     <Box sx={{ display: "flex", justifyContent: "center", gap: 0.5 }}>
-                      <Tooltip title="Copy"><IconButton size="small" sx={{ p: 0.25 }} color="warning" aria-label="Copy Pre-Alert" onClick={() => void copyRow(row)}><FileCopyIcon fontSize="small" /></IconButton></Tooltip>
-                      <Tooltip title="Email"><IconButton size="small" sx={{ p: 0.25 }} color="success" aria-label="Email Pre-Alert" onClick={() => mailRow(row)}><MailOutlineIcon fontSize="small" /></IconButton></Tooltip>
-                      <Tooltip title="Cancel Transit"><IconButton size="small" sx={{ p: 0.25 }} color="error" aria-label="Cancel transit" onClick={() => setCancelTarget(row)}><CancelIcon fontSize="small" /></IconButton></Tooltip>
+                      <Tooltip disableInteractive title="Copy"><IconButton size="small" sx={{ p: 0.25 }} color="warning" aria-label="Copy Pre-Alert" onClick={() => void copyRow(row)}><FileCopyIcon fontSize="small" /></IconButton></Tooltip>
+                      <Tooltip disableInteractive title="Email"><IconButton size="small" sx={{ p: 0.25 }} color="success" aria-label="Email Pre-Alert" onClick={() => mailRow(row)}><MailOutlineIcon fontSize="small" /></IconButton></Tooltip>
+                      <Tooltip disableInteractive title="Cancel Transit"><IconButton size="small" sx={{ p: 0.25 }} color="error" aria-label="Cancel transit" onClick={() => setCancelTarget(row)}><CancelIcon fontSize="small" /></IconButton></Tooltip>
                       {!(row.customClearanceApproved || row.status === "Custom Clearance") && (
-                        <Tooltip title="Custom Clearance"><IconButton size="small" sx={{ p: 0.25 }} color="info" aria-label="Custom Clearance" onClick={() => setCustomClearanceTarget(row)}><CheckCircleOutlineIcon fontSize="small" /></IconButton></Tooltip>
+                        <Tooltip disableInteractive title="Custom Clearance"><IconButton size="small" sx={{ p: 0.25 }} color="info" aria-label="Custom Clearance" onClick={() => setCustomClearanceTarget(row)}><CheckCircleOutlineIcon fontSize="small" /></IconButton></Tooltip>
                       )}
                       {(row.customClearanceApproved || row.status === "Custom Clearance" || row.status === "Stock Received") && (
-                        <Tooltip title="Stock Received"><IconButton size="small" sx={{ p: 0.25 }} color="success" aria-label="Stock Received" onClick={() => setStockReceivedTarget(row)}><CheckCircleOutlineIcon fontSize="small" /></IconButton></Tooltip>
+                        <Tooltip disableInteractive title="Stock Received"><IconButton size="small" sx={{ p: 0.25 }} color="success" aria-label="Stock Received" onClick={() => setStockReceivedTarget(row)}><CheckCircleOutlineIcon fontSize="small" /></IconButton></Tooltip>
                       )}
-                      <Tooltip title="Move to stage 3"><IconButton size="small" color="success" aria-label="Move to Pre-Alert Stage 3" onClick={() => openCompleteDialog(row)}><SendIcon fontSize="small" /></IconButton></Tooltip>
+                      <Tooltip disableInteractive title="Move to stage 3"><IconButton size="small" color="success" aria-label="Move to Pre-Alert Stage 3" onClick={() => openCompleteDialog(row)}><SendIcon fontSize="small" /></IconButton></Tooltip>
                     </Box>
                 </TableCell>
               </TableRow>

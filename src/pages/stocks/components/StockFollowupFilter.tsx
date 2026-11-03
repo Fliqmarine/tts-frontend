@@ -165,7 +165,7 @@ export default function Filter({ filters, onChange }: StockFollowupFilterProps) 
                     <MenuItem value="Supplier 3">Supplier 3</MenuItem>
                 </TextField>
 
-                <Tooltip title={showMore ? "Hide more filters" : "Show more filters"}>
+                <Tooltip disableInteractive title={showMore ? "Hide more filters" : "Show more filters"}>
                     <IconButton
                         aria-label={showMore ? "Hide more filters" : "Show more filters"}
                         onClick={() => setShowMore((open) => !open)}

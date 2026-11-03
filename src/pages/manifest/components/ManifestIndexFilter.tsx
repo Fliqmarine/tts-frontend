@@ -108,7 +108,7 @@ export default function ManifestIndexFilter({ filters, onChange }: ManifestIndex
 
         {ROW_ONE_FIELDS.map(renderField)}
 
-        <Tooltip title={showMore ? "Hide more filters" : "Show more filters"}>
+        <Tooltip disableInteractive title={showMore ? "Hide more filters" : "Show more filters"}>
           <IconButton
             aria-label={showMore ? "Hide more filters" : "Show more filters"}
             aria-expanded={showMore}

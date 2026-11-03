@@ -409,10 +409,10 @@ export default function ManifestIndexTable({ filters }: ManifestIndexTableProps)
                     <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0.25 }}>
                       
                       <IconButton size="small" aria-label={`Internal comments for ${manifest.manifestNumber ?? manifest.id}`} onClick={() => openInternalComments(manifest)} sx={{ p: 0.4, color: internalComments[String(manifest.id)]?.trim() ? "primary.main" : "text.disabled" }}><TextsmsIcon sx={{ fontSize: 17 }} /></IconButton>
-                      <Tooltip title="Is Pickup"><IconButton size="small" color="info" aria-label={`View stock charges for ${manifest.manifestNumber ?? manifest.id}`} onClick={() => setPickupChargesTarget(manifest)} sx={{ p: 0.4 }}><PaidOutlinedIcon sx={{ fontSize: 17 }} /></IconButton></Tooltip>
-                      <Tooltip title="Revised manifest" arrow><IconButton size="small" color="primary" aria-label="Revised manifest" onClick={() => openEditor(manifest, true)} sx={{ p: 0.4 }}><ContentPasteSearchOutlinedIcon sx={{ fontSize: 17 }} /></IconButton></Tooltip>
-                      <Tooltip title="Send manifest email" arrow><IconButton size="small" color="success" aria-label="Send manifest email" onClick={() => openEmail(manifest, "manifest")} sx={{ p: 0.4 }}><MailIcon sx={{ fontSize: 17 }} /></IconButton></Tooltip>
-                      <Tooltip title="Send reminder email" arrow><IconButton size="small" color="warning" aria-label="Send reminder email" onClick={() => openEmail(manifest, "reminder")} sx={{ p: 0.4,}}><MarkEmailUnreadOutlinedIcon sx={{ fontSize: 17 }} /></IconButton></Tooltip>
+                      <Tooltip disableInteractive title="Is Pickup"><IconButton size="small" color="info" aria-label={`View stock charges for ${manifest.manifestNumber ?? manifest.id}`} onClick={() => setPickupChargesTarget(manifest)} sx={{ p: 0.4 }}><PaidOutlinedIcon sx={{ fontSize: 17 }} /></IconButton></Tooltip>
+                      <Tooltip disableInteractive title="Revised manifest" arrow><IconButton size="small" color="primary" aria-label="Revised manifest" onClick={() => openEditor(manifest, true)} sx={{ p: 0.4 }}><ContentPasteSearchOutlinedIcon sx={{ fontSize: 17 }} /></IconButton></Tooltip>
+                      <Tooltip disableInteractive title="Send manifest email" arrow><IconButton size="small" color="success" aria-label="Send manifest email" onClick={() => openEmail(manifest, "manifest")} sx={{ p: 0.4 }}><MailIcon sx={{ fontSize: 17 }} /></IconButton></Tooltip>
+                      <Tooltip disableInteractive title="Send reminder email" arrow><IconButton size="small" color="warning" aria-label="Send reminder email" onClick={() => openEmail(manifest, "reminder")} sx={{ p: 0.4,}}><MarkEmailUnreadOutlinedIcon sx={{ fontSize: 17 }} /></IconButton></Tooltip>
                       <Button size="small" variant="contained" 
                         onClick={() => navigate("/jobs/pre-alert-create", { state: { manifest } })} 
                         // startIcon={<AddIcon />}
@@ -424,8 +424,8 @@ export default function ManifestIndexTable({ filters }: ManifestIndexTableProps)
                       >
                         Create Pre-Alert
                       </Button>
-                      <Tooltip title="View manifest" arrow><IconButton size="small" color="info" aria-label="View manifest" onClick={() => navigate(`/manifest/manifest-view/${manifest.id}`)} sx={{ p: 0.4 }}><VisibilityIcon sx={{ fontSize: 17 }} /></IconButton></Tooltip>
-                      <Tooltip title="Edit manifest" arrow><IconButton size="small" color="primary" aria-label="Edit manifest" onClick={() => openEditor(manifest)} sx={{ p: 0.4 }}><EditIcon sx={{ fontSize: 17 }} /></IconButton></Tooltip>
+                      <Tooltip disableInteractive title="View manifest" arrow><IconButton size="small" color="info" aria-label="View manifest" onClick={() => navigate(`/manifest/manifest-view/${manifest.id}`)} sx={{ p: 0.4 }}><VisibilityIcon sx={{ fontSize: 17 }} /></IconButton></Tooltip>
+                      <Tooltip disableInteractive title="Edit manifest" arrow><IconButton size="small" color="primary" aria-label="Edit manifest" onClick={() => openEditor(manifest)} sx={{ p: 0.4 }}><EditIcon sx={{ fontSize: 17 }} /></IconButton></Tooltip>
                       <IconButton size="small" color="error" aria-label="Delete manifest" onClick={() => setDeleteTarget(manifest)} sx={{ p: 0.4 }}><DeleteIcon sx={{ fontSize: 16 }} /></IconButton>
                     </Box>
                   </TableCell>

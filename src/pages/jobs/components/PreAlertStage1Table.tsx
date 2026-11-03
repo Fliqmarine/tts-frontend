@@ -8,8 +8,7 @@ import { Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, Dial
 import { alpha } from "@mui/material/styles";
 import { useMemo, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import type { PreAlertDetails } from "../types/preAlert.types";
-import type { PreAlertStage1Filters } from "./PreAlertStage1Filter";
+import type { PreAlertDetails, PreAlertStage1Filters } from "../types/preAlert.types";
 import { FileCell } from "../../stocks/components/StockFollowupTable";
 import type { FileItem } from "../../stocks/types/Stocks.types";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
@@ -125,6 +124,7 @@ export default function PreAlertStage1Table({ filters, rows: suppliedRows }: Pre
   const visibleRows = useMemo(() => {
     const query = filters?.search.trim().toLowerCase() ?? "";
     return rows.filter((row) => {
+      // Identify Stage 1 records in the dedicated Stage 1 table.
       if ((row.stage ?? 1) !== 1) return false;
       if (filters?.client && row.client !== filters.client) return false;
       if (filters?.vessel && row.vessel !== filters.vessel) return false;
@@ -363,13 +363,13 @@ export default function PreAlertStage1Table({ filters, rows: suppliedRows }: Pre
                 <TableCell sx={{ textAlign:"center" }}>{show(row.distance)}</TableCell>
                 <TableCell align="center" sx={{ position: "sticky", right: 0, bgcolor: "background.paper", zIndex: 1,boxShadow: "-6px 0 8px -6px rgba(0,0,0,0.25)" }}>
                   <Box sx={{ display: "flex", justifyContent: "center", gap: 0.25 }}>
-                    <Tooltip title="Copy"><IconButton size="small" color="warning" aria-label="Copy Pre-Alert" onClick={() => void copyRow(row)}><FileCopyIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="View"><IconButton size="small" color="primary" aria-label="View Pre-Alert" onClick={() => navigate(`/jobs/pre-alert-view/${encodeURIComponent(row.id)}`, { state: { preAlert: row } })}><VisibilityIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="Edit"><IconButton size="small" color="primary" aria-label="Edit Pre-Alert" onClick={() => navigate(`/jobs/pre-alert-edit/${encodeURIComponent(row.id)}`, { state: { preAlert: row } })}><EditIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="Cancel Pre-Alert"><IconButton size="small" color="error" aria-label="Cancel Pre-Alert" onClick={() => setCancelTarget(row)}><CancelIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="Email"><IconButton size="small" color="success" aria-label="Email Pre-Alert" onClick={() => mailRow(row)}><MailOutlineIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="Transit"><IconButton size="small" color="error" aria-label="Transit Pre-Alert" onClick={() => moveTransit(row)}><AirportShuttleIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="Complete"><IconButton size="small" color="success" aria-label="Complete Pre-Alert" onClick={() => openCompleteDialog(row)}><CheckCircleOutlineIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="Copy"><IconButton size="small" color="warning" aria-label="Copy Pre-Alert" onClick={() => void copyRow(row)}><FileCopyIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="View"><IconButton size="small" color="primary" aria-label="View Pre-Alert" onClick={() => navigate(`/jobs/pre-alert-view/${encodeURIComponent(row.id)}`, { state: { preAlert: row } })}><VisibilityIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="Edit"><IconButton size="small" color="primary" aria-label="Edit Pre-Alert" onClick={() => navigate(`/jobs/pre-alert-edit/${encodeURIComponent(row.id)}`, { state: { preAlert: row } })}><EditIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="Cancel Pre-Alert"><IconButton size="small" color="error" aria-label="Cancel Pre-Alert" onClick={() => setCancelTarget(row)}><CancelIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="Email"><IconButton size="small" color="success" aria-label="Email Pre-Alert" onClick={() => mailRow(row)}><MailOutlineIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="Transit"><IconButton size="small" color="error" aria-label="Transit Pre-Alert" onClick={() => moveTransit(row)}><AirportShuttleIcon fontSize="small" /></IconButton></Tooltip>
+                    <Tooltip disableInteractive title="Complete"><IconButton size="small" color="success" aria-label="Complete Pre-Alert" onClick={() => openCompleteDialog(row)}><CheckCircleOutlineIcon fontSize="small" /></IconButton></Tooltip>
                   </Box>
                 </TableCell>
               </TableRow>
@@ -379,7 +379,7 @@ export default function PreAlertStage1Table({ filters, rows: suppliedRows }: Pre
       </TableContainer>
       <TablePagination component="div" count={visibleRows.length} page={safePage} rowsPerPage={rowsPerPage} onPageChange={(_, nextPage) => setPage(nextPage)} onRowsPerPageChange={(event) => { setRowsPerPage(Number(event.target.value)); setPage(0); }} rowsPerPageOptions={[10, 25, 50]} />
     </Paper>
-    
+    {/* Back Stage - 1 Cancel Pre Alert Dialog  */}
     <Dialog
       open={cancelTarget !== null}
       onClose={() => setCancelTarget(null)}
@@ -429,29 +429,8 @@ export default function PreAlertStage1Table({ filters, rows: suppliedRows }: Pre
         </Button>
       </DialogActions>
     </Dialog>
-    
-    <Dialog open={completeTarget !== null} onClose={() => { setCompleteTarget(null); setCompletePodFiles([]); }} fullWidth maxWidth="md" aria-labelledby="complete-pre-alert-title" sx={{ mb:50 }}>
-      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, pr: 3,my:3 }}>
-        <DialogTitle id="complete-pre-alert-title" sx={{ fontWeight: 700, flex: 1 }}>
-        Complete - PreAlert Number - <Box component="span" sx={{ color: "primary.main" }}>({completeTarget?.manifestNumber ?? ""})</Box>
-
-        </DialogTitle>
-        <DialogActions sx={{ flexShrink: 0, p: 0 }}>
-          <Button onClick={() => { setCompleteTarget(null); setCompletePodFiles([]); }} variant="outlined" color="error" sx={{ textTransform: "none", fontWeight: 600 }}>Cancel</Button>
-          <Button onClick={confirmComplete} variant="contained" color="success" disabled={completePodFiles.length === 0} startIcon={<CheckCircleOutlineIcon />} sx={{ textTransform: "none", fontWeight: 600 }}>Complete</Button>
-        </DialogActions>
-      </Box>
-      <DialogContent>
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "stretch", gap: 1, p: 1.5 }}>
-          <Button component="label" variant={completePodFiles.length ? "outlined" : "contained"} startIcon={completePodFiles.length ? <InsertDriveFileIcon /> : <CloudUploadOutlinedIcon />} sx={{ textTransform: "none", alignSelf: "flex-start" }}>
-            {completePodFiles.length ? "Add more POD files" : "Upload POD *"}
-            <input hidden required type="file" multiple accept="application/pdf,image/jpeg,image/png,image/webp" onChange={(event) => { setCompletePodFiles((current) => [...current, ...Array.from(event.target.files ?? [])]); event.target.value = ""; }} />
-          </Button>
-          {completePodFiles.length ? <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>{completePodFiles.map((file, index) => <Box key={`${file.name}-${index}`} sx={{ display: "flex", alignItems: "center", gap: 0.5, px: 1, py: 0.25, border: "1px solid", borderColor: "success.light", borderRadius: 1 }}><InsertDriveFileIcon sx={{ fontSize: 13, color: "success.main" }} /><Typography variant="caption">{file.name}</Typography><IconButton aria-label={`Remove ${file.name}`} size="small" onClick={() => setCompletePodFiles((current) => current.filter((_, i) => i !== index))}><Typography variant="caption">×</Typography></IconButton></Box>)}</Box> : <Typography variant="caption" color="error.main">POD file is required before completing this Pre-Alert.</Typography>}
-        </Box>
-      </DialogContent>
-    </Dialog>
    
+   {/* Transit - Dialog*/}
     <Dialog
       open={transitTarget !== null}
       onClose={() => { setTransitTarget(null); setPodFiles([]); }}
@@ -518,6 +497,29 @@ export default function PreAlertStage1Table({ filters, rows: suppliedRows }: Pre
                     </IconButton>
                     </Box>)}
             </Box> : <Typography variant="caption" color="text.secondary"></Typography>}
+        </Box>
+      </DialogContent>
+    </Dialog>
+
+    {/* Move to stage - 3 Complete Dialog*/}
+    <Dialog open={completeTarget !== null} onClose={() => { setCompleteTarget(null); setCompletePodFiles([]); }} fullWidth maxWidth="md" aria-labelledby="complete-pre-alert-title" sx={{ mb:50 }}>
+      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, pr: 3,my:3 }}>
+        <DialogTitle id="complete-pre-alert-title" sx={{ fontWeight: 700, flex: 1 }}>
+        Complete - PreAlert Number - <Box component="span" sx={{ color: "primary.main" }}>({completeTarget?.manifestNumber ?? ""})</Box>
+
+        </DialogTitle>
+        <DialogActions sx={{ flexShrink: 0, p: 0 }}>
+          <Button onClick={() => { setCompleteTarget(null); setCompletePodFiles([]); }} variant="outlined" color="error" sx={{ textTransform: "none", fontWeight: 600 }}>Cancel</Button>
+          <Button onClick={confirmComplete} variant="contained" color="success" disabled={completePodFiles.length === 0} startIcon={<CheckCircleOutlineIcon />} sx={{ textTransform: "none", fontWeight: 600 }}>Complete</Button>
+        </DialogActions>
+      </Box>
+      <DialogContent>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "stretch", gap: 1, p: 1.5 }}>
+          <Button component="label" variant={completePodFiles.length ? "outlined" : "contained"} startIcon={completePodFiles.length ? <InsertDriveFileIcon /> : <CloudUploadOutlinedIcon />} sx={{ textTransform: "none", alignSelf: "flex-start" }}>
+            {completePodFiles.length ? "Add more POD files" : "Upload POD *"}
+            <input hidden required type="file" multiple accept="application/pdf,image/jpeg,image/png,image/webp" onChange={(event) => { setCompletePodFiles((current) => [...current, ...Array.from(event.target.files ?? [])]); event.target.value = ""; }} />
+          </Button>
+          {completePodFiles.length ? <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>{completePodFiles.map((file, index) => <Box key={`${file.name}-${index}`} sx={{ display: "flex", alignItems: "center", gap: 0.5, px: 1, py: 0.25, border: "1px solid", borderColor: "success.light", borderRadius: 1 }}><InsertDriveFileIcon sx={{ fontSize: 13, color: "success.main" }} /><Typography variant="caption">{file.name}</Typography><IconButton aria-label={`Remove ${file.name}`} size="small" onClick={() => setCompletePodFiles((current) => current.filter((_, i) => i !== index))}><Typography variant="caption">×</Typography></IconButton></Box>)}</Box> : <Typography variant="caption" color="error.main">POD file is required before completing this Pre-Alert.</Typography>}
         </Box>
       </DialogContent>
     </Dialog>

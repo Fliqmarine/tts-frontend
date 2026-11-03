@@ -268,7 +268,7 @@ export default function StockHistoryTable({ filters }: StockHistoryTableProps) {
                                         const color = statusColor(row.stockStatus);
                                         return <TableCell key={column.key}><Chip size="small" label={row.stockStatus} color={color} variant="outlined" sx={(theme) => ({ height: 20, fontSize: "0.65rem", fontWeight: 600, bgcolor: alpha(theme.palette[color].main, 0.08) })} /></TableCell>;
                                     }
-                                    if (column.key === "pickup") return <TableCell key={column.key} align="center"><Tooltip title={row.pickup ? "Pickup required" : "No pickup"}><span>{row.pickup ? <CheckCircleOutlinedIcon fontSize="small" color="success" /> : <HighlightOffIcon fontSize="small" color="error" />}</span></Tooltip></TableCell>;
+                                    if (column.key === "pickup") return <TableCell key={column.key} align="center"><Tooltip disableInteractive title={row.pickup ? "Pickup required" : "No pickup"}><span>{row.pickup ? <CheckCircleOutlinedIcon fontSize="small" color="success" /> : <HighlightOffIcon fontSize="small" color="error" />}</span></Tooltip></TableCell>;
                                     if (column.key === "docs") return <TableCell key={column.key} align="center"><FileCell files={row.docs} type="doc" /></TableCell>;
                                     if (column.key === "images") return <TableCell key={column.key} align="center"><FileCell files={row.images} type="image" /></TableCell>;
                                     if (column.key === "arrivalDate") return <TableCell key={column.key} title={row.arrivalDate}>{formatDate(row.arrivalDate)}</TableCell>;
@@ -279,12 +279,12 @@ export default function StockHistoryTable({ filters }: StockHistoryTableProps) {
                                 })}
                                 <TableCell align="center" className="col-actions">
                                     <Box sx={{ display: "flex", justifyContent: "center", gap: 0.25 }}>
-                                        <Tooltip title="View stock">
+                                        <Tooltip disableInteractive title="View stock">
                                             <IconButton size="small" color="primary" aria-label="View stock" onClick={() => navigate(`/stocks/view/${row.id}`, { state: { stock: selectedStock ?? row } })} sx={{ p: 0.4 }}>
                                                 <VisibilityIcon sx={{ fontSize: 16 }} />
                                             </IconButton>
                                         </Tooltip>
-                                        <Tooltip title="Stock logs">
+                                        <Tooltip disableInteractive title="Stock logs">
                                             <IconButton size="small" color="secondary" aria-label="Stock logs" onClick={() => navigate("/stocks/history", { state: { stock: selectedStock ?? row } })} sx={{ p: 0.4 }}>
                                                 <HistoryOutlinedIcon sx={{ fontSize: 16 }} />
                                             </IconButton>
