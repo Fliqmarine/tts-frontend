@@ -7,6 +7,7 @@ import MedicationOutlinedIcon from '@mui/icons-material/MedicationOutlined';
 import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined';
 import CargoSvg from '../../assets/Cargo_svg.svg';
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
@@ -121,6 +122,7 @@ const hidePlaceholderSx = (hasValue: boolean) => ({
 
 function CreateStockPage({ onChange }: StockCreatePageProps) {
     const theme = useTheme();
+    const navigate = useNavigate();
     //* Below 900px (md) tables are replaced with stacked cards
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -416,7 +418,31 @@ function CreateStockPage({ onChange }: StockCreatePageProps) {
                         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1 }}>
                             <TextField size="small" label="Vessel" fullWidth required />
                             <TextField size="small" label="Client" fullWidth required disabled />
-                            <TextField size="small" label="Supplier" fullWidth required />
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                <TextField size="small" label="Supplier" fullWidth required />
+                                <Tooltip title="Create supplier contact" disableInteractive>
+                                    <IconButton
+                                    color="primary"
+                                    size="small"
+                                    aria-label="Create supplier contact"
+                                    onClick={() => navigate("/master/contact-list/contact-create")}
+                                    sx={{
+                                        width: 20,
+                                        height: 30,
+                                        flexShrink: 0,
+                                        border: 0.5,
+                                        borderColor: "primary.main",
+                                        // borderRadius: 1,
+                                        "&:hover": {
+                                        bgcolor: "primary.main",
+                                        color: "primary.contrastText",
+                                        },
+                                    }}
+                                    >
+                                    <AddIcon fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
                             <TextField size="small" label="PO Number" fullWidth required />
                             <TextField size="small" label="Arrival Date" fullWidth required  type="date" value={arrivalDate}
                                 onChange={(e) => setArrivalDate(e.target.value)}

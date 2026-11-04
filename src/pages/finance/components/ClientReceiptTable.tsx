@@ -276,11 +276,12 @@ export default function ClientReceiptTable({
   const pageRows = visibleRows.slice(safePage * rowsPerPage, safePage * rowsPerPage + rowsPerPage);
 
   const openUpdateDialog = (row: ClientReceiptRow) => {
+    const isEditingPayment = row.status === "Reopened";
     setActiveRow(row);
-    setAmountReceived(row.status === "Reopened" ? String(row.amount) : "");
-    setOurBankReference(row.bankRefNo);
-    setClientBankReference(row.referenceNumber);
-    setReceivedDate(row.status === "Reopened" && row.receiptDate
+    setAmountReceived(isEditingPayment ? String(row.amount) : "");
+    setOurBankReference(isEditingPayment ? row.bankRefNo : "");
+    setClientBankReference(isEditingPayment ? row.referenceNumber : "");
+    setReceivedDate(isEditingPayment && row.receiptDate
       ? row.receiptDate.slice(0, 10)
       : new Date().toISOString().slice(0, 10));
     setDocument(null);
@@ -782,7 +783,7 @@ export default function ClientReceiptTable({
                         <CloseRoundedIcon fontSize="small" />
                         </IconButton>
                     </Box>
-                    ) : activeRow?.documentName && !removeExistingDocument ? (
+                    ) : activeRow?.status === "Reopened" && activeRow.documentName && !removeExistingDocument ? (
                     <Box
                         sx={{
                         display: "flex",

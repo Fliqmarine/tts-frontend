@@ -16,6 +16,7 @@ export const UserSchema = z.object({
   id: z.number(),
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
+  phone: z.string().optional(),
   role: z.enum(ROLE_OPTIONS),
   employeeId: z.string().optional(),
   jobTitle: z.string().optional(),
@@ -33,6 +34,7 @@ export const UserSchema = z.object({
 export const CreateUserSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
+  phone: z.string().min(1, "Phone is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   role: z.enum(ROLE_OPTIONS),
   employeeId: z.string().optional(),
@@ -48,6 +50,7 @@ export const CreateUserSchema = z.object({
 export const UpdateUserSchema = z.object({
   name: z.string().min(1).optional(),
   email: z.string().email().optional(),
+  phone: z.string().optional(),
   password: z.string().min(6).optional(),
   role: z.enum(ROLE_OPTIONS).optional(),
   employeeId: z.string().optional(),

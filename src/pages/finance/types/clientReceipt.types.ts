@@ -8,7 +8,6 @@ export const ClientReceiptStatusSchema = z.enum([
   "Overdue",
   "Reopen Request",
   "Reopened",
-  "Paid",
 ]);
 export type ClientReceiptStatus = z.infer<typeof ClientReceiptStatusSchema>;
 
@@ -85,52 +84,9 @@ export const ClientReceiptPaymentSchema = z.object({
 });
 export type ClientReceiptPayment = z.infer<typeof ClientReceiptPaymentSchema>;
 
-export const StoredClientReceiptSchema = z.object({
-  invoiceId: z.string(),
-  status: ClientReceiptStatusSchema,
-  payments: z.array(ClientReceiptPaymentSchema),
-});
-export type StoredClientReceipt = z.infer<typeof StoredClientReceiptSchema>;
-
-const CLIENT_RECEIPTS_STORAGE_KEY = "tts-client-receipts";
-
-const readStoredClientReceipts = (): StoredClientReceipt[] => {
-  const stored = localStorage.getItem(CLIENT_RECEIPTS_STORAGE_KEY);
-  if (!stored) return [];
-
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(stored);
-  } catch (error) {
-    console.error("Could not read Client Receipt records.", error);
-    throw new Error("Client Receipt records contain invalid JSON.", { cause: error });
-  }
-
-  const result = z.array(StoredClientReceiptSchema).safeParse(parsed);
-  if (!result.success) {
-    console.error("Client Receipt records have an invalid format.", result.error);
-    throw new Error("Client Receipt records have an invalid format.");
-  }
-  return result.data;
-};
-
-const writeStoredClientReceipts = (receipts: StoredClientReceipt[]) => {
-  const result = z.array(StoredClientReceiptSchema).safeParse(receipts);
-  if (!result.success) {
-    console.error("Could not save invalid Client Receipt records.", result.error);
-    throw new Error("Client Receipt records failed validation.");
-  }
-  localStorage.setItem(CLIENT_RECEIPTS_STORAGE_KEY, JSON.stringify(result.data));
-};
-
 export const getClientReceiptRows = (): ClientReceiptRow[] => {
-  const receiptRecords = new Map(
-    readStoredClientReceipts().map((receipt) => [receipt.invoiceId, receipt]),
-  );
-
   return getSaleInvoiceRows().map(({ preAlert, invoice, type, source }) => {
-    const savedReceipt = receiptRecords.get(invoice.invoiceId);
-    const demoExtraPayment = source === "demo" && !savedReceipt && type === "extra"
+    const demoExtraPayment = source === "demo" && type === "extra"
       ? {
           receiptNumber: "CR-DEMO-EX-001",
           amount: invoice.totalPrice,
@@ -141,7 +97,7 @@ export const getClientReceiptRows = (): ClientReceiptRow[] => {
           documentDataUrl: undefined,
         }
       : undefined;
-    const payments = savedReceipt?.payments ?? (demoExtraPayment ? [demoExtraPayment] : []);
+    const payments = demoExtraPayment ? [demoExtraPayment] : [];
     const receivedAmount = payments.reduce((total, payment) => total + payment.amount, 0);
     const totalAmount = invoice.totalPrice;
     const outstandingAmount = Math.max(0, totalAmount - receivedAmount);
@@ -181,7 +137,7 @@ export const getClientReceiptRows = (): ClientReceiptRow[] => {
       referenceNumber: latestPayment?.clientBankReference ?? "",
       amount: latestPayment?.amount ?? 0,
       currency: invoice.form.invoiceCurrency || "AED",
-      status: savedReceipt?.status ?? (demoExtraPayment ? "Received" : "Invoice Generated"),
+      status: demoExtraPayment ? "Received" : "Invoice Generated",
       documentName: latestPayment?.documentName,
       documentDataUrl: latestPayment?.documentDataUrl,
     });
@@ -198,27 +154,17 @@ export const addClientReceiptPayment = async (
     throw new Error("Client Receipt payment failed validation.");
   }
 
-  const receipts = readStoredClientReceipts();
-  const existingIndex = receipts.findIndex((receipt) => receipt.invoiceId === row.invoiceId);
-  const existing = existingIndex < 0
-    ? { invoiceId: row.invoiceId, status: row.status, payments: [] }
-    : receipts[existingIndex];
   const isEditingPayment = row.status === "Reopened";
-  const existingPayments = existing.payments.length > 0
-    ? existing.payments
-    : isEditingPayment && row.amount > 0
-      ? [{
-          receiptNumber: row.receiptNumber,
-          amount: row.amount,
-          receivedDate: row.receiptDate,
-          ourBankReference: row.bankRefNo,
-          clientBankReference: row.clientBankRefNo,
-          documentName: row.documentName,
-          documentDataUrl: row.documentDataUrl,
-        }]
-      : [];
-  const paymentBeingEdited = isEditingPayment
-    ? existingPayments[existingPayments.length - 1]
+  const paymentBeingEdited = isEditingPayment && row.amount > 0
+    ? {
+        receiptNumber: row.receiptNumber,
+        amount: row.amount,
+        receivedDate: row.receiptDate,
+        ourBankReference: row.bankRefNo,
+        clientBankReference: row.clientBankRefNo,
+        documentName: row.documentName,
+        documentDataUrl: row.documentDataUrl,
+      }
     : undefined;
   const maximumAmount = row.outstandingAmount + (paymentBeingEdited?.amount ?? 0);
   if (updateResult.data.amountReceived > maximumAmount) {
@@ -249,36 +195,21 @@ export const addClientReceiptPayment = async (
     - (paymentBeingEdited?.amount ?? 0)
     + paymentResult.data.amount;
   const outstandingAmount = Math.max(0, row.totalAmount - receivedAmount);
-  const nextPayments = paymentBeingEdited
-    ? existingPayments.map((payment, index) =>
-        index === existingPayments.length - 1 ? paymentResult.data : payment,
-      )
-    : [...existingPayments, paymentResult.data];
-  const updatedReceipt = StoredClientReceiptSchema.parse({
-    ...existing,
-    status: outstandingAmount === 0 ? "Paid" : "Partially Received",
-    payments: nextPayments,
-  });
+  const status = outstandingAmount === 0 ? "Received" : "Partially Received";
 
-  const nextReceipts = existingIndex < 0
-    ? [...receipts, updatedReceipt]
-    : receipts.map((receipt, index) => index === existingIndex ? updatedReceipt : receipt);
-  writeStoredClientReceipts(nextReceipts);
-
-  const latestPayment = updatedReceipt.payments[updatedReceipt.payments.length - 1];
   return ClientReceiptRowSchema.parse({
     ...row,
-    receiptNumber: latestPayment.receiptNumber,
-    receiptDate: latestPayment.receivedDate,
+    receiptNumber: paymentResult.data.receiptNumber,
+    receiptDate: paymentResult.data.receivedDate,
     receivedAmount,
     outstandingAmount,
-    amount: latestPayment.amount,
-    bankRefNo: latestPayment.ourBankReference,
-    clientBankRefNo: latestPayment.clientBankReference,
-    referenceNumber: latestPayment.clientBankReference,
-    status: updatedReceipt.status,
-    documentName: latestPayment.documentName,
-    documentDataUrl: latestPayment.documentDataUrl,
+    amount: paymentResult.data.amount,
+    bankRefNo: paymentResult.data.ourBankReference,
+    clientBankRefNo: paymentResult.data.clientBankReference,
+    referenceNumber: paymentResult.data.clientBankReference,
+    status,
+    documentName: paymentResult.data.documentName,
+    documentDataUrl: paymentResult.data.documentDataUrl,
   });
 };
 
@@ -295,18 +226,3 @@ const readFileAsDataUrl = (file: File): Promise<string> =>
     reader.onerror = () => reject(reader.error ?? new Error("Uploaded receipt document could not be read."));
     reader.readAsDataURL(file);
   });
-
-export const updateClientReceiptStatus = (
-  invoiceId: string,
-  status: ClientReceiptStatus,
-): void => {
-  const receipts = readStoredClientReceipts();
-  const existingIndex = receipts.findIndex((receipt) => receipt.invoiceId === invoiceId);
-  const existing = existingIndex < 0
-    ? { invoiceId, status, payments: [] }
-    : { ...receipts[existingIndex], status };
-  const updated = StoredClientReceiptSchema.parse(existing);
-  writeStoredClientReceipts(existingIndex < 0
-    ? [...receipts, updated]
-    : receipts.map((receipt, index) => index === existingIndex ? updated : receipt));
-};

@@ -26,6 +26,8 @@ import GLCodeParentIndex from "./pages/master/gl-code-parent/GLCodeParentIndex";
 import ContactEdit from "./pages/master/contact-list/ContactEdit";
 import ContactView from "./pages/master/contact-list/ContactView";
 import ClientIndex from "./pages/master/client/ClientIndexPage";
+import ClientCreatePage from "./pages/master/client/ClientCreatePage";
+import ClientEditPage from "./pages/master/client/ClientEditPage";
 
 import ManifestIndexPage from "./pages/manifest/ManifestIndex";
 import ManifestCreatePage from "./pages/manifest/ManifestCreate";
@@ -73,6 +75,8 @@ function App() {
                   <Route path="/master/users" element={<UsersIndex />} />
 
                   <Route path="/master/client" element={<ClientIndex />} />
+                  <Route path="/master/client/create" element={<ClientCreatePage />} />
+                  <Route path="/master/client/edit" element={<ClientEditPage />} />
 
                   <Route path="/master/contact-list" element={<ContactsIndex />} />
                   <Route path="/master/contact-list/contact-create" element={<CreateContactPage />} />

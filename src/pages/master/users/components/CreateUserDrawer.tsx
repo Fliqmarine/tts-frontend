@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { createUser, getUsers, updateUser } from "../services/user.service";
-import { Box, Button, Drawer, IconButton, MenuItem, Stack, TextField, Typography, Avatar, Alert, FormControlLabel, Switch, InputAdornment } from "@mui/material";
+import { Box, Button, Drawer, IconButton, MenuItem, Stack, TextField, Typography, Avatar, Alert, FormControlLabel, Switch, InputAdornment, type TextFieldProps } from "@mui/material";
 import axios from "axios";
 import { ROLE_OPTIONS, type User } from "../types/user.types";
 import CloseIcon from "@mui/icons-material/Close";
@@ -9,6 +9,22 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import EmailIcon from "@mui/icons-material/Email";
 import LockIcon from "@mui/icons-material/Lock";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import type { Value } from "react-phone-number-input";
+
+
+const toCamelCase = (value = "") =>
+    value
+        .toLowerCase()
+        .replace(/(^|[\s,])(\p{L})/gu, (_, sep, char) => sep + char.toUpperCase());
+
+
+
+const PhoneInputField = forwardRef<HTMLInputElement, TextFieldProps>((props, ref) => (
+  <TextField size="small" label="Phone" fullWidth {...props} inputRef={ref} />
+));
+PhoneInputField.displayName = "PhoneInputField";
 
 interface CreateUserDrawerProps {
   open: boolean;
@@ -34,6 +50,7 @@ const HUB_OPTIONS = [
 export default function CreateUserDrawer({ open, onClose, onCreated, user }: CreateUserDrawerProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [clientId, setClientId] = useState("");
@@ -53,6 +70,7 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
     if (!user) {
       setName("");
       setEmail("");
+      setPhone("");
       setPassword("");
       setRole("");
       setClientId("");
@@ -67,6 +85,7 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
     }
     setName(user.name);
     setEmail(user.email);
+    setPhone(user.phone ?? "");
     setRole(user.role);
     setClientId(user.clientId ?? "");
     setHubId(user.hubId ?? "");
@@ -106,6 +125,7 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
   const handleCancel = () => {
     setName("");
     setEmail("");
+    setPhone("");
     setPassword("");
     setRole("");
     setClientId("");
@@ -134,6 +154,7 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
           {
             name,
             email,
+            phone,
             password,
             role: role as User["role"],
             clientId,
@@ -149,6 +170,7 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
           {
             name,
             email,
+            phone,
             password,
             role: role as User["role"],
             clientId,
@@ -163,6 +185,7 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
 
       setName("");
       setEmail("");
+      setPhone("");
       setPassword("");
       setRole("");
       setClientId("");
@@ -321,7 +344,7 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
                 label="Name"
                 variant="outlined"
                 value={name}
-                onChange={(event) => setName(event.target.value)}
+                onChange={(event) => setName(toCamelCase(event.target.value))}                // onChange={updateField("companyName", toCamelCase)}
                 fullWidth
                 required
                 slotProps={{
@@ -355,6 +378,16 @@ export default function CreateUserDrawer({ open, onClose, onCreated, user }: Cre
                   }
                 }}
               />
+              <Box sx={{ minWidth: 0, "& .PhoneInputCountry": { mr: 1 } }}>
+                <PhoneInput
+                  international
+                  value={phone ? (phone as Value) : undefined}
+                  onChange={(value) => setPhone(value || "")}
+                  inputComponent={PhoneInputField}
+                  required
+                  style={{ display: "flex", width: "100%" }}
+                />
+              </Box>
 
               <TextField
                 label="Password"

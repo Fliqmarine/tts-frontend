@@ -9,8 +9,21 @@ const countries = getCountries().map((code) => ({
 	label: en[code] || code,
 }));
 
-export default function ClientIndexFilter({ filters, onFilterChange, keyAccountManagers = [] }) {
-	const handleChange = (key, value) => {
+interface ClientFilters {
+	search: string;
+	country: string;
+	keyAccountManager: string;
+	status: string;
+}
+
+interface ClientIndexFilterProps {
+	filters: ClientFilters;
+	onFilterChange: (filters: ClientFilters) => void;
+	keyAccountManagers?: string[];
+}
+
+export default function ClientIndexFilter({ filters, onFilterChange, keyAccountManagers = [] }: ClientIndexFilterProps) {
+	const handleChange = (key: keyof ClientFilters, value: string) => {
 		onFilterChange({ ...filters, [key]: value || "" });
 	};
 
@@ -73,7 +86,7 @@ export default function ClientIndexFilter({ filters, onFilterChange, keyAccountM
 					size="small"
 					options={keyAccountManagers}
 					value={selectedManager}
-					onChange={(_, manager) => handleChange("keyAccountManager", manager)}
+					onChange={(_, manager) => handleChange("keyAccountManager", manager ?? "")}
 					renderInput={(params) => <TextField {...params} label="Key Account Manager" />}
 					sx={{ width: { xs: "100%", sm: 220 }, "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
 				/>

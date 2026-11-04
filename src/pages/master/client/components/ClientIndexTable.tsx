@@ -28,11 +28,46 @@ import {
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 
-export default function ClientIndexTable({ clients = [], onDelete, onEdit, onView, onStatusChange, filters = {} }) {
-	const [selected, setSelected] = useState([]);
+interface ClientTableRow {
+	id: number;
+	companyName: string;
+	stationCode?: string;
+	email?: string;
+	phone?: string;
+	country?: string;
+	keyAccountManager?: string;
+	status?: boolean;
+	coordinatorInCharge?: { email?: string; phone?: string };
+}
+
+interface ClientFilters {
+	search?: string;
+	country?: string;
+	keyAccountManager?: string;
+	status?: string;
+}
+
+interface ClientIndexTableProps<T extends ClientTableRow> {
+	clients?: T[];
+	onDelete?: (client: T) => void;
+	onEdit?: (client: T) => void;
+	onView?: (client: T) => void;
+	onStatusChange?: (client: T, status: boolean) => void;
+	filters?: ClientFilters;
+}
+
+export default function ClientIndexTable<T extends ClientTableRow>({
+	clients = [],
+	onDelete,
+	onEdit,
+	onView,
+	onStatusChange,
+	filters = {},
+}: ClientIndexTableProps<T>) {
+	const [selected, setSelected] = useState<number[]>([]);
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
-	const [deleteTarget, setDeleteTarget] = useState(null);
+	const [deleteTarget, setDeleteTarget] = useState<T | null>(null);
 
 	const handleConfirmDelete = () => {
 		if (!deleteTarget) return;
@@ -183,7 +218,7 @@ export default function ClientIndexTable({ clients = [], onDelete, onEdit, onVie
 													size="small"
 													checked={isActive}
 													onChange={(event) => onStatusChange?.(client, event.target.checked)}
-													inputProps={{ "aria-label": `Set ${client.companyName} ${isActive ? "inactive" : "active"}` }}
+													slotProps={{ input: { "aria-label": `Set ${client.companyName} ${isActive ? "inactive" : "active"}` } }}
 												/>
 												<Typography variant="caption" color={isActive ? "success.main" : "text.secondary"}>
 													{isActive ? "Active" : "Inactive"}
@@ -271,7 +306,7 @@ export default function ClientIndexTable({ clients = [], onDelete, onEdit, onVie
 					>
 						<DeleteOutlinedIcon sx={{ fontSize: 32 }} />
 					</Box>
-					<Typography variant="h6" component="h2" fontWeight={700}>Delete client?</Typography>
+					<Typography variant="h6" component="h2" sx={{ fontWeight: 700 }}>Delete client?</Typography>
 				</DialogTitle>
 				<DialogContent sx={{ textAlign: "center", pb: 1 }}>
 					<Typography id="delete-client-description" variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>

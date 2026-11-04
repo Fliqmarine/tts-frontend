@@ -1,6 +1,7 @@
 import { forwardRef, useEffect, useState } from "react";
 import {
     Alert,
+    Autocomplete,
     Box,
     Button,
     Dialog,
@@ -23,6 +24,14 @@ import en from "react-phone-number-input/locale/en.json";
 
 const countries = getCountries();
 
+const toCamelCase = (value = "") =>
+    value
+        .toLowerCase()
+        .replace(/(^|[\s,])(\p{L})/gu, (_, sep, char) => sep + char.toUpperCase());
+
+const parseEmailList = (value = "") =>
+    value.split(/[,\n;]+/).map((email) => email.trim()).filter(Boolean);
+
 const createEmptyForm = () => ({
     companyName: "",
     eoriUiseNo: "",
@@ -33,7 +42,7 @@ const createEmptyForm = () => ({
     notifyParty: "",
     postalCode: "",
     vatNo: "",
-    multipleEmail: "",
+    multipleEmail: [],
     coordinatorInCharge: { name: "", email: "", phone: "" },
     accountingDetails: {
         name: "",
@@ -44,10 +53,10 @@ const createEmptyForm = () => ({
         useBillingCurrency: false,
         paymentTerms: "",
         currency: "",
-        billingAddress: "",
+        // billingAddress: "",
         specialInstructions: "",
     },
-    keyAccountManager: "",
+    // keyAccountManager: "",
     bankDetails: "",
 });
 
@@ -66,16 +75,16 @@ const createFormFromHub = (hub) => {
         notifyParty: hub.notifyParty ?? "",
         postalCode: hub.postalCode ?? "",
         vatNo: hub.vatNo ?? "",
-        multipleEmail: hub.multipleEmail ?? "",
+        multipleEmail: parseEmailList(hub.multipleEmail),
         coordinatorInCharge: { ...emptyForm.coordinatorInCharge, ...hub.coordinatorInCharge },
         accountingDetails: { ...emptyForm.accountingDetails, ...hub.accountingDetails },
-        keyAccountManager: hub.keyAccountManager ?? "",
+        // keyAccountManager: hub.keyAccountManager ?? "",
         bankDetails: hub.bankDetails ?? "",
     };
 };
 
 /* ---------- compact layout tokens ---------- */
-const GAP =1.5;
+const GAP = 1.5 ;
 const twoCols = { 
     display: "grid", 
     gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))" }, 
@@ -132,6 +141,7 @@ const Column = ({ children }) => (
 
 export default function HubDialog({ open, onClose, onSaved, hub = null }) {
     const [form, setForm] = useState(createEmptyForm);
+    const [multipleEmailInput, setMultipleEmailInput] = useState("");
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
     const isEditing = Boolean(hub);
@@ -139,17 +149,27 @@ export default function HubDialog({ open, onClose, onSaved, hub = null }) {
     useEffect(() => {
         if (open) {
             setForm(createFormFromHub(hub));
+            setMultipleEmailInput("");
             setError("");
         }
     }, [open, hub]);
 
-    const updateField = (field) => (event) => setForm((c) => ({ ...c, [field]: event.target.value }));
+    // const updateField = (field) => (event) => setForm((c) => ({ ...c, [field]: event.target.value }));
+    const updateField = (field, transform) => (event) => {
+        const value = transform ? transform(event.target.value) : event.target.value;
+        setForm((c) => ({ ...c, [field]: value }));
+    };
 
-    const updateNested = (section, field) => (event) =>
-        setForm((c) => ({ ...c, [section]: { ...c[section], [field]: event.target.value } }));
+    // const updateNested = (section, field) => (event) =>
+    //     setForm((c) => ({ ...c, [section]: { ...c[section], [field]: event.target.value } }));
+    const updateNested = (section, field, transform) => (event) => {
+        const value = transform ? transform(event.target.value) : event.target.value;
+        setForm((c) => ({ ...c, [section]: { ...c[section], [field]: value } }));
+    };
 
     const resetForm = () => {
         setForm(createEmptyForm());
+        setMultipleEmailInput("");
         setError("");
     };
 
@@ -175,10 +195,13 @@ export default function HubDialog({ open, onClose, onSaved, hub = null }) {
             notifyParty: form.notifyParty.trim(),
             postalCode: form.postalCode.trim(),
             vatNo: form.vatNo.trim(),
-            multipleEmail: form.multipleEmail.trim(),
+            multipleEmail: [...new Set([
+                ...form.multipleEmail,
+                ...parseEmailList(multipleEmailInput),
+            ])].join(", "),
             coordinatorInCharge: form.coordinatorInCharge,
             accountingDetails: form.accountingDetails,
-            keyAccountManager: form.keyAccountManager.trim(),
+            // keyAccountManager: form.keyAccountManager.trim(),
             bankDetails: form.bankDetails.trim(),
         };
 
@@ -199,10 +222,11 @@ export default function HubDialog({ open, onClose, onSaved, hub = null }) {
             scroll="paper"
             sx={{
                 "& .MuiDialog-paper": {
-                    height: { xs: "calc(100dvh - 16px)", sm: "82vh" },
+                    height: { xs: "calc(100dvh - 16px)", sm: "72vh" },
                     maxHeight: "calc(100% - 32px)",
                     width: { xs: "calc(100% - 16px)", sm: "calc(100% - 64px)" },
-                    m: { xs: 1, sm: 4 },
+                    mb: "100px",
+                    
                 },
             }}
         >
@@ -248,24 +272,19 @@ export default function HubDialog({ open, onClose, onSaved, hub = null }) {
                         <Column>
                             <Section title="Hub Details">
                                 <Box sx={twoCols}>
-                                    <Field label="Company Name" value={form.companyName} onChange={updateField("companyName")} required sx={fullRow} />
-                                    <Field label="EORI/UISE No" value={form.eoriUiseNo} onChange={updateField("eoriUiseNo")}  />
+                                    {/* <Field label="Company Name" value={form.companyName} onChange={updateField("companyName")} required sx={fullRow} /> */}
+                                    <Field label="Company Name" value={form.companyName} onChange={updateField("companyName", toCamelCase)} required sx={fullRow} />
+                                    <Field label="EORI/UISE No" value={form.eoriUiseNo} onChange={updateField("eoriUiseNo", toCamelCase)}  />
                                     <Field label="Station Code" value={form.stationCode} onChange={updateField("stationCode")} required />
                                     <CountrySelect label="Country" value={form.country} onChange={updateField("country")} required />
                                     <Field label="City" value={form.city} onChange={updateField("city")} required />
                                     <Field label="Postal Code" value={form.postalCode} onChange={updateField("postalCode")} />
                                     <Field label="VAT No" value={form.vatNo} onChange={updateField("vatNo")} />
-                                    <Field label="Address" value={form.address} onChange={updateField("address")} required multiline minRows={3}  sx={fullRow} />
-                                    <Field label="Notify Party" value={form.notifyParty} onChange={updateField("notifyParty")} multiline minRows={3}  sx={fullRow} />
+                                    <Field label="Address" value={form.address} onChange={updateField("address", toCamelCase)} required multiline minRows={3}  sx={fullRow} />
+                                    <Field label="Notify Party" value={form.notifyParty} onChange={updateField("notifyParty", toCamelCase)} multiline minRows={3}  sx={fullRow} />
                                 </Box>
                             </Section>
-                            <Section title="Coordinator In Charge">
-                                <Box sx={twoCols}>
-                                    <Field label="Name" value={coord.name} onChange={updateNested("coordinatorInCharge", "name")} required sx={fullRow} />
-                                    <Field label="Email" type="email" value={coord.email} onChange={updateNested("coordinatorInCharge", "email")} required />
-                                    <PhoneField value={coord.phone} country={form.country} onChange={(phone) => setForm((current) => ({ ...current, coordinatorInCharge: { ...current.coordinatorInCharge, phone } }))} required />
-                                </Box>
-                            </Section>
+                            
                             
 
                             
@@ -275,31 +294,60 @@ export default function HubDialog({ open, onClose, onSaved, hub = null }) {
                         <Column>
                             <Section title="Accounting Details">
                                 <Box sx={twoCols}>
-                                    <Field label="Name" value={acc.name} onChange={updateNested("accountingDetails", "name")} required sx={fullRow} />
+                                    {/* <Field label="Name" value={acc.name} onChange={updateNested("accountingDetails", "name")} required sx={fullRow} /> */}
+                                    <Field label="Name" value={acc.name} onChange={updateNested("accountingDetails", "name", toCamelCase)} />
                                     <Field label="Email" type="email" value={acc.email} onChange={updateNested("accountingDetails", "email")} required />
                                     <PhoneField value={acc.phone} country={acc.country} onChange={(phone) => setForm((current) => ({ ...current, accountingDetails: { ...current.accountingDetails, phone } }))} required />
                                     <CountrySelect label="Country" value={acc.country} onChange={updateNested("accountingDetails", "country")} />
                                     {/* <Field label="Credit Limit" value={acc.creditLimit} onChange={updateNested("accountingDetails", "creditLimit")} required /> */}
                                     <Field label="Currency" value={acc.currency} onChange={updateNested("accountingDetails", "currency")} required />
                                     <Field label="Payment Terms" value={acc.paymentTerms} onChange={updateNested("accountingDetails", "paymentTerms")} required />
-                                    <Field label="Billing Address" value={acc.billingAddress} onChange={updateNested("accountingDetails", "billingAddress")} multiline minRows={3} sx={fullRow} />
-                                    <Field label="Special Instructions" value={acc.specialInstructions} onChange={updateNested("accountingDetails", "specialInstructions")} multiline minRows={3} sx={fullRow} />
+                                    {/* <Field label="Billing Address" value={acc.billingAddress} onChange={updateNested("accountingDetails", "billingAddress")} multiline minRows={3} sx={fullRow} /> */}
+                                    <Field label="Special Instructions" value={acc.specialInstructions} onChange={updateNested("accountingDetails", "specialInstructions", toCamelCase)} multiline minRows={1.7} sx={fullRow} />
                                 </Box>
                             </Section>
-                            <Section title="TTS - Bank Details">
-                                <Field label="Bank Details" value={form.bankDetails} onChange={updateField("bankDetails")} required multiline minRows={3.5} />
+                            <Section title="Coordinator In Charge">
+                                <Box sx={twoCols}>
+                                    <Field label="Name" value={coord.name} onChange={updateNested("coordinatorInCharge", "name", toCamelCase)} required sx={fullRow} />
+                                    <Field label="Email" type="email" value={coord.email} onChange={updateNested("coordinatorInCharge", "email")} required />
+                                    <PhoneField value={coord.phone} country={form.country} onChange={(phone) => setForm((current) => ({ ...current, coordinatorInCharge: { ...current.coordinatorInCharge, phone } }))} required />
+                                </Box>
                             </Section>
+                            
                             
                         </Column>
 
                         {/* Column 3 */}
                         <Column>
 
-                            <Section title="Key Account Manager">
+                            {/* <Section title="Key Account Manager">
                                 <Field label="Opp Manager" value={form.keyAccountManager} onChange={updateField("keyAccountManager")} required />
+                            </Section> */}
+                            <Section title="TTS - Bank Details">
+                                <Field label="Bank Details" value={form.bankDetails} onChange={updateField("bankDetails", toCamelCase)} required multiline minRows={3.5} />
                             </Section>
                             <Section title="Multiple Email">
-                                <Field label="Email" type="email" value={form.multipleEmail} onChange={updateField("multipleEmail")} />
+                                <Autocomplete
+                                    multiple
+                                    freeSolo
+                                    options={[]}
+                                    value={form.multipleEmail}
+                                    inputValue={multipleEmailInput}
+                                    onInputChange={(_, value) => setMultipleEmailInput(value)}
+                                    onChange={(_, emails) => setForm((current) => ({
+                                        ...current,
+                                        multipleEmail: [...new Set(emails.flatMap((email) => parseEmailList(email)))],
+                                    }))}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label="Email"
+                                            placeholder="Type an email and press Enter"
+                                            size="small"
+                                            fullWidth
+                                        />
+                                    )}
+                                />
                             </Section>
                             
                         </Column>

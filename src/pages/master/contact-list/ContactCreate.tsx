@@ -83,7 +83,7 @@ interface FormState {
 }
 
 const INITIAL_FORM_STATE: FormState = {
-    groupId: "TTS Agent",
+    groupId: "Supplier",
     //description: "",
     companyName: "",
     //initial: "",

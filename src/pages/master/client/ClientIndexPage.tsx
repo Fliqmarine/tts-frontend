@@ -1,12 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Stack } from "@mui/material";
-import ClientIndexHeader from "./components/Header";
-import ClientIndexFilter from "./components/Fliter";
-import ClientIndexTable from "./components/Table";
-import ClientDialog from "./components/ClientDialog";
+import { useLocation, useNavigate } from "react-router-dom";
 import ClientViewDialog from "./components/ClientViewDialog";
+import ClientIndexHeader from "./components/ClientIndexHeader";
+import ClientIndexFilter from "./components/ClientIndexFliter";
+import ClientIndexTable from "./components/ClientIndexTable";
 
-const demoClients = [
+interface Client {
+	id: number;
+	groupId?: string;
+	status: boolean;
+	companyName: string;
+	stationCode: string;
+	city: string;
+	country: string;
+	address: string;
+	notifyParty?: string;
+	postalCode: string;
+	vatNo: string;
+	coordinatorInCharge: { name: string; email: string; phone: string };
+	accountingDetails: {
+		name: string;
+		email: string;
+		phone: string;
+		country: string;
+		creditLimit: string;
+		useBillingCurrency: boolean;
+		paymentTerms: string;
+		currency: string;
+		billingAddress: string;
+		specialInstructions: string;
+	};
+	multipleEmail: string;
+	keyAccountManager: string;
+	bankDetails: string;
+}
+
+interface ClientFilters {
+	search: string;
+	country: string;
+	keyAccountManager: string;
+	status: string;
+}
+
+type NewClient = Omit<Client, "id" | "status" | "stationCode"> & Partial<Pick<Client, "stationCode">>;
+
+interface ClientCreateNavigationState {
+	createdClient?: NewClient;
+	updatedClient?: { id: number; client: NewClient };
+}
+
+const demoClients: Client[] = [
 	{
 		id: 1001,
 		groupId: "Client",
@@ -64,32 +108,46 @@ const demoClients = [
 ];
 
 export default function ClientIndexPage() {
-	const [filters, setFilters] = useState({ search: "", country: "", keyAccountManager: "", status: "" });
-	const [clients, setClients] = useState(demoClients);
-	const [clientDialogOpen, setClientDialogOpen] = useState(false);
-	const [clientToEdit, setClientToEdit] = useState(null);
-	const [clientToView, setClientToView] = useState(null);
+	const location = useLocation();
+	const navigate = useNavigate();
+	const navigationState = location.state as ClientCreateNavigationState | null;
+	const createdClient = navigationState?.createdClient;
+	const updatedClient = navigationState?.updatedClient;
+	const [filters, setFilters] = useState<ClientFilters>({ search: "", country: "", keyAccountManager: "", status: "" });
+	const [clients, setClients] = useState<Client[]>(() => {
+		let initialClients = demoClients;
+		if (createdClient) {
+			const id = Math.max(0, ...initialClients.map((client) => client.id)) + 1;
+			initialClients = [...initialClients, { ...createdClient, id, stationCode: createdClient.stationCode || `DEMO-${id}`, status: true }];
+		}
+		if (updatedClient) {
+			initialClients = initialClients.map((client) => (
+				client.id === updatedClient.id ? { ...client, ...updatedClient.client, id: client.id } : client
+			));
+		}
+		return initialClients;
+	});
+	const [clientToView, setClientToView] = useState<Client | null>(null);
 	const keyAccountManagers = [...new Set(clients.map((client) => client.keyAccountManager).filter(Boolean))].sort();
 
-	const openCreateDialog = () => {
-		setClientToEdit(null);
-		setClientDialogOpen(true);
+	useEffect(() => {
+		if (createdClient || updatedClient) {
+			navigate("/master/client", { replace: true, state: null });
+		}
+	}, [createdClient, updatedClient, navigate]);
+
+	const openCreatePage = () => {
+		navigate("/master/client/create");
 	};
 
-	const openEditDialog = (client) => {
-		setClientToEdit(client);
-		setClientDialogOpen(true);
+	const openEditPage = (client: Client) => {
+		navigate("/master/client/edit", { state: { editingClient: client } });
 	};
 
-	const openViewDialog = (client) => setClientToView(client);
+	const openViewDialog = (client: Client) => setClientToView(client);
 	const closeViewDialog = () => setClientToView(null);
 
-	const closeClientDialog = () => {
-		setClientDialogOpen(false);
-		setClientToEdit(null);
-	};
-
-	const handleDelete = (client) => {
+	const handleDelete = (client: Client) => {
 		if (!window.confirm(`Delete ${client.companyName}?`)) {
 			return;
 		}
@@ -97,43 +155,23 @@ export default function ClientIndexPage() {
 		setClients((current) => current.filter((item) => item.id !== client.id));
 	};
 
-	const handleStatusChange = (client, status) => {
+	const handleStatusChange = (client: Client, status: boolean) => {
 		setClients((current) => current.map((item) => (
 			item.id === client.id ? { ...item, status } : item
 		)));
 	};
 
-	const handleClientSaved = (savedClient) => {
-		if (clientToEdit) {
-			setClients((current) => current.map((item) => (
-				item.id === clientToEdit.id ? { ...item, ...savedClient, id: item.id } : item
-			)));
-			return;
-		}
-
-		setClients((current) => {
-			const id = Math.max(0, ...current.map((item) => Number(item.id) || 0)) + 1;
-			return [...current, { ...savedClient, id, stationCode: `DEMO-${id}`, status: true }];
-		});
-	};
-
 	return (
 		<Stack spacing={1}>
-			<ClientIndexHeader onCreate={openCreateDialog} />
+			<ClientIndexHeader onCreate={openCreatePage} />
 			<ClientIndexFilter filters={filters} onFilterChange={setFilters} keyAccountManagers={keyAccountManagers} />
 			<ClientIndexTable
 				clients={clients}
 				filters={filters}
 				onDelete={handleDelete}
-				onEdit={openEditDialog}
+				onEdit={openEditPage}
 				onView={openViewDialog}
 				onStatusChange={handleStatusChange}
-			/>
-			<ClientDialog
-				open={clientDialogOpen}
-				client={clientToEdit}
-				onClose={closeClientDialog}
-				onSaved={handleClientSaved}
 			/>
 			<ClientViewDialog client={clientToView} onClose={closeViewDialog} />
 		</Stack>

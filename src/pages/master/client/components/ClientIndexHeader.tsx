@@ -2,7 +2,11 @@ import { Add } from "@mui/icons-material";
 import GroupsIcon from "@mui/icons-material/Groups";
 import { Box, Button, Typography } from "@mui/material";
 
-export default function ClientIndexHeader({ onCreate }) {
+interface ClientIndexHeaderProps {
+	onCreate: () => void;
+}
+
+export default function ClientIndexHeader({ onCreate }: ClientIndexHeaderProps) {
 	return (
 		<Box
 			sx={{

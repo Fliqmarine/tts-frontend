@@ -31,6 +31,7 @@ export const createUser = async (
 
   formData.append("name", data.name);
   formData.append("email", data.email);
+  formData.append("phone", data.phone);
   formData.append("password", data.password);
   formData.append("role", data.role);
   formData.append("isActive", String(data.isActive ?? true),);
@@ -65,6 +66,7 @@ export const updateUser = async (
   const formData = new FormData();
   if (data.name !== undefined) formData.append("name", data.name);
   if (data.email !== undefined) formData.append("email", data.email);
+  if (data.phone !== undefined) formData.append("phone", data.phone);
   if (data.role !== undefined) formData.append("role", data.role);
 
   formData.append(

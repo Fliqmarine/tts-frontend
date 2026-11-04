@@ -242,11 +242,6 @@ export const navigationMenus: NavigationMenu[] = [
                 icon: <HubOutlinedIcon fontSize="small" />,
             },
             {
-                label: "Hub",
-                path: "/master/hub",
-                icon: <WarehouseIcon fontSize="small" />,
-            },
-            {
                 label: "Contact List",
                 path: "/master/contact-list",
                 icon: <ContactsIcon fontSize="small" />,
@@ -307,6 +302,11 @@ export const navigationMenus: NavigationMenu[] = [
                 label: "Users",
                 path: "/master/users",
                 icon: <PeopleIcon fontSize="small" />,
+            },
+            {
+                label: "Hub",
+                path: "/master/hub",
+                icon: <WarehouseIcon fontSize="small" />,
             },
             {
                 label: "Tariff Master",

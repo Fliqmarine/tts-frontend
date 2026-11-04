@@ -13,7 +13,7 @@ import {
 	Typography,
 	useMediaQuery,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -22,9 +22,54 @@ import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
-const isEmpty = (value) => value === null || value === undefined || String(value).trim() === "";
+interface ClientViewRecord {
+	id: number;
+	companyName?: string;
+	stationCode?: string;
+	vatNo?: string;
+	country?: string;
+	city?: string;
+	postalCode?: string;
+	address?: string;
+	notifyParty?: string;
+	multipleEmail?: string;
+	keyAccountManager?: string;
+	bankDetails?: string;
+	coordinatorInCharge?: {
+		name?: string;
+		email?: string;
+		phone?: string;
+	};
+	accountingDetails?: {
+		name?: string;
+		email?: string;
+		phone?: string;
+		country?: string;
+		creditLimit?: string | number;
+		currency?: string;
+		paymentTerms?: string;
+		billingAddress?: string;
+		specialInstructions?: string;
+	};
+}
 
-const formatMoney = (amount, currency) => {
+interface ClientViewDialogProps {
+	client: ClientViewRecord | null;
+	onClose: () => void;
+	onEdit?: (client: ClientViewRecord) => void;
+}
+
+interface DetailProps {
+	label: string;
+	value?: string | number | null;
+	href?: string;
+	multiline?: boolean;
+	fullWidth?: boolean;
+}
+
+const isEmpty = (value: unknown) => value === null || value === undefined || String(value).trim() === "";
+
+const formatMoney = (amount: string | number | undefined, currency?: string): string | null => {
 	if (isEmpty(amount)) return null;
 	const number = Number(amount);
 	if (Number.isNaN(number)) return String(amount);
@@ -39,9 +84,9 @@ const formatMoney = (amount, currency) => {
 	}
 };
 
-const copyLine = (label, value) => `${label}: ${isEmpty(value) ? "-" : value}`;
+const copyLine = (label: string, value: unknown) => `${label}: ${isEmpty(value) ? "-" : value}`;
 
-function buildClientDetailsText(client) {
+function buildClientDetailsText(client: ClientViewRecord) {
 	const coordinator = client.coordinatorInCharge ?? {};
 	const accounting = client.accountingDetails ?? {};
 	const creditLimit = formatMoney(accounting.creditLimit, accounting.currency) ?? accounting.creditLimit;
@@ -81,12 +126,12 @@ function buildClientDetailsText(client) {
 	].join("\n");
 }
 
-function Detail({ label, value, href, multiline = false, fullWidth = false }) {
+function Detail({ label, value, href, multiline = false, fullWidth = false }: DetailProps) {
 	const empty = isEmpty(value);
 
 	return (
 		<Box sx={{ minWidth: 0, gridColumn: fullWidth ? "1 / -1" : "auto" }}>
-			<Typography variant="caption" color="text.secondary" display="block" sx={{ lineHeight: 2, mb: 2 }}>
+			<Typography variant="caption" color="text.secondary" sx={{ display: "block", lineHeight: 2, mb: 2 }}>
 				{label}
 			</Typography>
 			{empty ? (
@@ -113,15 +158,15 @@ function Detail({ label, value, href, multiline = false, fullWidth = false }) {
 	);
 }
 
-function DetailSection({ icon, title, children }) {
+function DetailSection({ icon, title, children }: { icon: ReactNode; title: string; children: ReactNode }) {
 	return (
 		<Paper variant="outlined" component="section" sx={{ p: 1.5, borderRadius: 2 }}>
-			<Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.25 }}>
+			<Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.25 }}>
 				<Box sx={{ display: "flex", color: "primary.main" }}>{icon}</Box>
 				<Typography variant="subtitle2" color="primary.main" sx={{ fontWeight: 700 }}>
 					{title}
 				</Typography>
-			</Stack>
+			</Box>
 			<Box
 				sx={{
 					display: "grid",
@@ -136,7 +181,7 @@ function DetailSection({ icon, title, children }) {
 	);
 }
 
-export default function ClientViewDialog({ client, onClose, onEdit }) {
+export default function ClientViewDialog({ client, onClose }: ClientViewDialogProps) {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 	const [copyMessage, setCopyMessage] = useState("");
@@ -163,10 +208,10 @@ export default function ClientViewDialog({ client, onClose, onEdit }) {
 			maxWidth="lg"
 			fullScreen={isMobile}
 			aria-labelledby="client-view-title"
-			PaperProps={{ sx: { maxHeight: isMobile ? "100%" : "none" } }}
+			slotProps={{ paper: { sx: { maxHeight: isMobile ? "100%" : "none" } } }}
 		>
 			<DialogTitle id="client-view-title" sx={{ py: 2, pr: 12, pl: 5, position: "relative", mt: 2}}>
-				<Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap" useFlexGap>
+				<Stack direction="row" spacing={1.5} sx={{ alignItems: "center", flexWrap: "wrap" }} useFlexGap>
 					<Typography variant="h6" component="span" sx={{ fontWeight: 700 }}>
 						{client?.companyName || "Client Details"}
 					</Typography>

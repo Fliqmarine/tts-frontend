@@ -3,11 +3,9 @@ import { useMemo, useState } from "react";
 import ClientReceiptFilter from "./components/ClientReceiptFilter";
 import ClientReceiptHeader from "./components/ClientReceiptHeader";
 import ClientReceiptTable from "./components/ClientReceiptTable";
-import { updateSaleInvoiceStatus } from "./types/saleInvoice.types";
 import {
   addClientReceiptPayment,
   getClientReceiptRows,
-  updateClientReceiptStatus,
   type ClientReceiptFilters,
   type ClientReceiptRow,
   type ClientReceiptStatus,
@@ -48,32 +46,22 @@ export default function ClientReceiptPage() {
   const updateReceipt = async (row: ClientReceiptRow, update: ReceiptUpdate) => {
     try {
       const updatedRow = await addClientReceiptPayment(row, update);
-      updateSaleInvoiceStatus(
-        row.invoiceNumber,
-        updatedRow.outstandingAmount === 0 ? "Paid" : "Partially Paid",
-      );
       setRows((current) => current.map((receipt) =>
         receipt.invoiceId === updatedRow.invoiceId ? updatedRow : receipt,
       ));
       setError("");
     } catch (updateError) {
-      console.error("Could not save client receipt payment.", updateError);
-      setError(updateError instanceof Error ? updateError.message : "Could not save client receipt payment.");
+      console.error("Could not update client receipt.", updateError);
+      setError(updateError instanceof Error ? updateError.message : "Could not update client receipt.");
       throw updateError;
     }
   };
 
   const setReceiptStatus = (row: ClientReceiptRow, status: ClientReceiptStatus) => {
-    try {
-      updateClientReceiptStatus(row.invoiceId, status);
-      setRows((current) => current.map((receipt) =>
-        receipt.invoiceId === row.invoiceId ? { ...receipt, status } : receipt,
-      ));
-      setError("");
-    } catch (updateError) {
-      console.error("Could not update client receipt status.", updateError);
-      setError(updateError instanceof Error ? updateError.message : "Could not update client receipt status.");
-    }
+    setRows((current) => current.map((receipt) =>
+      receipt.invoiceId === row.invoiceId ? { ...receipt, status } : receipt,
+    ));
+    setError("");
   };
 
   return (
