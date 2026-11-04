@@ -51,8 +51,10 @@ import MainInvoiceEdit from "./pages/invoices/MainInvoiceEdit";
 import MainInvoiceView from "./pages/invoices/MainInvoiceView";
 import CreditNoteCreate from "./pages/invoices/CreditNoteCreate";
 import CreditNoteView from "./pages/invoices/CreditNoteView";
+
 import SaleInvoiceIndexPage from "./pages/finance/SaleInvoiceIndexPage";
 import ClientReceiptPage from "./pages/finance/ClientReceipt";
+import VendorInvoiceIndexPage from "./pages/finance/VendorInvoiceIndexPage";
 
 
 
@@ -125,8 +127,10 @@ function App() {
                   <Route path="/invoices/extra-invoice-view" element={<ExtraInvoiceView />} />
                   <Route path="/invoices/credit-note-create" element={<CreditNoteCreate />} />
                   <Route path="/invoices/credit-note-view" element={<CreditNoteView />} />
+                  
                   <Route path="/finance/sale-invoice" element={<SaleInvoiceIndexPage />} />
                   <Route path="/finance/client-receipt" element={<ClientReceiptPage />} />
+                  <Route path="/finance/vendor-invoice" element={<VendorInvoiceIndexPage />} />
 
                 </Route>
             </Routes>
