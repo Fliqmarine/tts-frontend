@@ -16,7 +16,7 @@ export const StockChargeRowSchema = z.object({
 });
 export type StockChargeRow = z.infer<typeof StockChargeRowSchema>;
 
-export const StockSchema = z.object({
+export const StockSchema = z.object({   
     id: z.number(),
     station: z.string(),
     vessel: z.string(),
@@ -26,7 +26,7 @@ export const StockSchema = z.object({
     arrival_date: z.string(),
     entry_date: z.string().optional(),
     country_of_origin: z.string().optional(),
-    cargo_status: z.enum(["On stock", "New", "Hold", "Landed Goods", "Transit", "Pending", "Storage", "Received"]),
+    stock_status: z.enum(["Stock", "New", "Hold", "Landed Goods", "Transit", "Pending", "Storage", "In Progress"]),
     cargo_description: z.string().optional(),
     hs_code: z.string().optional(),
     currency: z.string().optional(),

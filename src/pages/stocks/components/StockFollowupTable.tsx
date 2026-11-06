@@ -707,7 +707,7 @@ export default function StockFollowupTable({ filters }: StockFollowupTableProps)
     const handleConfirmApprove = () => {
         if (!approveTarget) return;
         setRows((current) => current.map((row) =>
-            row.id === approveTarget.id ? { ...row, stock_status: "Completed" } : row
+            row.id === approveTarget.id ? { ...row, stock_status: "Stock" } : row
         ));
         setApproveTarget(null);
     };
@@ -879,94 +879,94 @@ export default function StockFollowupTable({ filters }: StockFollowupTableProps)
 
                         <TableBody>
                             {paginateData.map((row) => {
-                                const isApproved = row.stock_status === "Completed";
+                                const isApproved = row.stock_status === "Stock";
                                 return (
-                                <TableRow key={row.id} hover selected={selected.includes(row.id)}>
-                                    <TableCell padding="checkbox" sx={{ pl: 1.5 }}>
-                                        <Checkbox size="small" checked={selected.includes(row.id)} onChange={() => handleSelectRow(row.id)} />
-                                    </TableCell>
+                                    <TableRow key={row.id} hover selected={selected.includes(row.id)}>
+                                        <TableCell padding="checkbox" sx={{ pl: 1.5 }}>
+                                            <Checkbox size="small" checked={selected.includes(row.id)} onChange={() => handleSelectRow(row.id)} />
+                                        </TableCell>
 
-                                    {columns.map((c) => {
-                                        const text = c.text?.(row);
-                                        return (
-                                            <TableCell
-                                                key={c.key}
-                                                align={c.align}
-                                                className={c.node ? "no-clip" : undefined}
-                                                title={text}   // full value on hover when it's cut with "..."
-                                                sx={c.bold ? { fontWeight: 600 } : undefined}
-                                            >
-                                                {c.node ? c.node(row) : text}
-                                            </TableCell>
-                                        );
-                                    })}
+                                        {columns.map((c) => {
+                                            const text = c.text?.(row);
+                                            return (
+                                                <TableCell
+                                                    key={c.key}
+                                                    align={c.align}
+                                                    className={c.node ? "no-clip" : undefined}
+                                                    title={text}   // full value on hover when it's cut with "..."
+                                                    sx={c.bold ? { fontWeight: 600 } : undefined}
+                                                >
+                                                    {c.node ? c.node(row) : text}
+                                                </TableCell>
+                                            );
+                                        })}
 
-                                    <TableCell align="center" className="col-actions">
-                                        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 0.25 }}>
-                                            <Button
-                                                size="small"
-                                                variant="contained"
-                                                color="success"
-                                                disableElevation
-                                                disabled={isApproved}
-                                                startIcon={isApproved ? <DoneAllIcon /> : <CheckCircleIcon />}
-                                                onClick={() => handleApprove(row)}
-                                                sx={(t) => ({
-                                                    textTransform: "none",
-                                                    fontWeight: 600,
-                                                    fontSize: "0.65rem",
-                                                    height: 24,
-                                                    minWidth: 0,
-                                                    px: 1,
-                                                    borderRadius: "14px",
-                                                    whiteSpace: "nowrap",
-                                                    color: t.palette.success.dark,
-                                                    bgcolor: alpha(t.palette.success.main, 0.12),
-                                                    border: "1px solid",
-                                                    borderColor: alpha(t.palette.success.main, 0.4),
-                                                    "& .MuiButton-startIcon": { mr: 0.4, ml: 0, "& > *:first-of-type": { fontSize: 14 } },
-                                                    "&:hover": {
-                                                        bgcolor: t.palette.success.main,
-                                                        color: t.palette.success.contrastText,
-                                                        borderColor: t.palette.success.main,
-                                                    },
-                                                    "&.Mui-disabled": {
-                                                        color: t.palette.success.main,
-                                                        bgcolor: alpha(t.palette.success.main, 0.06),
-                                                        borderColor: alpha(t.palette.success.main, 0.2),
-                                                        opacity: 0.75,
-                                                    },
-                                                })}
-                                            >
-                                                {isApproved ? "Approved" : "Approve"}
-                                            </Button>
-                                            {[
-                                                { title: "View", color: "info", Icon: VisibilityIcon },
-                                                { title: "Log", color: "secondary", Icon: HistoryOutlinedIcon },
-                                                { title: "Edit", color: "primary", Icon: EditIcon },
-                                                { title: "Delete", color: "error", Icon: DeleteIcon },
-                                            ].map(({ title, color, Icon }) => (
-                                                <Tooltip disableInteractive key={title} title={title} arrow>
-                                                    <IconButton
-                                                        size="small"
-                                                        color={color as "info" | "secondary" | "primary" | "error"}
-                                                        aria-label={title.toLowerCase()}
-                                                        onClick={title === "View"
-                                                            ? () => navigate(`/stocks/view/${row.id}`, { state: { stock: row } })
-                                                            : title === "Edit"
-                                                                ? () => navigate(`/stocks/edit/${row.id}`, { state: { stock: row } })
-                                                                : title === "Delete"
-                                                                    ? () => setDeleteTarget(row)
-                                                                    : undefined}
-                                                        sx={{ p: 0.4 }}
-                                                    >
-                                                        <Icon sx={{ fontSize: "0.95rem" }} />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            ))}
-                                        </Box>
-                                    </TableCell>
-                                </TableRow>
+                                        <TableCell align="center" className="col-actions">
+                                            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 0.25 }}>
+                                                <Button
+                                                    size="small"
+                                                    variant="contained"
+                                                    color="success"
+                                                    disableElevation
+                                                    disabled={isApproved}
+                                                    startIcon={isApproved ? <DoneAllIcon /> : <CheckCircleIcon />}
+                                                    onClick={() => handleApprove(row)}
+                                                    sx={(t) => ({
+                                                        textTransform: "none",
+                                                        fontWeight: 600,
+                                                        fontSize: "0.65rem",
+                                                        height: 24,
+                                                        minWidth: 0,
+                                                        px: 1,
+                                                        borderRadius: "14px",
+                                                        whiteSpace: "nowrap",
+                                                        color: t.palette.success.dark,
+                                                        bgcolor: alpha(t.palette.success.main, 0.12),
+                                                        border: "1px solid",
+                                                        borderColor: alpha(t.palette.success.main, 0.4),
+                                                        "& .MuiButton-startIcon": { mr: 0.4, ml: 0, "& > *:first-of-type": { fontSize: 14 } },
+                                                        "&:hover": {
+                                                            bgcolor: t.palette.success.main,
+                                                            color: t.palette.success.contrastText,
+                                                            borderColor: t.palette.success.main,
+                                                        },
+                                                        "&.Mui-disabled": {
+                                                            color: t.palette.success.main,
+                                                            bgcolor: alpha(t.palette.success.main, 0.06),
+                                                            borderColor: alpha(t.palette.success.main, 0.2),
+                                                            opacity: 0.75,
+                                                        },
+                                                    })}
+                                                >
+                                                    {isApproved ? "Approved" : "Approve"}
+                                                </Button>
+                                                {[
+                                                    { title: "View", color: "info", Icon: VisibilityIcon },
+                                                    { title: "Log", color: "secondary", Icon: HistoryOutlinedIcon },
+                                                    { title: "Edit", color: "primary", Icon: EditIcon },
+                                                    { title: "Delete", color: "error", Icon: DeleteIcon },
+                                                ].map(({ title, color, Icon }) => (
+                                                    <Tooltip disableInteractive key={title} title={title} arrow>
+                                                        <IconButton
+                                                            size="small"
+                                                            color={color as "info" | "secondary" | "primary" | "error"}
+                                                            aria-label={title.toLowerCase()}
+                                                            onClick={title === "View"
+                                                                ? () => navigate(`/stocks/view/${row.id}`, { state: { stock: row } })
+                                                                : title === "Edit"
+                                                                    ? () => navigate(`/stocks/edit/${row.id}`, { state: { stock: row } })
+                                                                    : title === "Delete"
+                                                                        ? () => setDeleteTarget(row)
+                                                                        : undefined}
+                                                            sx={{ p: 0.4 }}
+                                                        >
+                                                            <Icon sx={{ fontSize: "0.95rem" }} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                ))}
+                                            </Box>
+                                        </TableCell>
+                                    </TableRow>
                                 );
                             })}
 

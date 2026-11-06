@@ -40,6 +40,11 @@ interface ClientViewRecord {
 		email?: string;
 		phone?: string;
 	};
+	additionalCoordinators?: {
+		name: string;
+		email: string;
+		phone: string;
+	}[];
 	accountingDetails?: {
 		name?: string;
 		email?: string;
@@ -87,7 +92,7 @@ const formatMoney = (amount: string | number | undefined, currency?: string): st
 const copyLine = (label: string, value: unknown) => `${label}: ${isEmpty(value) ? "-" : value}`;
 
 function buildClientDetailsText(client: ClientViewRecord) {
-	const coordinator = client.coordinatorInCharge ?? {};
+	const coordinators = [client.coordinatorInCharge ?? {}, ...(client.additionalCoordinators ?? [])];
 	const accounting = client.accountingDetails ?? {};
 	const creditLimit = formatMoney(accounting.creditLimit, accounting.currency) ?? accounting.creditLimit;
 
@@ -104,9 +109,14 @@ function buildClientDetailsText(client: ClientViewRecord) {
 		copyLine("Notify Party", client.notifyParty),
 		"",
 		"Coordinator In Charge",
-		copyLine("Name", coordinator.name),
-		copyLine("Email", coordinator.email),
-		copyLine("Phone", coordinator.phone),
+		...coordinators.flatMap((coordinator, index) => {
+			const prefix = index === 0 ? "" : `Coordinator ${index + 1} `;
+			return [
+				copyLine(`${prefix}Name`, coordinator.name),
+				copyLine(`${prefix}Email`, coordinator.email),
+				copyLine(`${prefix}Phone`, coordinator.phone),
+			];
+		}),
 		"",
 		"Accounting Details",
 		copyLine("Name", accounting.name),
@@ -186,7 +196,7 @@ export default function ClientViewDialog({ client, onClose }: ClientViewDialogPr
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 	const [copyMessage, setCopyMessage] = useState("");
 
-	const coordinator = client?.coordinatorInCharge ?? {};
+	const coordinators = [client?.coordinatorInCharge ?? {}, ...(client?.additionalCoordinators ?? [])];
 	const accounting = client?.accountingDetails ?? {};
 
 	const copyToClipboard = async () => {
@@ -279,17 +289,35 @@ export default function ClientViewDialog({ client, onClose }: ClientViewDialogPr
 							</DetailSection>
 
 							<DetailSection icon={<SupportAgentIcon fontSize="small" />} title="Coordinator In Charge">
-								<Detail label="Name" value={coordinator.name} fullWidth />
-								<Detail
-									label="Email"
-									value={coordinator.email}
-									href={coordinator.email ? `mailto:${coordinator.email}` : undefined}
-								/>
-								<Detail
-									label="Phone"
-									value={coordinator.phone}
-									href={coordinator.phone ? `tel:${coordinator.phone}` : undefined}
-								/>
+								{coordinators.map((coordinator, index) => (
+									<Box
+										key={index}
+										sx={{
+											gridColumn: "1 / -1",
+											display: "grid",
+											gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))" },
+											columnGap: 2,
+											rowGap: 1.25,
+										}}
+									>
+										{index > 0 && (
+											<Typography variant="subtitle2" sx={{ gridColumn: "1 / -1", fontWeight: 600 }}>
+												Coordinator {index + 1}
+											</Typography>
+										)}
+										<Detail label="Name" value={coordinator.name} fullWidth />
+										<Detail
+											label="Email"
+											value={coordinator.email}
+											href={coordinator.email ? `mailto:${coordinator.email}` : undefined}
+										/>
+										<Detail
+											label="Phone"
+											value={coordinator.phone}
+											href={coordinator.phone ? `tel:${coordinator.phone}` : undefined}
+										/>
+									</Box>
+								))}
 							</DetailSection>
 						</Stack>
 

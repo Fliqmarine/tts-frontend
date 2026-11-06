@@ -46,9 +46,9 @@ interface FormState {
     groupId: string;
     //description: string;
     companyName: string;
+    email: string;
+    phone: string;
     //initial: string;
-    //email: string;
-    //phone: string;
     //faxNo: string;
     address: string;
     city: string;
@@ -86,9 +86,9 @@ const INITIAL_FORM_STATE: FormState = {
     groupId: "Supplier",
     //description: "",
     companyName: "",
+    email: "",
+    phone: "",
     //initial: "",
-    //email: "",
-    //phone: "",
     //faxNo: "",
     address: "",
     city: "",
@@ -143,7 +143,9 @@ interface SectionConfig {
 interface GroupConfig {
     coordinatorInChargeStandalone: boolean;
     coordinatorInChargeRequired?: boolean;
+    hasCoordinatorInCharge?: boolean;
     hasAccounting: boolean;
+    hasMultipleEmail?: boolean;
     accountingVariant?: "standard";
     hasExtraColumn: boolean; // Client-only: key account manager / bank detail / client hubs
     contactRows: FieldConfig[][];
@@ -218,30 +220,33 @@ const GROUP_CONFIGS: Record<string, GroupConfig> = {
         ],
     },
     Supplier: {
-        coordinatorInChargeStandalone: true,
-        coordinatorInChargeRequired: false,
+        coordinatorInChargeStandalone: false,
+        hasCoordinatorInCharge: false,
         hasAccounting: false,
+        hasMultipleEmail: false,
         hasExtraColumn: false,
         contactRows: [
-            [{ key: "companyName", label: "Company Name", required: true }],
+            [
+                { key: "companyName", label: "Name", required: true },
+                { key: "country", label: "Country" },
+            ],
+            [
+                { key: "email", label: "Email", type: "email", required: true },
+                { key: "phone", label: "Phone", type: "tel", required: true },
+            ],
             // [
-            //     { key: "email", label: "Email", type: "email", required: true },
-            //     { key: "phone", label: "Phone", type: "tel", required: true },
+            //    { key: "faxNo", label: "Fax No" },
+            //     { key: "eoriUiseNo", label: "EORI / UISE No." },
             // ],
-            [
-               // { key: "faxNo", label: "Fax No" },
-                { key: "eoriUiseNo", label: "EORI / UISE No." },
-            ],
-            [
-                { key: "country", label: "Country", },
-                { key: "city", label: "City", },
-            ],
-            [{ key: "address", label: "Address", multiline: true, rows: 3 }],
-            [
-                { key: "postalCode", label: "Postal Code" },
-                { key: "vatNo", label: "Vat No" },
-            ],
-              [{ key: "notifyParty", label: "Notify Party",  multiline: true, rows: 3 }],
+            // [
+            //     { key: "city", label: "City", },
+            // ],
+            // [{ key: "address", label: "Address", multiline: true, rows: 3 }],
+            // [
+            //     { key: "postalCode", label: "Postal Code" },
+            //     { key: "vatNo", label: "Vat No" },
+            // ],
+            // [{ key: "notifyParty", label: "Notify Party",  multiline: true, rows: 3 }],
         ],
     },
 };
@@ -326,10 +331,14 @@ export default function CreateContactPage() {
     const groupConfig = formData.groupId ? GROUP_CONFIGS[formData.groupId] : undefined;
 
     const handleSubmit = async () => {
-        if (!formData.groupId || !formData.companyName || !formData.email || !formData.phone) {
+        if (
+            !formData.groupId ||
+            !formData.companyName ||
+            (formData.groupId === "Supplier" && (!formData.email || !formData.phone))
+        ) {
             setSnackbar({
                 open: true,
-                message: "Please fill in all required fields (Group, Company Name, Email, Phone).",
+                message: "Please fill in all required Supplier fields (Name, Email, Phone).",
                 severity: "error",
             });
             return;
@@ -341,6 +350,8 @@ export default function CreateContactPage() {
                 groupId: formData.groupId as CreateContactRequest["groupId"],
                // description: formData.description,
                 companyName: formData.companyName,
+                ...(formData.email ? { email: formData.email } : {}),
+                ...(formData.phone ? { phone: formData.phone } : {}),
                // initial: formData.initial,
                // email: formData.email,
                // phone: formData.phone,
@@ -503,24 +514,28 @@ export default function CreateContactPage() {
             <Box component={Paper} elevation={3} sx={{ flex: 1, py: 2, px: 2, gap: 1, display: "flex", flexDirection: "column" }}>
                 {renderRows(config.contactRows)}
             </Box>
-            {renderSection(
-                {
-                    title: "Coordinator In Charge",
-                    rows: COORDINATOR_IN_CHARGE_ROWS.map((row) =>
-                        row.map((field) => ({
-                            ...field,
-                            required: config.coordinatorInChargeRequired ?? true,
-                        }))
-                    ),
-                    standalonePaper: true,
-                },
-                "coordinator-in-charge",
-            )}
+            {config.hasCoordinatorInCharge !== false &&
+                renderSection(
+                    {
+                        title: "Coordinator In Charge",
+                        rows: COORDINATOR_IN_CHARGE_ROWS.map((row) =>
+                            row.map((field) => ({
+                                ...field,
+                                required: config.coordinatorInChargeRequired ?? true,
+                            }))
+                        ),
+                        standalonePaper: true,
+                    },
+                    "coordinator-in-charge",
+                )}
         </Box>
     );
 
     const renderColumn2 = (config: GroupConfig) => {
         if (!config.hasAccounting) {
+            if (config.hasMultipleEmail === false) {
+                return null;
+            }
             return (
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2, flex: "1 1 330px", }}>
                     {renderSection(
@@ -551,26 +566,25 @@ export default function CreateContactPage() {
                     </Box>
                     {renderRows(accountingRows)}
                 </Box>
-                <Box component={Paper} elevation={3} sx={{ flex: 1, py: 2, px: 2, gap: 1.5, display: "flex", flexDirection: "column", }}>
-                    <Box sx={SECTION_HEADER_SX}>
-                        <Box
-                            sx={{
-                                width: 4,
-                                height: 18,
-                                borderRadius: 1,
-                                background: "linear-gradient(180deg, #5A73FF 0%, #3D5AFE 100%)",
-                                flexShrink: 0,
-                                
-                            }}
-                        />
-                        <Typography variant="subtitle2" sx={{ color: "#3D5AFE", fontWeight: 700 }}>
-                           Multiple Email
-                        </Typography>
+                {config.hasMultipleEmail !== false && (
+                    <Box component={Paper} elevation={3} sx={{ flex: 1, py: 2, px: 2, gap: 1.5, display: "flex", flexDirection: "column" }}>
+                        <Box sx={SECTION_HEADER_SX}>
+                            <Box
+                                sx={{
+                                    width: 4,
+                                    height: 18,
+                                    borderRadius: 1,
+                                    background: "linear-gradient(180deg, #5A73FF 0%, #3D5AFE 100%)",
+                                    flexShrink: 0,
+                                }}
+                            />
+                            <Typography variant="subtitle2" sx={{ color: "#3D5AFE", fontWeight: 700 }}>
+                                Multiple Email
+                            </Typography>
+                        </Box>
+                        {renderRows(MULTIPLE_EMAIL_ROWS)}
                     </Box>
-                    {renderRows( MULTIPLE_EMAIL_ROWS )}
-                        
-                    
-                </Box>
+                )}
             </Box>
         );
 

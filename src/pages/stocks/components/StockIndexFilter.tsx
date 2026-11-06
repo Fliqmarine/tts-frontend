@@ -3,7 +3,7 @@ import { Box, Checkbox, Collapse, FormControlLabel, IconButton, InputAdornment, 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
-import type { StockIndexFilterProps, StockIndexFilters } from "../types/Stocks.types";
+import { StockSchema, type StockIndexFilterProps, type StockIndexFilters } from "../types/Stocks.types";
 
 const fieldSx = {
     minWidth: 0,
@@ -39,7 +39,7 @@ export default function StockIndexFilter({ filters, onChange }: StockIndexFilter
     const selectField = (
         key: "client" | "vessel" | "station" | "supplier" | "status",
         label: string,
-        options: string[],
+        options: readonly string[],
     ) => (
         <TextField
             key={key}
@@ -103,7 +103,7 @@ export default function StockIndexFilter({ filters, onChange }: StockIndexFilter
                     onChange={(event) => handleChange("transit_no", event.target.value)}
                     sx={fieldSx}
                 />
-                {selectField("status", "Status", ["Pending", "In Progress", "Completed"])}
+                {selectField("status", "Status", StockSchema.shape.stock_status.options)}
                 <Tooltip disableInteractive title={showMore ? "Hide more filters" : "Show more filters"}>
                         <IconButton
                         aria-label={showMore ? "Hide more filters" : "Show more filters"}

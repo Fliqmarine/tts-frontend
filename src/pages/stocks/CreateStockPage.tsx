@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, IconButton, MenuItem, Paper, Radio, RadioGroup, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextareaAutosize, TextField, Tooltip, Typography, useMediaQuery } from "@mui/material";
+import { Avatar,Alert, Box, Button, Checkbox, Dialog, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, IconButton, MenuItem, Paper, Radio, RadioGroup, Select, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextareaAutosize, TextField, Tooltip, Typography, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import DangerousOutlinedIcon from '@mui/icons-material/DangerousOutlined';
@@ -6,14 +6,21 @@ import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import MedicationOutlinedIcon from '@mui/icons-material/MedicationOutlined';
 import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined';
 import CargoSvg from '../../assets/Cargo_svg.svg';
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { forwardRef, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import { styled } from "@mui/material/styles";
+import type { TextFieldProps } from "@mui/material";
+import PhoneInput, { getCountries } from "react-phone-number-input";
+import type { Value } from "react-phone-number-input";
+import en from "react-phone-number-input/locale/en.json";
+import "react-phone-number-input/style.css";
+import { createContact } from "../master/contact-list/services/contact.service";
+import type { CreateContactRequest } from "../master/contact-list/types/contact.types";
 import type { StockCargoColumn, 
               StockCargoRow, 
               StockChargeColumn, 
@@ -33,6 +40,11 @@ const VisuallyHiddenInput = styled("input")({
     whiteSpace: "nowrap",
     width: 1,
 });
+
+const PhoneInputField = forwardRef<HTMLInputElement, TextFieldProps>((props, ref) => (
+    <TextField label="Telephone" {...props} inputRef={ref} />
+));
+PhoneInputField.displayName = "PhoneInputField";
 
 const SECTION_HEADER_SX = {
     display: "flex",
@@ -122,9 +134,18 @@ const hidePlaceholderSx = (hasValue: boolean) => ({
 
 function CreateStockPage({ onChange }: StockCreatePageProps) {
     const theme = useTheme();
-    const navigate = useNavigate();
     //* Below 900px (md) tables are replaced with stacked cards
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+    const [supplier, setSupplier] = useState("");
+    const [supplierDialogOpen, setSupplierDialogOpen] = useState(false);
+    const [isSavingSupplier, setIsSavingSupplier] = useState(false);
+    const [supplierForm, setSupplierForm] = useState({ companyName: "", email: "", phone: "", country: "" });
+    const [supplierSnackbar, setSupplierSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" }>({
+        open: false,
+        message: "",
+        severity: "success",
+    });
 
     const [cargoRows, setCargoRows] = useState([cargoDetailsEmptyRow()]);
     const [chargeRows, setChargeRows] = useState([chargesEmptyRow()]);
@@ -198,6 +219,32 @@ function CreateStockPage({ onChange }: StockCreatePageProps) {
 
     const [arrivalDate, setArrivalDate] = useState('');
     const [entryDate, setEntryDate] = useState('');
+
+    const handleCreateSupplier = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setIsSavingSupplier(true);
+        try {
+            const supplierContact: CreateContactRequest = {
+                groupId: "Supplier",
+                companyName: supplierForm.companyName,
+                email: supplierForm.email,
+                phone: supplierForm.phone,
+                country: supplierForm.country,
+            };
+            await createContact(supplierContact);
+            setSupplier(supplierForm.companyName);
+            setSupplierForm({ companyName: "", email: "", phone: "", country: "" });
+            setSupplierDialogOpen(false);
+            setSupplierSnackbar({ open: true, message: "Supplier contact created.", severity: "success" });
+        } catch (error: unknown) {
+            const message =
+                (error as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+                "Failed to create supplier contact. Please try again.";
+            setSupplierSnackbar({ open: true, message, severity: "error" });
+        } finally {
+            setIsSavingSupplier(false);
+        }
+    };
 
     const renderUploadedFiles = (files: File[]) => files.length > 0 && (
         <Box sx={{
@@ -419,27 +466,33 @@ function CreateStockPage({ onChange }: StockCreatePageProps) {
                             <TextField size="small" label="Vessel" fullWidth required />
                             <TextField size="small" label="Client" fullWidth required disabled />
                             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                <TextField size="small" label="Supplier" fullWidth required />
+                                <TextField
+                                    size="small"
+                                    label="Supplier"
+                                    fullWidth
+                                    required
+                                    value={supplier}
+                                    onChange={(event) => setSupplier(event.target.value)}
+                                />
                                 <Tooltip title="Create supplier contact" disableInteractive>
                                     <IconButton
-                                    color="primary"
-                                    size="small"
-                                    aria-label="Create supplier contact"
-                                    onClick={() => navigate("/master/contact-list/contact-create")}
-                                    sx={{
-                                        width: 20,
-                                        height: 30,
-                                        flexShrink: 0,
-                                        border: 0.5,
-                                        borderColor: "primary.main",
-                                        // borderRadius: 1,
-                                        "&:hover": {
-                                        bgcolor: "primary.main",
-                                        color: "primary.contrastText",
-                                        },
-                                    }}
+                                        color="primary"
+                                        size="small"
+                                        aria-label="Create supplier contact"
+                                        onClick={() => setSupplierDialogOpen(true)}
+                                        sx={{
+                                            width: 20,
+                                            height: 30,
+                                            flexShrink: 0,
+                                            border: 0.5,
+                                            borderColor: "primary.main",
+                                            "&:hover": {
+                                                bgcolor: "primary.main",
+                                                color: "primary.contrastText",
+                                            },
+                                        }}
                                     >
-                                    <AddIcon fontSize="small" />
+                                        <AddIcon fontSize="small" />
                                     </IconButton>
                                 </Tooltip>
                             </Box>
@@ -803,6 +856,142 @@ function CreateStockPage({ onChange }: StockCreatePageProps) {
                     )}
                 </Box>
             </Box>
+
+            <Dialog
+                open={supplierDialogOpen}
+                onClose={() => {
+                    if (!isSavingSupplier) setSupplierDialogOpen(false);
+                }}
+                fullWidth
+                maxWidth="sm"
+                slotProps={{ paper: { sx: { minHeight: 200 } } }}
+                sx={{ mb:40 }}
+            >
+                <DialogTitle
+                    sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        gap: 2,
+                        pb: 2,
+                        borderBottom: 1,
+                        borderColor: "divider",
+                    }}
+                >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                        <Avatar
+                            variant="rounded"
+                            sx={{
+                                bgcolor: "primary.main",
+                                color: "primary.contrastText",
+                                width: 44,
+                                height: 44,
+                            }}
+                        >
+                            <LocalShippingOutlinedIcon />
+                        </Avatar>
+                        <Typography variant="h6" component="span" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+                            New Supplier
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            disabled={isSavingSupplier}
+                            onClick={() => {
+                                setSupplierDialogOpen(false);
+                                setSupplierForm({ companyName: "", email: "", phone: "", country: "" });
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="submit"
+                            form="create-supplier-form"
+                            variant="contained"
+                            disabled={isSavingSupplier}
+                        >
+                            {isSavingSupplier ? "Saving…" : "Create"}
+                        </Button>
+                    </Box>
+                </DialogTitle>
+                <DialogContent>
+                    <Box
+                        component="form"
+                        id="create-supplier-form"
+                        onSubmit={handleCreateSupplier}
+                        sx={{
+                            display: "grid",
+                            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                            gap: 2,
+                            pt: 1,
+                            mt:1,
+                        }}
+                    >
+                        <TextField
+                            label="Name"
+                            value={supplierForm.companyName}
+                            onChange={(event) => setSupplierForm((current) => ({ ...current, companyName: event.target.value }))}
+                            required
+                            fullWidth
+                        />
+                        <TextField
+                            label="Email"
+                            type="email"
+                            value={supplierForm.email}
+                            onChange={(event) => setSupplierForm((current) => ({ ...current, email: event.target.value }))}
+                            required
+                            fullWidth
+                        />
+                        <Box
+                            sx={{
+                                minWidth: 0, // prevents the phone input from overflowing its grid cell
+                                "& .PhoneInput": { display: "flex", width: "100%" },
+                                "& .PhoneInputCountry": { mr: 1 },
+                            }}
+                        >
+                            <PhoneInput
+                                international
+                                value={supplierForm.phone as Value}
+                                onChange={(phone) => setSupplierForm((current) => ({ ...current, phone: phone || "" }))}
+                                inputComponent={PhoneInputField}
+                                required
+                                style={{ width: "100%" }}
+                            />
+                        </Box>
+                        <TextField
+                            select
+                            label="Country"
+                            value={supplierForm.country}
+                            onChange={(event) => setSupplierForm((current) => ({ ...current, country: event.target.value }))}
+                            fullWidth
+                        >
+                            {getCountries().map((countryCode) => (
+                                <MenuItem key={countryCode} value={countryCode}>
+                                    {(en as Record<string, string>)[countryCode] || countryCode}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                    </Box>
+                </DialogContent>
+                
+            </Dialog>
+            <Snackbar
+                open={supplierSnackbar.open}
+                autoHideDuration={4000}
+                onClose={() => setSupplierSnackbar((current) => ({ ...current, open: false }))}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert
+                    onClose={() => setSupplierSnackbar((current) => ({ ...current, open: false }))}
+                    severity={supplierSnackbar.severity}
+                    variant="filled"
+                >
+                    {supplierSnackbar.message}
+                </Alert>
+            </Snackbar>
+
         </Stack>
     );
 }

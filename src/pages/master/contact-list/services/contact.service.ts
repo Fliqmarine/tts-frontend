@@ -12,8 +12,8 @@ export const createContact = async (
     formData.append("groupId", data.groupId);
     //if (data.description) formData.append("description", data.description);
     formData.append("companyName", data.companyName);
-    //formData.append("email", data.email);
-    //formData.append("phone", data.phone);
+    if (data.email) formData.append("email", data.email);
+    if (data.phone) formData.append("phone", data.phone);
 
     //if (data.initial) formData.append("initial", data.initial);
    // if (data.faxNo) formData.append("faxNo", data.faxNo);

@@ -1,12 +1,19 @@
+export interface ClientCoordinator {
+	name: string;
+	email: string;
+	phone: string;
+}
+
 export interface ClientForm {
 	companyName: string;
 	city: string;
 	country: string;
 	address: string;
 	postalCode: string;
-	vatNo: string;
+	// vatNo: string;
 	multipleEmail: string;
-	coordinatorInCharge: { name: string; email: string; phone: string };
+	coordinatorInCharge: ClientCoordinator;
+	additionalCoordinators?: ClientCoordinator[];
 	accountingDetails: {
 		name: string;
 		email: string;
@@ -21,10 +28,14 @@ export interface ClientForm {
 	};
 	keyAccountManager: string;
 	bankDetails: string;
+	fob: string;
+	sellingRate: string;
+	rebate: string;
 }
 
 export interface ClientRecord extends Partial<Omit<ClientForm, "coordinatorInCharge" | "accountingDetails">> {
 	coordinatorInCharge?: Partial<ClientForm["coordinatorInCharge"]>;
+	additionalCoordinators?: ClientCoordinator[];
 	accountingDetails?: Partial<ClientForm["accountingDetails"]>;
 }
 

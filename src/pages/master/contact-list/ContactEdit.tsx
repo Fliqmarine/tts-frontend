@@ -122,6 +122,8 @@ interface SectionConfig {
 
 interface GroupConfig {
     hasAccounting: boolean;
+    hasCoordinatorInCharge?: boolean;
+    hasMultipleEmail?: boolean;
     contactRows: FieldConfig[][];
 }
 
@@ -201,19 +203,17 @@ const GROUP_CONFIGS: Record<string, GroupConfig> = {
     },
     Supplier: {
         hasAccounting: false,
+        hasCoordinatorInCharge: false,
+        hasMultipleEmail: false,
         contactRows: [
-            [{ key: "companyName", label: "Company Name", required: true }],
-            [{ key: "eoriUiseNo", label: "EORI / UISE No." }],
             [
-                { key: "country", label: "Country", required: true },
-                { key: "city", label: "City", required: true },
+                { key: "companyName", label: "Name", required: true },
+                { key: "phone", label: "Phone", type: "tel", required: true },
             ],
-            [{ key: "address", label: "Address", required: true, multiline: true, rows: 3 }],
             [
-                { key: "postalCode", label: "Postal Code" },
-                { key: "vatNo", label: "Vat No" },
+                { key: "country", label: "Country" },
+                { key: "email", label: "Email", type: "email", required: true },
             ],
-            [{ key: "notifyParty", label: "Notify Party", multiline: true, rows: 3 }],
         ],
     },
 };
@@ -427,10 +427,11 @@ export default function ContactEdit() {
             <Box component={Paper} elevation={3} sx={{ flex: 1, py: 2, px: 2, gap: 1, display: "flex", flexDirection: "column" }}>
                 {renderRows(config.contactRows)}
             </Box>
-            {renderSection(
-                { title: "Coordinator In Charge", rows: COORDINATOR_IN_CHARGE_ROWS, standalonePaper: true },
-                "coordinator-in-charge",
-            )}
+            {config.hasCoordinatorInCharge !== false &&
+                renderSection(
+                    { title: "Coordinator In Charge", rows: COORDINATOR_IN_CHARGE_ROWS, standalonePaper: true },
+                    "coordinator-in-charge",
+                )}
         </Box>
     );
 
@@ -441,10 +442,11 @@ export default function ContactEdit() {
                     { title: "Accounting details", rows: ACCOUNTING_ROWS_STANDARD, standalonePaper: true },
                     "accounting",
                 )}
-            {renderSection(
-                { title: "Multiple Email", rows: MULTIPLE_EMAIL_ROWS, standalonePaper: true },
-                "multi-email",
-            )}
+            {config.hasMultipleEmail !== false &&
+                renderSection(
+                    { title: "Multiple Email", rows: MULTIPLE_EMAIL_ROWS, standalonePaper: true },
+                    "multi-email",
+                )}
         </Box>
     );
 

@@ -28,6 +28,8 @@ import ContactView from "./pages/master/contact-list/ContactView";
 import ClientIndex from "./pages/master/client/ClientIndexPage";
 import ClientCreatePage from "./pages/master/client/ClientCreatePage";
 import ClientEditPage from "./pages/master/client/ClientEditPage";
+import FobIndex from "./pages/master/fob/FobIndexPage";
+import FobCreate from "./pages/master/fob/FobCreatePage";
 
 import ManifestIndexPage from "./pages/manifest/ManifestIndex";
 import ManifestCreatePage from "./pages/manifest/ManifestCreate";
@@ -91,6 +93,8 @@ function App() {
                   <Route path="/master/airport-codes" element={<AirportCodesIndex />} />
                   <Route path="/master/currency" element={<CurrenciesIndex />} />
                   <Route path="/master/cargo" element={<CargoIndex />} />
+                  <Route path="/master/fob" element={<FobIndex />} />
+                  <Route path="/master/fob/create" element={<FobCreate />} />
 
                   <Route path="/master/hub" element={<HubIndexPage />} />
                   <Route path="/master/hub-locations" element={<HubLocationsIndex />} />

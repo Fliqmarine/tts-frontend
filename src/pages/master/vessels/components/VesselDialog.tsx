@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useState } from "react";
 import {
     Box,
     Button,
@@ -6,9 +6,7 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    Divider,
     FormControlLabel,
-    IconButton,
     MenuItem,
     Paper,
     TextField,
@@ -16,7 +14,6 @@ import {
     type TextFieldProps,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import CloseIcon from "@mui/icons-material/Close";
 import DirectionsBoatOutlinedIcon from "@mui/icons-material/DirectionsBoatOutlined";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
@@ -26,8 +23,6 @@ import {
     type PersonInfo,
     type VesselFormState,
 } from "../types/vessel.types";
-import { getUsers } from "../../users/services/user.service";
-import type { User } from "../../users/types/user.types";
 
 interface VesselDialogProps {
     open: boolean;
@@ -149,20 +144,6 @@ function PersonSection({
 
 export default function VesselDialog({ open, onClose, onSaved, initialValues }: VesselDialogProps) {
     const [form, setForm] = useState<VesselFormState>(() => createInitialFormState(initialValues));
-    const [keyAccountManagers, setKeyAccountManagers] = useState<User[]>([]);
-    // const [managerError, setManagerError] = useState("");
-
-    useEffect(() => {
-        if (!open) return;
-
-        getUsers()
-            .then((users) => {
-                setKeyAccountManagers(users.filter((user) => user.role === "Key Account Manager"));
-            })
-            .catch(() => {
-                // setManagerError("Could not load Key Account Managers. Please close and reopen the form to retry.");
-            });
-    }, [open]);
 
     const setField = <K extends keyof VesselFormState>(
         key: K,
@@ -190,8 +171,10 @@ export default function VesselDialog({ open, onClose, onSaved, initialValues }: 
             scroll="paper"
             sx={{
                 "& .MuiDialog-paper": {
-                    height: { xs: "calc(100dvh - 16px)", sm: "min(62vh, 900px)" },
+                    height: { xs: "calc(100dvh - 16px)", sm: "min(70dvh, 900px)" },
+                    // maxHeight: "calc(100dvh - 16px)",
                     width: { xs: "calc(100% - 16px)", sm: "calc(70% - 64px)" },
+                    mb:18
                 },
             }}
         >
@@ -223,9 +206,6 @@ export default function VesselDialog({ open, onClose, onSaved, initialValues }: 
                         </Button>
                     </Box>
 
-
-
-
                 </DialogTitle>
 
 
@@ -252,13 +232,14 @@ export default function VesselDialog({ open, onClose, onSaved, initialValues }: 
                                         value={form.clientName}
                                         onChange={(event) => setField("clientName", event.target.value)}
                                         fullWidth
+                                        sx={{ gridColumn: "1 / -1" }}
                                     />
                                     <TextField
                                         size="small"
                                         label="Vessel name"
                                         value={form.vesselName}
                                         onChange={(event) => setField("vesselName", event.target.value)}
-                                        fullWidth
+                                        
                                         required
                                     />
                                     <TextField
@@ -266,7 +247,7 @@ export default function VesselDialog({ open, onClose, onSaved, initialValues }: 
                                         label="IMO No"
                                         value={form.imoNo}
                                         onChange={(event) => setField("imoNo", event.target.value)}
-                                        fullWidth
+                                        
                                         required
                                     />
                                     <TextField
@@ -274,7 +255,7 @@ export default function VesselDialog({ open, onClose, onSaved, initialValues }: 
                                         label="Vessel flag"
                                         value={form.vesselFlag}
                                         onChange={(event) => setField("vesselFlag", event.target.value)}
-                                        fullWidth
+                                        
                                     />
                                     <TextField
                                         size="small"
@@ -282,7 +263,7 @@ export default function VesselDialog({ open, onClose, onSaved, initialValues }: 
                                         type="number"
                                         value={form.buildYear}
                                         onChange={(event) => setField("buildYear", event.target.value)}
-                                        fullWidth
+                                        
                                         required
                                     />
                                     <TextField
@@ -291,7 +272,7 @@ export default function VesselDialog({ open, onClose, onSaved, initialValues }: 
                                         type="number"
                                         value={form.budget}
                                         onChange={(event) => setField("budget", event.target.value)}
-                                        fullWidth
+                                        
                                     />
                                     <TextField
                                         size="small"
@@ -299,28 +280,11 @@ export default function VesselDialog({ open, onClose, onSaved, initialValues }: 
                                         label="Vessel type"
                                         value={form.vesselType}
                                         onChange={(event) => setField("vesselType", event.target.value)}
-                                        fullWidth
+                                        
+                                        required
                                     >
                                         <MenuItem value="M/V">M/V</MenuItem>
                                         <MenuItem value="M/T">M/T</MenuItem>
-                                    </TextField>
-                                    <TextField
-                                        size="small"
-                                        select
-                                        label="Key Account Manager"
-                                        value={form.keyAccountManager}
-                                        onChange={(event) => setField("keyAccountManager", event.target.value)}
-                                        fullWidth
-                                        required
-                                    >
-                                        <MenuItem value="">
-                                            <em>Select Key Account Manager</em>
-                                        </MenuItem>
-                                        {keyAccountManagers.map((manager) => (
-                                            <MenuItem key={manager.id} value={manager.id.toString()}>
-                                                {manager.name}
-                                            </MenuItem>
-                                        ))}
                                     </TextField>
                                 </Box>
                             </Section>

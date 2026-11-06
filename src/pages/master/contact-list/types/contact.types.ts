@@ -44,9 +44,9 @@ export const CreateContactSchema = z.object({
 
     //* Common fields
     companyName: z.string().min(1, "Company name is required"),
+    email: z.string().email("Invalid email").optional(),
+    phone: z.string().optional(),
     //initial: z.string().optional(),
-    //email: z.string().email("Invalid email"),
-    //phone: z.string().min(1, "Phone is required"),
     //faxNo: z.string().optional(),
     address: z.string().optional(),
     city: z.string().optional(),

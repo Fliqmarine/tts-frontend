@@ -23,7 +23,6 @@ export const VesselFormSchema = z.object({
     // email: z.string(),
     // telephone: z.string(),
     vesselType: z.string(),
-    keyAccountManager: z.string(),
 
     // Person in charge (PIC)
     clientPic: PersonInfoSchema,
@@ -61,7 +60,6 @@ export const INITIAL_VESSEL_STATE: VesselFormState = {
     // email: "",
     // telephone: "",
     vesselType: "",
-    keyAccountManager: "",
     clientPic: { ...INITIAL_PERSON_INFO },
     supt: { ...INITIAL_PERSON_INFO },
     billingAddress: "",

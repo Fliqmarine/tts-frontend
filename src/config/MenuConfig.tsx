@@ -40,13 +40,15 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import HubOutlinedIcon from "@mui/icons-material/HubOutlined";
+import CalculateIcon from '@mui/icons-material/Calculate';
 
 
 
 
 export interface NavigationMenu {
     label: string;
-    children: NavigationChild[];
+    path?: string;
+    children?: NavigationChild[];
     subChildren?: NavigationChild[];
     icon?: ReactNode;
 }
@@ -62,6 +64,12 @@ export const isNavigationPathActive = (pathname: string, path: string) =>
     pathname === path || pathname.startsWith(`${path}/`);
 
 export const navigationMenus: NavigationMenu[] = [
+
+    {
+        label: "Follow Up",
+        path: "/stocks/follow-up",
+        icon: <FollowTheSignsIcon fontSize="small" />,
+    },
     {
         label: "Stocks",
         children: [
@@ -75,11 +83,7 @@ export const navigationMenus: NavigationMenu[] = [
                 path: "/stocks/stock-list",
                 icon: <ListAltIcon fontSize="small" />,
             },
-            {
-                label: "Follow Up",
-                path: "/stocks/follow-up",
-                icon: <FollowTheSignsIcon fontSize="small" />,
-            },
+
             {
                 label: "Stock History",
                 path: "/stocks/history",
@@ -246,12 +250,7 @@ export const navigationMenus: NavigationMenu[] = [
                 path: "/master/contact-list",
                 icon: <ContactsIcon fontSize="small" />,
             },
-            {
-                label: "Client",
-                path: "/master/client",
-                icon: <PeopleIcon fontSize="small" />,
-            },
-           
+                      
             {
                 label: "Vessels",
                 path: "/master/vessels",
@@ -304,9 +303,24 @@ export const navigationMenus: NavigationMenu[] = [
                 icon: <PeopleIcon fontSize="small" />,
             },
             {
+                label: "Client",
+                path: "/master/client",
+                icon: <PeopleIcon fontSize="small" />,
+            },
+            {
+                label: "Contact List",
+                path: "/master/contact-list",
+                icon: <ContactsIcon fontSize="small" />,
+            },
+            {
                 label: "Hub",
                 path: "/master/hub",
                 icon: <WarehouseIcon fontSize="small" />,
+            },
+            {
+                label: "Fob",
+                path: "/master/fob",
+                icon: <CalculateIcon fontSize="small" />,
             },
             {
                 label: "Tariff Master",
@@ -449,7 +463,8 @@ export default function NavigationMenu() {
     const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
 
     const isMenuActive = (menu: (typeof navigationMenus)[number]) =>
-        menu.children.some((child) => {
+        (menu.path ? isNavigationPathActive(location.pathname, menu.path) : false) ||
+        (menu.children ?? []).some((child) => {
             if (child.path && isNavigationPathActive(location.pathname, child.path)) return true;
             if (child.children) {
                 return child.children.some(
@@ -463,17 +478,18 @@ export default function NavigationMenu() {
         <>
             {navigationMenus.map((menu) => {
                 const active = isMenuActive(menu);
-                const isOpen = hoveredMenu === menu.label;
+                const isOpen = !menu.path && hoveredMenu === menu.label;
 
                 return (
                     <Box
                         key={menu.label}
-                        onMouseEnter={() => setHoveredMenu(menu.label)}
+                        onMouseEnter={() => { if (!menu.path) setHoveredMenu(menu.label); }}
                         onMouseLeave={() => setHoveredMenu(null)}
                         sx={{ position: "relative" }}
                     >
                         <Button
-                            endIcon={<KeyboardArrowDownIcon />}
+                            {...(menu.path ? { component: Link, to: menu.path } : {})}
+                            endIcon={menu.path ? undefined : <KeyboardArrowDownIcon />}
                             sx={(theme: any) => ({
                                 color: active || isOpen ? theme.palette.primary.main : "#000000",
                                 fontWeight: active ? 700 : 600,
@@ -504,27 +520,29 @@ export default function NavigationMenu() {
                         </Button>
 
                         {/* Invisible bridge (pt) prevents gap from closing the menu */}
-                        <Box
-                            sx={{
-                                position: "absolute",
-                                top: "100%",
-                                left: 0,
-                                zIndex: 1300,
-                                pt: "6px",
-                                pointerEvents: isOpen ? "auto" : "none",
-                            }}
-                        >
-                            <Grow in={isOpen} timeout={200} style={{ transformOrigin: "top left" }}>
-                                <Paper
-                                    elevation={8}
-                                    sx={{ minWidth: 180, py: 0.5, borderRadius: 2, border: "1px solid rgba(0,0,0,0.06)" }}
-                                >
-                                    {menu.children.map((child, index) => (
-                                        <NestedMenuItemPopup key={child.label || index} item={child} />
-                                    ))}
-                                </Paper>
-                            </Grow>
-                        </Box>
+                        {!menu.path && (
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    top: "100%",
+                                    left: 0,
+                                    zIndex: 1300,
+                                    pt: "6px",
+                                    pointerEvents: isOpen ? "auto" : "none",
+                                }}
+                            >
+                                <Grow in={isOpen} timeout={200} style={{ transformOrigin: "top left" }}>
+                                    <Paper
+                                        elevation={8}
+                                        sx={{ minWidth: 180, py: 0.5, borderRadius: 2, border: "1px solid rgba(0,0,0,0.06)" }}
+                                    >
+                                        {(menu.children ?? []).map((child, index) => (
+                                            <NestedMenuItemPopup key={child.label || index} item={child} />
+                                        ))}
+                                    </Paper>
+                                </Grow>
+                            </Box>
+                        )}
                     </Box>
                 );
             })}

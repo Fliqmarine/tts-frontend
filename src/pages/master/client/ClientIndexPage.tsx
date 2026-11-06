@@ -19,6 +19,7 @@ interface Client {
 	postalCode: string;
 	vatNo: string;
 	coordinatorInCharge: { name: string; email: string; phone: string };
+	additionalCoordinators?: { name: string; email: string; phone: string }[];
 	accountingDetails: {
 		name: string;
 		email: string;

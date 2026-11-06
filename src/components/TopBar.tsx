@@ -159,10 +159,14 @@ const MobileMenuGroup = ({
     menu,
     onClose,
 }: {
-    menu: { label: string; children: NavigationChild[] };
+    menu: { label: string; path?: string; children?: NavigationChild[] };
     onClose: () => void;
 }) => {
     const [open, setOpen] = useState(false);
+
+    if (menu.path) {
+        return <MobileMenuNode item={menu} onClose={onClose} />;
+    }
 
     return (
         <Box>
@@ -172,7 +176,7 @@ const MobileMenuGroup = ({
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                    {menu.children.map((child, idx) => (
+                    {(menu.children ?? []).map((child, idx) => (
                         <MobileMenuNode key={child.path || idx} item={child} level={1} onClose={onClose} />
                     ))}
                 </List>

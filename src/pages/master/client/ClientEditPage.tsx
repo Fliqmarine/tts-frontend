@@ -1,5 +1,7 @@
 import { forwardRef, type ChangeEvent, type FormEvent, type ReactNode, useEffect, useState } from "react";
-import { Box, Button, MenuItem, Paper, TextField, Typography, type TextFieldProps } from "@mui/material";
+import { Box, Button, IconButton, MenuItem, Paper, TextField, Tooltip, Typography, type TextFieldProps } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
 import PhoneInput, { getCountries, type Value } from "react-phone-number-input";
 import en from "react-phone-number-input/locale/en.json";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -32,6 +34,7 @@ const createFormFromClient = (client: ClientRecord): ClientForm => ({
 	postalCode: client.postalCode ?? "",
 	vatNo: client.vatNo ?? "",
 	multipleEmail: client.multipleEmail ?? "",
+	additionalCoordinators: client.additionalCoordinators?.map((coordinator) => ({ ...coordinator })) ?? [],
 	coordinatorInCharge: {
 		name: client.coordinatorInCharge?.name ?? "",
 		email: client.coordinatorInCharge?.email ?? "",
@@ -112,6 +115,7 @@ export default function ClientEditPage() {
 		vatNo: "",
 		multipleEmail: "",
 		coordinatorInCharge: { name: "", email: "", phone: "" },
+		additionalCoordinators: [],
 		accountingDetails: {
 			name: "",
 			email: "",
@@ -143,6 +147,13 @@ export default function ClientEditPage() {
 		setForm((current) => ({ ...current, [section]: { ...current[section], [field]: value } }));
 	const onNested = <S extends NestedSection>(section: S, field: keyof ClientForm[S], transform?: Transform) =>
 		(event: InputChange) => setNested(section, field, transform ? transform(event.target.value) : event.target.value);
+	const updateAdditionalCoordinator = (index: number, field: "name" | "email" | "phone", value: string) =>
+		setForm((current) => ({
+			...current,
+			additionalCoordinators: (current.additionalCoordinators ?? []).map((coordinator, coordinatorIndex) =>
+				coordinatorIndex === index ? { ...coordinator, [field]: value } : coordinator,
+			),
+		}));
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -156,6 +167,7 @@ export default function ClientEditPage() {
 			vatNo: form.vatNo.trim(),
 			multipleEmail: form.multipleEmail.trim(),
 			coordinatorInCharge: form.coordinatorInCharge,
+			additionalCoordinators: form.additionalCoordinators ?? [],
 			accountingDetails: form.accountingDetails,
 			keyAccountManager: form.keyAccountManager.trim(),
 			bankDetails: form.bankDetails.trim(),
@@ -193,9 +205,65 @@ export default function ClientEditPage() {
 						</Section>
 						<Section title="Coordinator In Charge">
 							<Box sx={twoCols}>
-								<Field label="Name" value={coord.name} onChange={onNested("coordinatorInCharge", "name", toTitleCase)} required sx={fullRow} />
+								<Box sx={{ ...fullRow, display: "flex", alignItems: "center", gap: 1 }}>
+									<Field label="Name" value={coord.name} onChange={onNested("coordinatorInCharge", "name", toTitleCase)} required />
+									<Tooltip title="Add another coordinator">
+										<IconButton
+											type="button"
+											color="primary"
+											aria-label="Add another coordinator"
+											onClick={() => setForm((current) => ({
+												...current,
+												additionalCoordinators: [
+													...(current.additionalCoordinators ?? []),
+													{ name: "", email: "", phone: "" },
+												],
+											}))}
+										>
+											<AddIcon />
+										</IconButton>
+									</Tooltip>
+								</Box>
 								<Field label="Email" type="email" value={coord.email} onChange={onNested("coordinatorInCharge", "email")} required />
 								<PhoneField value={coord.phone} country={form.country} onChange={(phone) => setNested("coordinatorInCharge", "phone", phone)} />
+								{(form.additionalCoordinators ?? []).map((coordinator, index) => (
+									<Box key={index} sx={{ ...fullRow, display: "grid", gridTemplateColumns: "1fr auto", gap: 1.5, alignItems: "center" }}>
+										<Box sx={twoCols}>
+											<Field
+												label="Name"
+												value={coordinator.name}
+												onChange={(event) => updateAdditionalCoordinator(index, "name", toTitleCase(event.target.value))}
+												required
+												sx={fullRow}
+											/>
+											<Field
+												label="Email"
+												type="email"
+												value={coordinator.email}
+												onChange={(event) => updateAdditionalCoordinator(index, "email", event.target.value)}
+												required
+											/>
+											<PhoneField
+												value={coordinator.phone}
+												country={form.country}
+												onChange={(phone) => updateAdditionalCoordinator(index, "phone", phone)}
+											/>
+										</Box>
+										<Tooltip title="Remove coordinator">
+											<IconButton
+												type="button"
+												color="error"
+												aria-label={`Remove coordinator ${index + 2}`}
+												onClick={() => setForm((current) => ({
+													...current,
+													additionalCoordinators: (current.additionalCoordinators ?? []).filter((_, coordinatorIndex) => coordinatorIndex !== index),
+												}))}
+											>
+												<CloseIcon />
+											</IconButton>
+										</Tooltip>
+									</Box>
+								))}
 							</Box>
 						</Section>
 					</Column>

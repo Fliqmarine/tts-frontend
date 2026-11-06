@@ -30,15 +30,16 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import { useMemo, useState, type ChangeEvent, type MouseEvent as ReactMouseEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FileCell } from "./StockFollowupTable";
-import type { Stock, StockIndexColumn, StockIndexFilters, StockIndexTableProps } from "../types/Stocks.types";
+import type { Stock, StockIndexColumn, StockIndexTableProps } from "../types/Stocks.types";
 
 const stockSeeds: Omit<Stock, "id" | "stock_id">[] = [
-    { station: "ICN-TTS-E 1", stock_status: "Pending", arrival_date: "2026-09-12", client: "Client 1", vessel: "Vessel 1", existing_manifest: "TTS-NB-26-09-1134", supplier: "Supplier 1", po_no: "PO-26002779", pkgs: 10, weight: 100, cbm: 1.25, value: 1000, transit_no: "TR-10001", pickup: true, docs: [{ name: "invoice.pdf", url: "/files/invoice.pdf" }], images: [{ name: "cargo-front.jpg", url: "/files/cargo-front.jpg" }], hasChineseDocs: true, daysInStock: 12, dg: false },
+    { station: "ICN-TTS-E 1", stock_status: "New", arrival_date: "2026-09-12", client: "Client 1", vessel: "Vessel 1", existing_manifest: "TTS-NB-26-09-1134", supplier: "Supplier 1", po_no: "PO-26002779", pkgs: 10, weight: 100, cbm: 1.25, value: 1000, transit_no: "TR-10001", pickup: true, docs: [{ name: "invoice.pdf", url: "/files/invoice.pdf" }], images: [{ name: "cargo-front.jpg", url: "/files/cargo-front.jpg" }], hasChineseDocs: true, daysInStock: 12, dg: false },
     { station: "DXB-TTS-02", stock_status: "In Progress", arrival_date: "2026-08-18", client: "Client 2", vessel: "Vessel 2", existing_manifest: "MAN-260818-02", supplier: "Supplier 2", po_no: "PO-26003403", pkgs: 24, weight: 840, cbm: 4.8, value: 7200, transit_no: "TR-10002", pickup: false, docs: [{ name: "packing-list.pdf", url: "/files/packing-list.pdf" }], images: [], hasChineseDocs: false, daysInStock: 38, dg: true },
-    { station: "SIN-TTS-03", stock_status: "Completed", arrival_date: "2026-09-26", client: "Client 3", vessel: "Vessel 3", existing_manifest: "MAN-260926-03", supplier: "Supplier 3", po_no: "PO-26004111", pkgs: 6, weight: 52, cbm: 0.72, value: 2150, transit_no: "TR-10003", pickup: true, docs: [], images: [{ name: "container.jpg", url: "/files/container.jpg" }], hasChineseDocs: true, daysInStock: 4, dg: false },
+    { station: "SIN-TTS-03", stock_status: "Transit", arrival_date: "2026-09-26", client: "Client 3", vessel: "Vessel 3", existing_manifest: "MAN-260926-03", supplier: "Supplier 3", po_no: "PO-26004111", pkgs: 6, weight: 52, cbm: 0.72, value: 2150, transit_no: "TR-10003", pickup: true, docs: [], images: [{ name: "container.jpg", url: "/files/container.jpg" }], hasChineseDocs: true, daysInStock: 4, dg: false },
     { station: "LHR-TTS-04", stock_status: "Pending", arrival_date: "2026-07-22", client: "Client 1", vessel: "Vessel 2", existing_manifest: "MAN-260722-04", supplier: "Supplier 2", po_no: "PO-26005102", pkgs: 18, weight: 1200, cbm: 7.4, value: 18400, transit_no: "TR-10004", pickup: false, docs: [{ name: "invoice-04.pdf", url: "/files/invoice-04.pdf" }], images: [], hasChineseDocs: false, daysInStock: 65, dg: true },
     { station: "JFK-TTS-05", stock_status: "In Progress", arrival_date: "2026-09-04", client: "Client 2", vessel: "Vessel 1", existing_manifest: "MAN-260904-05", supplier: "Supplier 1", po_no: "PO-26006008", pkgs: 3, weight: 16, cbm: 0.18, value: 340, transit_no: "TR-10005", pickup: true, docs: [{ name: "entry.pdf", url: "/files/entry.pdf" }], images: [], hasChineseDocs: true, daysInStock: 20, dg: false },
     { station: "HND-TTS-06", stock_status: "Pending", arrival_date: "2026-08-01", client: "Client 3", vessel: "Vessel 3", existing_manifest: "MAN-260801-06", supplier: "Supplier 3", po_no: "PO-26007110", pkgs: 42, weight: 2260, cbm: 12.6, value: 39800, transit_no: "TR-10006", pickup: false, docs: [], images: [], hasChineseDocs: false, daysInStock: 52, dg: false },
@@ -53,7 +54,7 @@ const demoStocks: Stock[] = Array.from({ length: 24 }, (_, index) => {
 const columns: StockIndexColumn[] = [
     { key: "station", label: "Station", width: 120 },
     { key: "stock_id", label: "Stock ID", width: 130 },
-    { key: "stock_status", label: "Stock Status", width: 120 },
+    { key: "stock_status", label: "Stock Status", width: 180 },
     { key: "arrival_date", label: "Arrival Date", width: 115 },
     { key: "client", label: "Client", width: 150 },
     { key: "vessel", label: "Vessel", width: 150 },
@@ -62,7 +63,7 @@ const columns: StockIndexColumn[] = [
     { key: "po_no", label: "PO No", width: 130 },
     { key: "pkgs", label: "Pieces", width: 75, align: "right" },
     { key: "weight", label: "Weight (KGS)", width: 105, align: "right" },
-    { key: "cbm", label: "CBM", width: 85, align: "right" },
+    // { key: "cbm", label: "CBM", width: 85, align: "right" },
     { key: "value", label: "Value", width: 105, align: "right" },
     { key: "transit_no", label: "Transit No", width: 120 },
     { key: "pickup", label: "Pickup", width: 75, align: "center" },
@@ -74,14 +75,21 @@ const ROW_HEIGHT = 38;
 const HEADER_HEIGHT = 42;
 const MIN_COL_WIDTH = 60;
 const CHECKBOX_COL_WIDTH = 44;
-const ACTIONS_COL_WIDTH = 190;
+const ACTIONS_COL_WIDTH = 230;
 const defaultWidths = Object.fromEntries(columns.map((column) => [column.key, column.width])) as Record<string, number>;
 
 const statusColor = (status: Stock["stock_status"]) => {
-    if (status === "Completed") return "success";
-    if (status === "In Progress") return "info";
+    if (status === "On stock") return "success";
+    if (status === "New") return "success";
+    if (status === "In Progress") return "warning";
+    if (status === "Storage") return "warning";
+    if (status === "Landed Goods") return "warning";
+    if (status === "Transit") return "error";
+    if (status === "Hold") return "error";
+    if (status === "Pending") return "error";
     return "warning";
 };
+
 
 const formatDate = (date: string) => new Date(`${date}T00:00:00`).toLocaleDateString();
 
@@ -99,6 +107,17 @@ export default function StockIndexTable({ filters }: StockIndexTableProps) {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [deleteTarget, setDeleteTarget] = useState<Stock | null>(null);
     const [widths, setWidths] = useState<Record<string, number>>(defaultWidths);
+
+    const [approveTarget, setApproveTarget] = useState<Stock | null>(null);
+    const handleConfirmApprove = () => {
+        if (!approveTarget) return;
+        setRows((current) => current.map((row) =>
+            row.id === approveTarget.id ? { ...row, stock_status: "Stock" } : row
+        ));
+        setApproveTarget(null);
+    };
+    const handleApprove = (row: Stock) => setApproveTarget(row);
+    const handleCloseApprove = () => setApproveTarget(null);
 
     const startResize = (key: string, event: ReactMouseEvent) => {
         event.preventDefault();
@@ -365,8 +384,14 @@ export default function StockIndexTable({ filters }: StockIndexTableProps) {
                                     return <TableCell key={column.key} align={column.align} title={String(value)}>{value}</TableCell>;
                                 })}
                                 <TableCell align="center" className="col-actions">
-                                    <Box sx={{ display: "flex", justifyContent: "center", gap: 0.1 }}>
-                                        
+                                    <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 0.1, alignItems: "center" }}>
+                                        {row.stock_status === "New" && (
+                                            <Tooltip disableInteractive title="Approve stock">
+                                                <IconButton size="small" color="success" aria-label="Approve stock" onClick={() => handleApprove(row)} sx={{ p: 0.4 }}>
+                                                    <ThumbUpAltIcon sx={{ fontSize: 16 }} />
+                                                </IconButton>
+                                            </Tooltip>
+                                        )}
                                         <IconButton size="small" color="success" aria-label="Download Chinese Docs" disabled={!row.hasChineseDocs || !row.docs.length} onClick={() => downloadChineseDocs(row.id)} sx={{ p: 0.4, gap: 0.4, borderRadius: 1 }}>
                                             <DownloadIcon sx={{ fontSize: 16 }} />
                                             <Typography component="span" sx={{ fontSize: "0.62rem", lineHeight: 1, whiteSpace: "nowrap" }}>China Docs</Typography>
@@ -410,6 +435,64 @@ export default function StockIndexTable({ filters }: StockIndexTableProps) {
                 rowsPerPageOptions={[10, 25, 50, 100]}
                 sx={{ borderTop: "1px solid", borderColor: "divider", "& .MuiTablePagination-toolbar": { px: { xs: 1, sm: 2 }, flexWrap: { xs: "wrap", sm: "nowrap" }, justifyContent: { xs: "center", sm: "flex-end" } }, "& .MuiTablePagination-selectLabel": { display: { xs: "none", sm: "block" } } }}
             />
+            <Dialog
+                open={approveTarget !== null}
+                onClose={handleCloseApprove}
+                aria-labelledby="approve-stock-index-title"
+                aria-describedby="approve-stock-index-description"
+                fullWidth
+                maxWidth="xs"
+                slotProps={{ paper: { sx: { borderRadius: 3, p: 1, mb:50 } } }}
+            >
+                <DialogContent sx={{ textAlign: "center", pt: 3.5, pb: 1 }}>
+                    <Box
+                        sx={(theme) => ({
+                            width: 56,
+                            height: 56,
+                            mx: "auto",
+                            mb: 2,
+                            borderRadius: "50%",
+                            display: "grid",
+                            placeItems: "center",
+                            bgcolor: alpha(theme.palette.success.main, 0.12),
+                            color: "success.main",
+                        })}
+                    >
+                        <CheckCircleOutlinedIcon sx={{ fontSize: 32 }} />
+                    </Box>
+                    <Typography id="approve-stock-index-title" variant="h6" sx={{ fontWeight: 700 }}>
+                        Confirm Approval
+                    </Typography>
+                     <Typography id="approve-stock-dialog-description" variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                        Are you sure you would like to approve this stock <br />{approveTarget?.stock_id && (
+                            <> (<Box component="span" sx={{ color: "primary.main", fontWeight: 700 }}>{approveTarget.stock_id}</Box>)</>
+                        )}?
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pt: 2, pb: 3, gap: 1.5 }}>
+                    <Button
+                        onClick={handleCloseApprove}
+                        variant="outlined"
+                        color="inherit"
+                        fullWidth
+                        sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2, borderColor: "divider" }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleConfirmApprove}
+                        color="success"
+                        variant="contained"
+                        fullWidth
+                        autoFocus
+                        disableElevation
+                        startIcon={<CheckCircleOutlinedIcon />}
+                        sx={{ textTransform: "none", fontWeight: 600, borderRadius: 2 }}
+                    >
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <Dialog
                 open={deleteTarget !== null}
                 onClose={() => setDeleteTarget(null)}
