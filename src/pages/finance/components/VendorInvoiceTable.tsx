@@ -18,16 +18,21 @@ type Props = {
 };
 
 const columns = [
-  "Vendor",
-  "Invoice No.",
-  "Manifest No.",
-  "Vessel",
-  "Mode of Arrival",
-  "Invoice Date",
+  "Accrual Date",
+  "Vendor Invoice Date",
   "Overdue Date",
-  "Amount",
+  "Vendor Invoice No",
+  "Fliq Invoice No.",
+  "Fliq Manifest No.",
+  "Vessel",
   "Status",
+  "Mode",
+  "Invoice Amount",
+  "GST Amount",
+  "Amount",
+  "Paid Amount",
   "Bank",
+  "Docs",
 ];
 
 const formatDate = (value: string) =>

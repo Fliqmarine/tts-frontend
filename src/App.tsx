@@ -57,8 +57,14 @@ import CreditNoteCreate from "./pages/invoices/CreditNoteCreate";
 import CreditNoteView from "./pages/invoices/CreditNoteView";
 
 import SaleInvoiceIndexPage from "./pages/finance/SaleInvoiceIndexPage";
-import ClientReceiptPage from "./pages/finance/ClientReceipt";
+import ClientReceiptPage from "./pages/finance/ClientReceiptPage";
 import VendorInvoiceIndexPage from "./pages/finance/VendorInvoiceIndexPage";
+import InvoiceReport from "./pages/finance/InvoiceReportPage";
+import ProformaInvoiceCreatePage from "./pages/finance/ProformaInvoiceCreatePage";
+import ProformaInvoiceEditPage from "./pages/finance/ProformaInvoiceEditPage";
+import ProformaInvoiceIndexPage from "./pages/finance/ProformaInvoiceIndexPage";
+import ProformaReceiptUpdatePage from "./pages/finance/ProformaReceiptUpdatePage";
+import ProformaInvoiceReceiptIndexPage from "./pages/finance/ProformaInvoiceReceiptIndexPage";
 
 
 
@@ -139,6 +145,12 @@ function App() {
                   <Route path="/finance/sale-invoice" element={<SaleInvoiceIndexPage />} />
                   <Route path="/finance/client-receipt" element={<ClientReceiptPage />} />
                   <Route path="/finance/vendor-invoice" element={<VendorInvoiceIndexPage />} />
+                  <Route path="/finance/invoice-report" element={<InvoiceReport />} />
+                  <Route path="/finance/proforma-invoices" element={<ProformaInvoiceIndexPage />} />
+                  <Route path="/finance/proforma-invoices/create" element={<ProformaInvoiceCreatePage />} />
+                  <Route path="/finance/proforma-invoices/edit/:invoiceId" element={<ProformaInvoiceEditPage />} />
+                  <Route path="/finance/proforma-invoices/receipt-update/:invoiceId" element={<ProformaReceiptUpdatePage />} />
+                  <Route path="/finance/proforma-invoice-receipts" element={<ProformaInvoiceReceiptIndexPage />} />
 
                 </Route>
             </Routes>

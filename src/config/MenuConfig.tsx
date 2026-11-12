@@ -181,6 +181,11 @@ export const navigationMenus: NavigationMenu[] = [
                 icon: <PaidIcon fontSize="small" />,
             },
             {
+                label: "Invoice Report",
+                path: "/finance/invoice-report",
+                icon: <AssessmentIcon fontSize="small" />,
+            },
+            {
                 label: "Vendor Payment",
                 path: "/finance/vendor-payment",
                 icon: <PaymentsIcon fontSize="small" />,
@@ -189,11 +194,6 @@ export const navigationMenus: NavigationMenu[] = [
                 label: "AP Update",
                 path: "/finance/ap-update",
                 icon: <SyncAltIcon fontSize="small" />,
-            },
-            {
-                label: "Invoice Report",
-                path: "/finance/invoice-report",
-                icon: <AssessmentIcon fontSize="small" />,
             },
             {
                 label: "Expenses",
